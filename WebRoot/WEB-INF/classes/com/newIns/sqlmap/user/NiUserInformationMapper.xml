@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.newIns.dao.NiUserInformationMapper">
+	<resultMap id="NiUserBaseInformationResultMap" type="com.newIns.model.NiUserBaseInformation">
+		<id column="userId" property="userId" jdbcType="INTEGER" />
+		<result column="userName" property="userName" jdbcType="VARCHAR" />
+		<result column="phone" property="phone" jdbcType="VARCHAR" />
+		<result column="gender" property="gender" jdbcType="INTEGER" />
+		<result column="schoolName" property="schoolName" jdbcType="VARCHAR" />
+		<result column="userChannel" property="userChannel" jdbcType="INTEGER" />
+		<result column="userFirstCTime" property="userFirstCTime"
+			jdbcType="TIMESTAMP" />
+		<result column="userCTime" property="userCTime" jdbcType="TIMESTAMP" />
+	</resultMap>
+
+	<resultMap id="NiUserDetailInformationResultMap" type="com.newIns.model.NiUserDetailInformation">
+		<id column="userId" property="userId" jdbcType="INTEGER" />
+		<result column="wanxOpenId" property="wanxOpenId" jdbcType="VARCHAR" />
+		<result column="bindCard" property="bindCard" jdbcType="INTEGER" />
+		<result column="userChannel" property="userChannel" jdbcType="INTEGER" />
+		<result column="userCTime" property="userCTime" jdbcType="TIMESTAMP" />
+		<result column="bindPhoneIMEI" property="bindPhoneIMEI"
+			jdbcType="VARCHAR" />
+		<result column="userName" property="userName" jdbcType="VARCHAR" />
+		<result column="wanxNickname" property="wanxNickname" jdbcType="VARCHAR" />
+		<result column="phone" property="phone" jdbcType="VARCHAR" />
+		<result column="email" property="email" jdbcType="VARCHAR" />
+		<result column="gender" property="gender" jdbcType="INTEGER" />
+		<result column="birthday" property="birthday" jdbcType="DATE" />
+		<result column="race" property="race" jdbcType="VARCHAR" />
+		<result column="politicsStatus" property="politicsStatus"
+			jdbcType="INTEGER" />
+		<result column="degree" property="degree" jdbcType="INTEGER" />
+		<result column="jobPosition" property="jobPosition" jdbcType="VARCHAR" />
+		<result column="address" property="address" jdbcType="VARCHAR" />
+		<result column="marriage" property="marriage" jdbcType="INTEGER" />
+		<result column="hasChildren" property="hasChildren" jdbcType="INTEGER" />
+		<result column="nationality" property="nationality" jdbcType="VARCHAR" />
+		<result column="regionName" property="regionName" jdbcType="VARCHAR" />
+		<result column="schoolName" property="schoolName" jdbcType="VARCHAR" />
+		<result column="985" property="is985" jdbcType="INTEGER" />
+		<result column="211" property="is211" jdbcType="INTEGER" />
+		<result column="college" property="college" jdbcType="VARCHAR" />
+		<result column="department" property="department" jdbcType="VARCHAR" />
+		<result column="major" property="major" jdbcType="VARCHAR" />
+		<result column="className" property="classId" jdbcType="VARCHAR" />
+		<result column="userSn" property="userSn" jdbcType="INTEGER" />
+		<result column="jobTitle" property="jobTitle" jdbcType="VARCHAR" />
+		<result column="enrolDate" property="enrolDate" jdbcType="DATE" />
+	</resultMap>
+
+	<!-- 分页查询 -->
+	<select id="selectList" resultMap="NiUserBaseInformationResultMap">
+		SELECT
+		ni_user_base.userId,userName,phone,gender,schoolName,userChannel,userFirstCTime,userCTime
+		FROM ni_user_base,ni_user_education
+		<where>
+			ni_user_base.userId = ni_user_education.userId
+			  <![CDATA[
+             AND TIMESTAMPDIFF(HOUR,ni_user_base.userFirstCTime,NOW())<=24
+             ]]>
+
+		</where>
+		ORDER BY userFirstCTime DESC
+	</select>
+
+	<select id="selectListByParams" parameterType="hashmap"
+		resultMap="NiUserBaseInformationResultMap">
+		SELECT
+		ni_user_base.userId,userName,phone,gender,schoolName,userChannel,userFirstCTime,userCTime
+		FROM ni_user_base,ni_user_education
+		<where>
+			ni_user_base.userId = ni_user_education.userId
+			<if test="schoolName!=null">
+				AND schoolName LIKE '%${schoolName}%'
+			</if>
+			<if test="userId!=null">
+				AND ni_user_base.userId = #{userId}
+			</if>
+			<if test="phone!=null">
+				AND phone LIKE '${phone}%'
+			</if>
+			<if test="gender!=null">
+				AND gender = #{gender}
+			</if>
+			<if test="startTime!=null and startTime!=''">
+				AND ni_user_base.userCTime BETWEEN #{startTime} AND
+				#{endTime}
+			</if>
+		</where>
+	</select>
+
+	<select id="selectByPrimaryKey" parameterType="java.lang.Integer"
+		resultMap="NiUserDetailInformationResultMap">
+		SELECT
+		wanxOpenId,bindCard,ni_user_base.userId,userChannel,userCTime,bindPhoneIMEI,userName,wanxNickname,phone,
+		email,gender,birthday,race,politicsStatus,degree,jobPosition,address,marriage,hasChildren,nationality,
+		ni_user_education.regionName,ni_user_education.schoolName,`985`,`211`,college,department,major,className,userSn,jobTitle,enrolDate
+		FROM
+		ni_user_base,ni_user_identifer,ni_user_education,ni_school_dict
+		WHERE
+		ni_user_base.userId=ni_user_identifer.userId AND
+		ni_user_identifer.userId=ni_user_education.userId AND
+		ni_user_education.schoolId=ni_school_dict.schoolId AND
+		ni_user_base.userId =
+		#{userId,jdbcType=INTEGER}
+	</select>
+
+
+
+</mapper>

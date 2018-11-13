@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.newIns.productPack.dao.School_Product_Dao">
+	
+	<insert id="insert" parameterType="com.newIns.productPack.pojo.School_Product">
+		INSERT INTO ni_school_product(
+			schoolId,packagetId,bTime,eTime,status
+		)
+		VALUES(
+			#{schoolId},#{packagetId},#{bTime},#{eTime},#{status}
+		)
+			
+	</insert>
+	
+	<select id="select_model" parameterType="com.newIns.productPack.pojo.School_Product" resultType="com.newIns.productPack.pojo.School_Product">
+		SELECT *
+			FROM ni_school_product
+			WHERE 
+			ni_school_product.schoolId = #{schoolId}
+			AND ni_school_product.packagetId = #{packagetId}
+	</select>
+	
+
+</mapper>

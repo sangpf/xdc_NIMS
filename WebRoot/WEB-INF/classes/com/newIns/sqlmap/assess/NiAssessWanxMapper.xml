@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.newIns.dao.assess.NiAssessWanxMapper" >
+  <resultMap id="BaseResultMap" type="com.newIns.model.assess.NiAssessWanx" >
+    <id column="deliveryId" property="deliveryid" jdbcType="INTEGER" />
+    <result column="aqnId" property="aqnid" jdbcType="INTEGER" />
+    <result column="pageStatus" property="pagestatus" jdbcType="TINYINT" />
+    <result column="isTop" property="istop" jdbcType="TINYINT" />
+    <result column="showOrder" property="showorder" jdbcType="TINYINT" />
+    <result column="operator" property="operator" jdbcType="VARCHAR" />
+    <result column="uTime" property="utime" jdbcType="TIMESTAMP" />
+    <result column="pTime" property="ptime" jdbcType="TIMESTAMP" />
+    <result column="comment" property="comment" jdbcType="VARCHAR" />
+  </resultMap>
+ 
+  <sql id="Base_Column_List" >
+    deliveryId, aqnId, pageStatus, isTop, showOrder, operator, uTime, pTime, comment
+  </sql>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from ni_assess_wanx
+    where deliveryId = #{deliveryid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from ni_assess_wanx
+    where deliveryId = #{deliveryid,jdbcType=INTEGER}
+  </delete>
+
+  <insert id="insert" parameterType="com.newIns.model.assess.NiAssessWanx" >
+    insert into ni_assess_wanx (deliveryId, aqnId, pageStatus, 
+      isTop, showOrder, operator, 
+      uTime, pTime, comment
+      )
+    values (#{deliveryid,jdbcType=INTEGER}, #{aqnid,jdbcType=INTEGER}, #{pagestatus,jdbcType=TINYINT}, 
+      #{istop,jdbcType=TINYINT}, #{showorder,jdbcType=TINYINT}, #{operator,jdbcType=VARCHAR}, 
+      #{utime,jdbcType=TIMESTAMP}, #{ptime,jdbcType=TIMESTAMP}, #{comment,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.newIns.model.assess.NiAssessWanx" >
+    insert into ni_assess_wanx
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="deliveryid != null" >
+        deliveryId,
+      </if>
+      <if test="aqnid != null" >
+        aqnId,
+      </if>
+      <if test="pagestatus != null" >
+        pageStatus,
+      </if>
+      <if test="istop != null" >
+        isTop,
+      </if>
+      <if test="showorder != null" >
+        showOrder,
+      </if>
+      <if test="operator != null" >
+        operator,
+      </if>
+      <if test="utime != null" >
+        uTime,
+      </if>
+      <if test="ptime != null" >
+        pTime,
+      </if>
+      <if test="comment != null" >
+        comment,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="deliveryid != null" >
+        #{deliveryid,jdbcType=INTEGER},
+      </if>
+      <if test="aqnid != null" >
+        #{aqnid,jdbcType=INTEGER},
+      </if>
+      <if test="pagestatus != null" >
+        #{pagestatus,jdbcType=TINYINT},
+      </if>
+      <if test="istop != null" >
+        #{istop,jdbcType=TINYINT},
+      </if>
+      <if test="showorder != null" >
+        #{showorder,jdbcType=TINYINT},
+      </if>
+      <if test="operator != null" >
+        #{operator,jdbcType=VARCHAR},
+      </if>
+      <if test="utime != null" >
+        #{utime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="ptime != null" >
+        #{ptime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="comment != null" >
+        #{comment,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.newIns.model.assess.NiAssessWanx" >
+    update ni_assess_wanx
+    <set >
+      <if test="aqnid != null" >
+        aqnId = #{aqnid,jdbcType=INTEGER},
+      </if>
+      <if test="pagestatus != null" >
+        pageStatus = #{pagestatus,jdbcType=TINYINT},
+      </if>
+      <if test="istop != null" >
+        isTop = #{istop,jdbcType=TINYINT},
+      </if>
+      <if test="showorder != null" >
+        showOrder = #{showorder,jdbcType=TINYINT},
+      </if>
+      <if test="operator != null" >
+        operator = #{operator,jdbcType=VARCHAR},
+      </if>
+      <if test="utime != null" >
+        uTime = #{utime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="ptime != null" >
+        pTime = #{ptime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="comment != null" >
+        comment = #{comment,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where deliveryId = #{deliveryid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.newIns.model.assess.NiAssessWanx" >
+    update ni_assess_wanx
+    set aqnId = #{aqnid,jdbcType=INTEGER},
+      pageStatus = #{pagestatus,jdbcType=TINYINT},
+      isTop = #{istop,jdbcType=TINYINT},
+      showOrder = #{showorder,jdbcType=TINYINT},
+      operator = #{operator,jdbcType=VARCHAR},
+      uTime = #{utime,jdbcType=TIMESTAMP},
+      pTime = #{ptime,jdbcType=TIMESTAMP},
+      comment = #{comment,jdbcType=VARCHAR}
+    where deliveryId = #{deliveryid,jdbcType=INTEGER}
+  </update>
+</mapper>

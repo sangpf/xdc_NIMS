@@ -1,0 +1,730 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.newIns.dao.NiDeliveryStatisticsMapper">
+	<!-- 调查部分 -->
+
+	<!-- 调查玩校投放基本结果集 -->
+	<resultMap id="SurveyWanxDeliveryBaseResultMap" type="com.newIns.model.NiDeliveryStatistics">
+		<id column="deliveryId" property="deliveryId" jdbcType="INTEGER" />
+		<result column="status" property="status" jdbcType="TINYINT" />
+		<result column="collectedNum" property="correctNum" jdbcType="INTEGER" />
+		<result column="sqnName" property="qnTitle" jdbcType="VARCHAR" />
+		<result column="sqnId" property="qnId" jdbcType="INTEGER" />
+		<result column="bTime" property="bTime" jdbcType="TIMESTAMP" />
+		<result column="eTime" property="eTime" jdbcType="TIMESTAMP" />
+		<result column="questionQty" property="questionQty" />
+	</resultMap>
+
+	<resultMap type="com.newIns.model.NiQuestionDescription" id="NiSurveyQuestionDescriptionResultMap">
+		<id column="sqId" property="qId" jdbcType="INTEGER" />
+		<result column="sqTitle" property="qTitle" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<resultMap type="com.newIns.model.NiQuestionDescription" id="NiAssessQuestionDescriptionResultMap">
+		<id column="aqId" property="qId" jdbcType="INTEGER" />
+		<result column="aqTitle" property="qTitle" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<resultMap type="com.newIns.model.NiQuestionDescription" id="NiVoteQuestionDescriptionResultMap">
+		<id column="vqnId" property="qId" jdbcType="INTEGER" />
+		<result column="vqTitle" property="qTitle" jdbcType="VARCHAR" />
+	</resultMap>
+
+
+	<!-- 根据条件查询调查玩校投放统计 -->
+	<select id="selectSurveyWanxDeliveryList" parameterType="hashMap"
+		resultMap="SurveyWanxDeliveryBaseResultMap">
+
+<!-- 		SELECT
+		deliveryId,ni_survey_delivery.status,collectedNum,sqnName,ni_survey_delivery.sqnId,ni_survey_delivery.bTime,ni_survey_delivery.eTime
+		FROM ni_survey_delivery,ni_survey_questionnaire
+		<where>
+			<if test="deliveryId != null">
+				deliveryId = #{deliveryId}
+			</if>
+			<if test="qnTitle != null">
+				AND sqnName LIKE CONCAT('%',#{qnTitle},'%')
+			</if>
+			<if test="status != null">
+				AND ni_survey_delivery.status = #{status}
+			</if>
+			AND ni_survey_delivery.sqnId=ni_survey_questionnaire.sqnId
+		</where> -->
+		
+		SELECT * FROM ni_survey_delivery
+		<where>
+			status != 1
+			<if test="deliveryId != null">
+				and deliveryId = #{deliveryId}
+			</if>
+			<if test="status != null">
+				and status = #{status}
+			</if>
+			<if test="channelId != null">
+				and channelId = #{channelId}
+			</if>
+		</where>
+		
+	</select>
+
+	<!-- 根据投放id查询调查玩校投放统计 -->
+	<select id="selectSurveyWanxDeliveryByKey" parameterType="java.lang.Integer" resultMap="SurveyWanxDeliveryBaseResultMap">
+		SELECT
+			ni_survey_delivery.deliveryId,
+			ni_survey_delivery.`status`,
+			ni_survey_delivery.collectedNum,
+			ni_survey_questionnaire.sqnName,
+		    ni_survey_questionnaire.questionQty,
+			ni_survey_delivery.sqnId,
+			ni_survey_delivery.bTime,
+			ni_survey_delivery.eTime
+		FROM
+			ni_survey_delivery,
+			ni_survey_questionnaire
+		<where>
+			<if test="deliveryId != null">
+				deliveryId = #{deliveryId}
+			</if>
+			AND ni_survey_delivery.sqnId=ni_survey_questionnaire.sqnId
+		</where>
+	</select>
+
+	<!-- 调查玩校问卷用户答题详情结果集 -->
+	<resultMap id="surveyWanxAnswerInfoList" type="com.newIns.model.NiDeliveryStatistics">
+		<id column="sqnId" property="qnId" jdbcType="INTEGER" />
+		<result column="userId" property="userId" jdbcType="INTEGER" />
+		<result column="sqId" property="qId" jdbcType="INTEGER" />
+		<result column="choice" property="choice" jdbcType="VARCHAR" />
+	</resultMap>
+
+
+
+	<!-- 根据调查问卷id得到所有答此问卷的用户答题详情 -->
+<!-- 	<select id="selectSurveyWanxAnswerInfoBySqnId" parameterType="java.lang.Integer"
+		resultMap="surveyWanxAnswerInfoList">
+		SELECT
+		ni_survey_answer.sqnId,ni_survey_answer.userId,ni_survey_answer.sqId,ni_survey_answer.choice
+		FROM ni_survey_answer WHERE ni_survey_answer.userId IN
+		(SELECT
+		ni_survey_order.userId FROM ni_survey_order WHERE
+		ni_survey_order.sqnId=#{sqnId}) AND ni_survey_answer.sqnId=#{sqnId}
+		ORDER BY ni_survey_answer.userId
+	</select> -->
+	<!-- 根据调查问卷id得到所有答此问卷的用户答题详情     同名存储过程 -->
+	<select id="selectSurveyWanxAnswerInfoBySqnId" parameterType="java.lang.Integer" 
+		resultMap="surveyWanxAnswerInfoList" statementType="CALLABLE">
+		{CALL selectSurveyWanxAnswerInfoBySqnId(#{sqnId})}
+	</select>
+	
+	<!-- 投票问卷 答题明细 , 恒表 -->
+	<select id="download_AnswerDetail_vote" parameterType="java.lang.Integer" resultType="com.newIns.data_processing.po.Download_AnswerDetail">
+		
+	SELECT
+			ni_vote_answer.userId AS userId,
+			ni_user_identifer.wanxUserId,
+			ni_user_identifer.wanxNickname,
+			ni_vote_answer.vqnId AS qnId,
+     	1 AS questionQty,
+			1 AS qId,
+			ni_vote_answer.choice AS choice,
+			(
+				CASE
+				WHEN ni_user_base.gender = 1 THEN '男'
+				WHEN ni_user_base.gender = 2 THEN '女'
+				END
+			) AS gender,
+			ni_user_education.schoolName,
+			ni_user_education.regionName,
+			1 AS questionNum,
+		  ni_vote_delivery.showTitle,
+			ni_vote_questionnaire.vqTitle AS qTitle,
+    '投票' AS questionType
+		FROM
+			ni_vote_questionnaire,
+			ni_vote_delivery,
+			ni_vote_answer
+		LEFT JOIN ni_user_identifer ON ni_vote_answer.userId = ni_user_identifer.userId
+		LEFT JOIN ni_user_base ON ni_vote_answer.userId = ni_user_base.userId
+		LEFT JOIN ni_user_education ON ni_vote_answer.userId = ni_user_education.userId
+		WHERE
+		    ni_vote_delivery.vqnId = ni_vote_answer.vqnId
+		AND ni_vote_questionnaire.vqnId = ni_vote_delivery.vqnId
+		AND ni_vote_delivery.deliveryId = #{id}
+		GROUP BY
+			ni_vote_answer.userId
+		
+	</select>
+	
+	<!-- 测评问卷 答题明细 , 恒表 -->
+	<select id="download_AnswerDetail_assess" parameterType="java.lang.Integer" resultType="com.newIns.data_processing.po.Download_AnswerDetail">
+		
+		SELECT
+			ni_assess_answer.userId AS userId,
+			ni_user_identifer.wanxUserId,
+			ni_user_identifer.wanxNickname,
+			ni_assess_answer.aqnId AS qnId,
+     	    ni_assess_questionnaire.questionQty,
+			ni_assess_answer.aqId AS qId,
+			ni_assess_answer.choice AS choice,
+			(
+				CASE
+				WHEN ni_user_base.gender = 1 THEN '男'
+				WHEN ni_user_base.gender = 2 THEN '女'
+				END
+			) AS gender,
+			ni_user_education.schoolName,
+			ni_user_education.regionName,
+			ni_assess_question.questionNum,
+		    ni_assess_delivery.showTitle,
+			ni_assess_question.aqTitle AS qTitle,
+			(
+			 CASE 
+			WHEN ni_assess_question.questionType = 1 THEN '单选'
+			WHEN ni_assess_question.questionType = 2 THEN '多选'
+			WHEN ni_assess_question.questionType = 3 THEN '数字填空'
+			WHEN ni_assess_question.questionType = 4 THEN '文本填空'
+			ELSE '其他题型'
+			END
+			) AS questionType
+		FROM
+			ni_assess_questionnaire,
+			ni_assess_delivery,
+			ni_assess_question,
+			ni_assess_answer
+		LEFT JOIN ni_user_identifer ON ni_assess_answer.userId = ni_user_identifer.userId
+		LEFT JOIN ni_user_base ON ni_assess_answer.userId = ni_user_base.userId
+		LEFT JOIN ni_user_education ON ni_assess_answer.userId = ni_user_education.userId
+		WHERE
+			ni_assess_answer.aqId = ni_assess_question.aqId
+		AND ni_assess_delivery.aqnId = ni_assess_answer.aqnId
+		AND ni_assess_questionnaire.aqnId = ni_assess_delivery.aqnId
+		AND ni_assess_delivery.deliveryId = #{id}
+		GROUP BY
+			ni_assess_answer.userId,
+			ni_assess_answer.aqId 
+		
+	</select>
+	
+	<!-- 导出单个问卷 答题信息 , 调查问卷 , 竖表模式 -->
+	<select id="download_AnswerDetail_survey" parameterType="java.lang.Integer" resultType="com.newIns.data_processing.po.Download_AnswerDetail">
+		SELECT
+			ni_survey_answer.userId AS userId,
+			ni_user_identifer.wanxUserId,
+			ni_user_identifer.wanxNickname,
+			ni_survey_answer.sqnId AS qnId,
+     		ni_survey_questionnaire.questionQty,
+			ni_survey_answer.sqId AS qId,
+			ni_survey_answer.choice AS choice,
+			(
+				CASE
+				WHEN ni_user_base.gender = 1 THEN '男'
+				WHEN ni_user_base.gender = 2 THEN '女'
+				END
+			) AS gender,
+			ni_user_education.schoolName,
+			ni_user_education.regionName,
+			ni_survey_question.questionNum,
+		  ni_survey_delivery.showTitle,
+			ni_survey_question.sqTitle AS qTitle,
+		(
+		 CASE 
+		WHEN ni_survey_question.questionType = 1 THEN '单选'
+		WHEN ni_survey_question.questionType = 2 THEN '多选'
+		WHEN ni_survey_question.questionType = 3 THEN '数字填空'
+		WHEN ni_survey_question.questionType = 4 THEN '文本填空'
+		ELSE '其他题型'
+		END
+		) AS questionType
+		FROM
+			ni_survey_questionnaire,
+			ni_survey_delivery,
+			ni_survey_question,
+			ni_survey_answer
+		LEFT JOIN ni_user_identifer ON ni_survey_answer.userId = ni_user_identifer.userId
+		LEFT JOIN ni_user_base ON ni_survey_answer.userId = ni_user_base.userId
+		LEFT JOIN ni_user_education ON ni_survey_answer.userId = ni_user_education.userId
+		WHERE
+			ni_survey_answer.sqId = ni_survey_question.sqId
+		AND ni_survey_delivery.sqnId = ni_survey_answer.sqnId
+		AND ni_survey_questionnaire.sqnId = ni_survey_delivery.sqnId
+		AND ni_survey_delivery.deliveryId = #{id}
+		GROUP BY
+			ni_survey_answer.userId,
+			ni_survey_answer.sqId 
+		
+	</select>
+
+	<!-- 根据调查问卷id得到所有答此问卷的用户答题详情并查询每个用户的详细信息 -->
+	<select id="selectSurveyWanxAnswerAndUserInfoBySqnId" parameterType="java.lang.Integer"
+		resultMap="surveyWanxAnswerInfoList">
+		
+		SELECT
+		ni_survey_answer.sqnId,ni_survey_answer.userId,ni_survey_answer.sqId,ni_survey_answer.choice,
+		ni_survey_answer.selfDefine,ni_survey_question.questionNum,
+		ni_user_base.userName,ni_user_base.gender,
+		ni_user_education.schoolName,ni_user_education.regionName,ni_user_education.role,
+		ni_region_dict.province,ni_region_dict.regionCode
+		FROM ni_survey_answer, ni_survey_question,
+		ni_user_base 
+		LEFT JOIN ni_user_education ON ni_user_base.userId=ni_user_education.userId
+		LEFT JOIN ni_region_dict ON ni_user_base.userId=ni_user_education.userId AND ni_user_education.regionId = ni_region_dict.regionId
+		WHERE ni_survey_answer.userId IN
+		(SELECT
+		ni_survey_order.userId FROM ni_survey_order WHERE
+		ni_survey_order.sqnId=#{sqnId} ) 
+		AND ni_survey_answer.sqnId=#{sqnId}
+		AND ni_survey_question.sqId = ni_survey_answer.sqId
+		AND ni_user_base.userId=ni_survey_answer.userId
+		ORDER BY ni_survey_answer.userId
+	</select>
+
+	<!-- 根据调查玩校投放id查找提交人数 -->
+	<select id="selectSurveyWanxDeliveryCommit" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+		SELECT count(1) 
+		FROM ni_survey_order 
+		where
+			deliveryId = #{deliveryId}
+	</select>
+	
+	<!-- 根据调查玩校投放id查找完成人数 -->
+	<select id="selectSurveyWanxDeliveryFinish" parameterType="java.lang.Integer"
+		resultType="java.lang.Integer">
+		SELECT count(orderId) FROM ni_survey_order WHERE
+		sqnId=#{sqnId} AND
+		orderStatus BETWEEN 1 AND 3
+	</select>
+	<!-- 根据调查玩校投放id查找奖励领取人数 -->
+	<select id="selectSurveyWanxDeliveryAward" parameterType="java.lang.Integer"
+		resultType="java.lang.Integer">
+		SELECT count(1) FROM ni_survey_order 
+		where awardId > 0 
+		and awardGetStatus = 2 
+		and deliveryId = #{deliveryId}
+	</select>
+	<!-- 测评部分 -->
+
+
+	<!-- 测评玩校投放基本结果集 -->
+	<resultMap id="AccessWanxDeliveryBaseResultMap" type="com.newIns.model.NiDeliveryStatistics">
+		<id column="deliveryId" property="deliveryId" jdbcType="INTEGER" />
+		<result column="status" property="status" jdbcType="TINYINT" />
+		<result column="collectedNum" property="correctNum" jdbcType="INTEGER" />
+		<result column="aqnName" property="qnTitle" jdbcType="VARCHAR" />
+		<result column="aqnId" property="qnId" jdbcType="INTEGER" />
+		<result column="bTime" property="bTime" jdbcType="TIMESTAMP"/>
+		<result column="eTime" property="eTime" jdbcType="TIMESTAMP"/>
+		<result column="questionQty" property="questionQty" />
+	</resultMap>
+
+	<!-- 根据条件查询测评玩校投放统计 -->
+	<select id="selectAccessWanxDeliveryList" parameterType="hashMap" resultMap="AccessWanxDeliveryBaseResultMap">
+<!-- 		SELECT
+		deliveryId,collectedNum,aqnName,
+		ni_assess_delivery.status,
+		ni_assess_delivery.aqnId,
+		ni_assess_delivery.bTime,
+		ni_assess_delivery.eTime
+		FROM ni_assess_delivery,ni_assess_questionnaire
+		<where>
+			<if test="deliveryId != null">
+				deliveryId = #{deliveryId}
+			</if>
+			<if test="qnTitle != null">
+				AND aqnName LIKE CONCAT('%',#{qnTitle},'%')
+			</if>
+			<if test="status != null">
+				AND ni_assess_delivery.status = #{status}
+			</if>
+			AND ni_assess_delivery.aqnId=ni_assess_questionnaire.aqnId
+		</where> -->
+		SELECT * FROM ni_assess_delivery
+		<where>
+			status != 1
+			<if test="deliveryId != null">
+				and deliveryId = #{deliveryId}
+			</if>
+			<if test="status != null">
+				and status = #{status}
+			</if>
+			<if test="channelId != null">
+				and channelId = #{channelId}
+			</if>
+		</where>
+		
+	</select>
+
+
+	<!-- 根据投放id查询测评玩校投放统计 -->
+	<select id="selectAccessWanxDeliveryByKey" parameterType="java.lang.Integer" resultMap="AccessWanxDeliveryBaseResultMap">
+		SELECT
+			ni_assess_delivery.deliveryId,
+			ni_assess_delivery.`status`,
+			ni_assess_delivery.collectedNum,
+			ni_assess_questionnaire.aqnName,
+			ni_assess_questionnaire.questionQty,
+			ni_assess_delivery.aqnId,
+			ni_assess_delivery.bTime,
+			ni_assess_delivery.eTime
+		FROM
+			ni_assess_delivery,
+			ni_assess_questionnaire
+		<where>
+			<if test="deliveryId != null">
+				deliveryId = #{deliveryId}
+			</if>
+			AND ni_assess_delivery.aqnId=ni_assess_questionnaire.aqnId
+		</where>
+	</select>
+
+
+	<!-- 测评玩校问卷用户答题详情结果集 -->
+	<resultMap id="assessWanxAnswerInfoList" type="com.newIns.model.NiDeliveryStatistics">
+		<id column="aqnId" property="qnId" jdbcType="INTEGER" />
+		<result column="userId" property="userId" jdbcType="INTEGER" />
+		<result column="aqId" property="qId" jdbcType="INTEGER" />
+		<result column="choice" property="choice" jdbcType="VARCHAR" />
+	</resultMap>
+
+
+
+	<!-- 根据测评问卷id得到所有答此问卷的用户答题详情 -->
+	<select id="selectAssessWanxAnswerInfoByAqnId" parameterType="java.lang.Integer"
+		resultMap="assessWanxAnswerInfoList">
+		SELECT
+		ni_assess_answer.aqnId,ni_assess_answer.userId,ni_assess_answer.aqId,ni_assess_answer.choice
+		FROM ni_assess_answer WHERE ni_assess_answer.userId IN
+		(SELECT
+		ni_assess_order.userId FROM ni_assess_order WHERE
+		ni_assess_order.aqnId=#{aqnId}) AND ni_assess_answer.aqnId=#{aqnId}
+		ORDER BY ni_assess_answer.userId
+	</select>
+
+	<!-- 根据测评问卷id得到所有答此问卷的用户答题详情并查询每个用户的详细信息    同名存储过程 -->
+<!-- 	<select id="selectAssessWanxAnswerAndUserInfoByAqnId" parameterType="java.lang.Integer"
+		resultMap="assessWanxAnswerInfoList" statementType="CALLABLE">
+		{ CALL selectAssessWanxAnswerAndUserInfoByAqnId( #{aqnId} ) }
+	</select> -->
+	<select id="selectAssessWanxAnswerAndUserInfoByAqnId" parameterType="java.lang.Integer"
+		resultMap="assessWanxAnswerInfoList">
+		SELECT
+			ni_assess_answer.aqnId,
+			ni_assess_answer.userId,
+			ni_assess_answer.aqId,
+			ni_assess_answer.choice,
+			ni_assess_answer.selfDefine,
+			ni_assess_question.questionNum,
+			ni_user_base.userName,
+			ni_user_base.gender,
+			ni_user_education.schoolName,
+			ni_user_education.regionName,
+			ni_user_education.role,
+			ni_region_dict.province,
+			ni_region_dict.regionCode
+		FROM
+			ni_assess_answer,
+			ni_assess_question,
+			ni_user_base
+		LEFT JOIN ni_user_education ON ni_user_base.userId = ni_user_education.userId
+		LEFT JOIN ni_region_dict ON ni_user_base.userId = ni_user_education.userId
+		AND ni_user_education.regionId = ni_region_dict.regionId
+		WHERE
+			ni_assess_answer.userId IN (
+				SELECT
+					ni_assess_order.userId
+				FROM
+					ni_assess_order
+				WHERE
+					ni_assess_order.aqnId = #{aqnId}
+		) 
+				AND ni_assess_answer.aqnId = #{aqnId}
+				AND ni_assess_question.aqId = ni_assess_answer.aqId
+				AND ni_user_base.userId = ni_assess_answer.userId
+				ORDER BY
+					ni_assess_answer.userId
+	</select>
+
+	<!-- 根据测评玩校投放id查找提交人数 -->
+	<select id="selectAccessWanxDeliveryCommit" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+		SELECT count(*) AS commitNum
+		FROM ni_assess_order 
+		where deliveryId = #{deliveryId}
+	</select>
+	
+	<!-- 根据测评玩校投放id查找完成人数 -->
+	<select id="selectAccessWanxDeliveryFinish" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+		SELECT count(1) 
+		FROM ni_assess_order 
+		WHERE
+		aqnId=#{aqnId} AND
+		orderStatus BETWEEN 1 AND 3
+	</select>
+	
+	<!-- 根据测评玩校投放id查找奖励领取人数 -->
+	<select id="selectAccessWanxDeliveryAward" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+		SELECT count(1) AS awardNum
+		FROM ni_assess_order 
+		where 
+		awardId > 0 
+		and awardGetStatus = 2 
+		and deliveryId = #{deliveryId}
+	</select>
+	<!-- 投票部分 -->
+
+
+	<!-- 投票玩校投放基本结果集 -->
+	<resultMap id="VoteWanxDeliveryBaseResultMap" type="com.newIns.model.NiDeliveryStatistics">
+		<id column="deliveryId" property="deliveryId" jdbcType="INTEGER" />
+		<result column="status" property="status" jdbcType="TINYINT" />
+		<result column="collectedNum" property="correctNum" jdbcType="INTEGER" />
+		<result column="vqnName" property="qnTitle" jdbcType="VARCHAR" />
+		<result column="vqnId" property="qnId" jdbcType="INTEGER" />
+		<result column="bTime" property="bTime" jdbcType="TIMESTAMP"/>
+		<result column="eTime" property="eTime" jdbcType="TIMESTAMP"/>
+	</resultMap>
+
+
+
+	<!-- 根据条件查询投票玩校投放统计 -->
+	<select id="selectVoteWanxDeliveryList" parameterType="hashMap"
+		resultMap="VoteWanxDeliveryBaseResultMap">
+
+<!-- 		SELECT
+		deliveryId,ni_vote_delivery.status,collectedNum,vqnName,ni_vote_delivery.vqnId,ni_vote_delivery.bTime,ni_vote_delivery.eTime
+		FROM ni_vote_delivery,ni_vote_questionnaire
+
+		<where>
+			<if test="deliveryId != null">
+				deliveryId = #{deliveryId}
+			</if>
+			<if test="qnTitle != null">
+				AND vqnName LIKE CONCAT('%',#{qnTitle},'%')
+			</if>
+			<if test="status != null">
+				AND ni_vote_delivery.status = #{status}
+			</if>
+			AND ni_vote_delivery.vqnId=ni_vote_questionnaire.vqnId
+		</where> -->
+		
+		SELECT * FROM ni_vote_delivery
+		<where>
+			status != 1
+			<if test="deliveryId != null">
+				and deliveryId = #{deliveryId}
+			</if>
+			<if test="status != null">
+				and status = #{status}
+			</if>
+			<if test="channelId != null">
+				and channelId = #{channelId}
+			</if>
+		</where>
+		
+	</select>
+
+	<!-- 根据投放id查询投票玩校投放统计 -->
+	<select id="selectVoteWanxDeliveryByKey" parameterType="java.lang.Integer"
+		resultMap="VoteWanxDeliveryBaseResultMap">
+
+		SELECT
+		deliveryId,ni_vote_delivery.status,collectedNum,vqnName,ni_vote_delivery.vqnId,ni_vote_delivery.bTime,ni_vote_delivery.eTime
+		FROM ni_vote_delivery,ni_vote_questionnaire
+
+		<where>
+			<if test="deliveryId != null">
+				deliveryId = #{deliveryId}
+			</if>
+			AND ni_vote_delivery.vqnId=ni_vote_questionnaire.vqnId
+		</where>
+	</select>
+
+	<!-- 投票玩校问卷用户答题详情结果集 -->
+	<resultMap id="voteWanxAnswerInfoList" type="com.newIns.model.NiDeliveryStatistics">
+		<id column="vqnId" property="qnId" jdbcType="INTEGER" />
+		<result column="userId" property="userId" jdbcType="INTEGER" />
+		<result column="vqId" property="qId" jdbcType="INTEGER" />
+		<result column="choice" property="choice" jdbcType="VARCHAR" />
+	</resultMap>
+
+
+
+	<!-- 根据投票问卷id得到所有答此问卷的用户答题详情 -->
+	<select id="selectVoteWanxAnswerInfoByVqnId" parameterType="java.lang.Integer"
+		resultMap="voteWanxAnswerInfoList">
+		SELECT
+		ni_vote_answer.vqnId,ni_vote_answer.userId,ni_vote_answer.choice
+		FROM
+		ni_vote_answer WHERE ni_vote_answer.userId IN
+		(SELECT
+		ni_vote_order.userId FROM ni_vote_order WHERE
+		ni_vote_order.vqnId=#{vqnId}) AND ni_vote_answer.vqnId=#{vqnId}
+		ORDER
+		BY ni_vote_answer.userId
+	</select>
+	
+	
+	<!-- 根据测评问卷id得到所有答此问卷的用户答题详情并查询每个用户的详细信息 -->
+	<select id="selectVoteWanxAnswerAndUserInfoByVqnId" parameterType="java.lang.Integer"
+		resultMap="voteWanxAnswerInfoList">
+		SELECT
+		ni_vote_answer.vqnId,ni_vote_answer.userId,ni_vote_answer.choice,
+		ni_vote_answer.selfDefine,
+		ni_user_base.userName,ni_user_base.gender,
+		ni_user_education.schoolName,ni_user_education.regionName,ni_user_education.role,
+		ni_region_dict.province,ni_region_dict.regionCode
+		FROM ni_vote_answer, 
+		ni_user_base LEFT JOIN ni_user_education ON ni_user_base.userId=ni_user_education.userId 
+		LEFT JOIN ni_region_dict ON ni_user_base.userId=ni_user_education.userId AND ni_user_education.regionId = ni_region_dict.regionId
+		WHERE ni_vote_answer.userId IN
+		(SELECT
+		ni_vote_order.userId FROM ni_vote_order WHERE
+		ni_vote_order.vqnId=#{vqnId}) 
+		AND ni_vote_answer.vqnId=#{vqnId}
+		AND ni_user_base.userId=ni_vote_answer.userId
+		ORDER BY ni_vote_answer.userId
+	</select>
+
+	<!-- 根据投票问卷id得到题目名称[一个投票问卷对应一个题目] -->
+	<!-- <select id="selectVoteWanxVqTitle" parameterType="java.lang.Integer" 
+		resultType="java.lang.String"> SELECT vqTitle FROM ni_vote_questionnaire 
+		WHERE vqnId=#{vqnId} </select> -->
+
+
+
+
+	<!-- 根据投票玩校投放id查找提交人数 -->
+	<select id="selectVoteWanxDeliveryCommit" parameterType="java.lang.Integer"
+		resultType="java.lang.Integer">
+		SELECT count(1) FROM ni_vote_order 
+		where
+		deliveryId=#{deliveryId}
+	</select>
+	
+	<!-- 根据投票玩校投放id查找完成人数 -->
+	<select id="selectVoteWanxDeliveryFinish" parameterType="java.lang.Integer"
+		resultType="java.lang.Integer">
+		SELECT count(orderId) FROM ni_vote_order where
+		vqnId=#{vqnId} AND
+		orderStatus BETWEEN 1 AND 3
+	</select>
+	<!-- 根据投票玩校投放id查找奖励领取人数 -->
+	<select id="selectVoteWanxDeliveryAward" parameterType="java.lang.Integer"
+		resultType="java.lang.Integer">
+		SELECT count(1) FROM ni_vote_order 
+		where awardId > 0
+		and awardGetStatus = 2 
+		and deliveryId=#{deliveryId}
+	</select>
+
+	<!-- 用户相关信息映射集 -->
+	<resultMap id="userInfoList" type="com.newIns.model.NiDeliveryStatisticsUserInfo">
+		<id column="userId" property="userId" jdbcType="INTEGER" />
+		<result column="userName" property="userName" jdbcType="VARCHAR" />
+		<result column="gender" property="gender" jdbcType="TINYINT" />
+		<result column="idCard" property="idCard" jdbcType="VARCHAR" />
+		<result column="phone" property="phone" jdbcType="VARCHAR" />
+		<result column="email" property="email" jdbcType="VARCHAR" />
+		<result column="userCTime" property="userCTime" jdbcType="TIMESTAMP" />
+		<result column="wanxUserId" property="wanxUserId" jdbcType="INTEGER" />
+		<result column="wanxNickname" property="wanxNickname" jdbcType="VARCHAR" />
+		<result column="schoolId" property="schoolId" jdbcType="INTEGER" />
+		<result column="schoolName" property="schoolName" jdbcType="VARCHAR" />
+		<result column="regionId" property="regionId" jdbcType="INTEGER" />
+		<result column="regionName" property="regionName" jdbcType="VARCHAR" />
+		<result column="regionCode" property="regionCode" jdbcType="VARCHAR" />
+		<result column="province" property="province" jdbcType="VARCHAR" />
+		<result column="userSn" property="userSn" jdbcType="VARCHAR" />
+		<result column="role" property="role" jdbcType="TINYINT" />
+		<result column="bindCard" property="bindCard" jdbcType="TINYINT" />
+		<result column="bindStudent" property="bindStudent" jdbcType="TINYINT" />
+		<result column="wanxScore" property="wanxScore" jdbcType="INTEGER" />
+		<result column="wanxAccount" property="wanxAccount" jdbcType="VARCHAR" />
+	</resultMap>
+
+
+	<!-- 根据userId查询用户相关信息  同名存储过程   缩减版-->
+	<select id="selectUserInfoByUserId" parameterType="java.lang.Integer" 
+		resultMap="userInfoList" statementType="CALLABLE">
+		{CALL selectUserInfoByUserId_min(#{userId})}
+	</select>
+	
+	<!-- 根据问题id查询问题信息  同名存储过程 -->
+	<select id="selectSurveyWanxSqTitle" parameterType="java.lang.Integer" 
+		resultMap="NiSurveyQuestionDescriptionResultMap" statementType="CALLABLE">
+		{CALL selectSurveyWanxSqTitle(#{sqId})}
+	</select>
+	
+	<!-- 根据测评问题id查询问题信息  同名存储过程  -->
+	<select id="selectAssessWanxAqTitle" parameterType="java.lang.Integer" resultMap="NiAssessQuestionDescriptionResultMap" statementType="CALLABLE">
+		{CALL selectAssessWanxAqTitle(#{aqId})}
+		
+	<!-- SELECT
+		ni_assess_question.aqId,
+		ni_assess_question.aqTitle,
+		ni_assess_question.option1Des,
+		ni_assess_question.option2Des,
+		ni_assess_question.option3Des,
+		ni_assess_question.option4Des,
+		ni_assess_question.option5Des,
+		ni_assess_question.option6Des,
+		ni_assess_question.option7Des,
+		ni_assess_question.option8Des,
+		ni_assess_question.option9Des,
+		ni_assess_question.option10Des,
+		ni_assess_question.option11Des,
+		ni_assess_question.option12Des,
+		ni_assess_question.option13Des,
+		ni_assess_question.option14Des,
+		ni_assess_question.option15Des,
+		ni_assess_question.option16Des,
+		ni_assess_question.option17Des,
+		ni_assess_question.option18Des,
+		ni_assess_question.option19Des,
+		ni_assess_question.option20Des,
+		ni_assess_question.option21Des,
+		ni_assess_question.option22Des,
+		ni_assess_question.option23Des,
+		ni_assess_question.option24Des,
+		ni_assess_question.option25Des,
+		ni_assess_question.option26Des
+		FROM
+		ni_assess_question 
+		WHERE
+		ni_assess_question.aqId = #{aqId} -->
+	</select>
+	
+	<select id="selectVoteWanxVqTitle" parameterType="java.lang.Integer"
+		resultMap="NiVoteQuestionDescriptionResultMap">
+		SELECT
+		ni_vote_questionnaire.vqnId,
+		ni_vote_questionnaire.vqTitle,
+		ni_vote_questionnaire.option1Des,
+		ni_vote_questionnaire.option2Des,
+		ni_vote_questionnaire.option3Des,
+		ni_vote_questionnaire.option4Des,
+		ni_vote_questionnaire.option5Des,
+		ni_vote_questionnaire.option6Des,
+		ni_vote_questionnaire.option7Des,
+		ni_vote_questionnaire.option8Des,
+		ni_vote_questionnaire.option9Des,
+		ni_vote_questionnaire.option10Des,
+		ni_vote_questionnaire.option11Des,
+		ni_vote_questionnaire.option12Des,
+		ni_vote_questionnaire.option13Des,
+		ni_vote_questionnaire.option14Des,
+		ni_vote_questionnaire.option15Des,
+		ni_vote_questionnaire.option16Des,
+		ni_vote_questionnaire.option17Des,
+		ni_vote_questionnaire.option18Des,
+		ni_vote_questionnaire.option19Des,
+		ni_vote_questionnaire.option20Des,
+		ni_vote_questionnaire.option21Des,
+		ni_vote_questionnaire.option22Des,
+		ni_vote_questionnaire.option23Des,
+		ni_vote_questionnaire.option24Des,
+		ni_vote_questionnaire.option25Des,
+		ni_vote_questionnaire.option26Des
+		FROM ni_vote_questionnaire WHERE
+		ni_vote_questionnaire.vqnId = #{vqnId};
+	</select>
+
+</mapper>

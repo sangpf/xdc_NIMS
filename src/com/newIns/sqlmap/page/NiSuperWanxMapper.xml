@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.newIns.dao.NiSuperWanxMapper" >
+	
+	<sql id="BASE_SQL">
+		deliveryId,qnId,qnType,pageStatus,isTop,showOrder,uTime,pTime,timer,operator,superListCategory,COMMENT
+	</sql>
+	
+	<!-- 新增超级列表页面 -->
+	<insert id="insertSuperListCategory" parameterType="com.newIns.model.page.NiSuperWanx" statementType="CALLABLE">
+		{call insertSuperListCategory(#{deliveryId},#{uTime},#{qnType},#{superListCategory})}
+	</insert>
+	
+	<!-- 根据投放id查询 -->
+	<select id="selectByDeliveryId" parameterType="java.lang.Integer" resultType="com.newIns.model.page.NiSuperWanx">
+		SELECT
+		<include refid="BASE_SQL"/>
+	    FROM ni_super_wanx WHERE deliveryId = #{id}
+	</select>
+	
+	<!-- 根据联合主键查询 -->
+	<select id="selectByPrimaryKey" parameterType="hashmap" resultType="com.newIns.model.page.NiSuperWanx">
+		SELECT
+		<include refid="BASE_SQL"/>
+	    FROM ni_super_wanx WHERE deliveryId = #{itemId} AND qnType = #{itemType} AND superListCategory = #{superListCategory}
+	</select>
+	
+</mapper>

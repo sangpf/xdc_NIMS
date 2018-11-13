@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.newIns.dao.NiFixedAwardStatisticsMapper">
+
+	
+	
+	<!-- 调查部分 -->
+	<!-- 调查玩校定奖基本结果集 -->
+    <resultMap id="surveyWanxFixedAwardBaseResultMap" type="com.newIns.model.NiFixedAwardStatistics" >
+	    <id column="deliveryId" property="deliveryId" jdbcType="INTEGER" />
+   	    <result column="sqnId" property="qnId" jdbcType="INTEGER" /> 
+   	    <result column="sqnName" property="qnName" jdbcType="VARCHAR" />
+	    <result column="status" property="status" jdbcType="TINYINT" />
+	    <result column="award1Id" property="awardId" jdbcType="INTEGER"/>
+	    <result column="awardName" property="awardName" jdbcType="VARCHAR" />
+  	</resultMap>
+	
+	
+	
+  <!-- 根据条件查询调查玩校定奖统计 -->
+  <select id="selectSurveyWanxFixedAwardList" parameterType="hashMap" resultMap="surveyWanxFixedAwardBaseResultMap">
+	  
+	SELECT ni_survey_delivery.deliveryId,ni_survey_delivery.sqnId,ni_survey_questionnaire.sqnName,ni_survey_delivery.status, 
+	ni_survey_delivery.award1Id,ni_award.awardName 
+	FROM ni_survey_delivery,ni_survey_questionnaire,ni_award 
+	<where>
+		<if test="deliveryId != null">
+			ni_survey_delivery.deliveryId = #{deliveryId} 
+		</if>
+		<if test="qnName != null">
+		    AND ni_survey_questionnaire.sqnName LIKE CONCAT('%',#{qnName},'%')
+		</if>
+		<if test="status != null">
+			AND ni_survey_delivery.status = #{status}
+		</if>
+		AND ni_survey_delivery.sqnId=ni_survey_questionnaire.sqnId 
+		AND ni_survey_delivery.award1Id >0
+		AND ni_survey_delivery.award1Id=ni_award.awardId
+	</where>
+  </select>
+  
+	<!-- 调查玩校投放定奖完成人数统计 -->
+	<select id="selectSurveyWanxFixedAwardFinishNum" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+		SELECT COUNT(orderId) FROM ni_survey_order WHERE awardMethod=1 AND orderStatus BETWEEN 1 AND 3 AND sqnId=#{sqnId}
+	</select>
+	
+	<!-- 调查玩校投放定奖领取人数统计 -->
+  	<select id="selectSurveyWanxFixedAwardReceiveNum" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+  		SELECT COUNT(orderId) FROM ni_survey_order WHERE awardMethod=1 AND awardGetStatus=2 AND orderStatus BETWEEN 1 AND 3 AND sqnId=#{sqnId}
+  	</select>
+  <!-- 测评部分 -->
+  
+  
+  <!-- 测评玩校定奖基本结果集 -->
+    <resultMap id="assessWanxFixedAwardBaseResultMap" type="com.newIns.model.NiFixedAwardStatistics" >
+	    <id column="deliveryId" property="deliveryId" jdbcType="INTEGER" />
+   	    <result column="aqnId" property="qnId" jdbcType="INTEGER" /> 
+   	    <result column="aqnName" property="qnName" jdbcType="VARCHAR" />
+	    <result column="status" property="status" jdbcType="TINYINT" />
+	    <result column="award1Id" property="awardId" jdbcType="INTEGER"/>
+	    <result column="awardName" property="awardName" jdbcType="VARCHAR" />
+  	</resultMap>
+  	
+  	
+	  <!-- 根据条件查询测评玩校定奖统计 -->
+<select id="selectAssessWanxFixedAwardList" parameterType="hashMap" resultMap="assessWanxFixedAwardBaseResultMap">
+	  
+	SELECT ni_assess_delivery.deliveryId,ni_assess_delivery.aqnId,ni_assess_questionnaire.aqnName,ni_assess_delivery.status, 
+	ni_assess_delivery.award1Id,ni_award.awardName 
+	FROM ni_assess_delivery,ni_assess_questionnaire,ni_award 
+	<where>
+		<if test="deliveryId != null">
+			ni_assess_delivery.deliveryId = #{deliveryId} 
+		</if>
+		<if test="qnName != null">
+		    AND ni_assess_questionnaire.aqnName LIKE CONCAT('%',#{qnName},'%')
+		</if>
+		<if test="status != null">
+			AND ni_assess_delivery.status = #{status}
+		</if>
+		AND ni_assess_delivery.aqnId=ni_assess_questionnaire.aqnId 
+		AND ni_assess_delivery.award1Id >0
+		AND ni_assess_delivery.award1Id=ni_award.awardId
+	</where>
+  </select>
+  
+  	<!-- 测评玩校投放定奖完成人数统计 -->
+	<select id="selectAssessWanxFixedAwardFinishNum" parameterType="java.lang.Integer"  resultType="java.lang.Integer">
+		SELECT COUNT(orderId) FROM ni_assess_order WHERE awardMethod=1 AND orderStatus BETWEEN 1 AND 3 AND aqnId=#{aqnId}
+	</select>
+	
+	<!-- 测评玩校投放定奖领取人数统计 -->
+  	<select id="selectAssessWanxFixedAwardReceiveNum" parameterType="java.lang.Integer"  resultType="java.lang.Integer">
+  		SELECT COUNT(orderId) FROM ni_assess_order WHERE awardMethod=1 AND awardGetStatus=2 AND orderStatus BETWEEN 1 AND 3 AND aqnId=#{aqnId}
+  	</select>
+  	
+  <!-- 投票部分 -->
+  
+  
+  <!-- 投票玩校报告基本结果集 -->
+     <resultMap id="voteWanxFixedAwardBaseResultMap" type="com.newIns.model.NiFixedAwardStatistics" >
+	    <id column="deliveryId" property="deliveryId" jdbcType="INTEGER" />
+   	    <result column="vqnId" property="qnId" jdbcType="INTEGER" /> 
+   	    <result column="vqnName" property="qnName" jdbcType="VARCHAR" />
+	    <result column="status" property="status" jdbcType="TINYINT" />
+	    <result column="award1Id" property="awardId" jdbcType="INTEGER"/>
+	    <result column="awardName" property="awardName" jdbcType="VARCHAR" />
+  	</resultMap>
+  	
+	  <!-- 根据条件查询投票玩校报告统计 -->
+  <select id="selectVoteWanxFixedAwardList" parameterType="hashMap" resultMap="voteWanxFixedAwardBaseResultMap">
+	  
+	SELECT ni_vote_delivery.deliveryId,ni_vote_delivery.vqnId,ni_vote_questionnaire.vqnName,ni_vote_delivery.status, 
+	ni_vote_delivery.award1Id,ni_award.awardName 
+	FROM ni_vote_delivery,ni_vote_questionnaire,ni_award 
+	<where>
+		<if test="deliveryId != null">
+			ni_vote_delivery.deliveryId = #{deliveryId} 
+		</if>
+		<if test="qnName != null">
+		    AND ni_vote_questionnaire.vqnName LIKE CONCAT('%',#{qnName},'%')
+		</if>
+		<if test="status != null">
+			AND ni_vote_delivery.status = #{status}
+		</if>
+		AND ni_vote_delivery.vqnId=ni_vote_questionnaire.vqnId 
+		AND ni_vote_delivery.award1Id >0
+		AND ni_vote_delivery.award1Id=ni_award.awardId
+	</where>
+  </select>
+  
+    	<!-- 投票玩校投放定奖完成人数统计 -->
+	<select id="selectVoteWanxFixedAwardFinishNum" parameterType="java.lang.Integer"  resultType="java.lang.Integer">
+		SELECT COUNT(orderId) FROM ni_vote_order WHERE awardMethod=1 AND orderStatus BETWEEN 1 AND 3 AND vqnId=#{vqnId}
+	</select>
+	
+	<!-- 投票玩校投放定奖领取人数统计 -->
+  	<select id="selectVoteWanxFixedAwardReceiveNum" parameterType="java.lang.Integer"  resultType="java.lang.Integer">
+  		SELECT COUNT(orderId) FROM ni_vote_order WHERE awardMethod=1 AND awardGetStatus=2 AND orderStatus BETWEEN 1 AND 3 AND vqnId=#{vqnId}
+  	</select>
+  
+</mapper>

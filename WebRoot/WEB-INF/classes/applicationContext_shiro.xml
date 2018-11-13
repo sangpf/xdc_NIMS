@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" 
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-3.0.xsd 
+		http://www.springframework.org/schema/mvc 
+		http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd 
+		http://www.springframework.org/schema/context 
+		http://www.springframework.org/schema/context/spring-context-3.0.xsd 
+		http://www.springframework.org/schema/aop 
+		http://www.springframework.org/schema/aop/spring-aop-3.0.xsd 
+		http://www.springframework.org/schema/tx 
+		http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+		http://www.springframework.org/schema/task
+   		http://www.springframework.org/schema/task/spring-task-3.0.xsd">
+	
+	<bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean" depends-on="myFilter">
+		<!-- 安全管理器 -->
+		<property name="securityManager" ref="securityManager"/>
+		<!-- 登录页面，用户未登录的时候跳转的页面 -->
+		<property name="loginUrl" value="/managerUser/returnLoginPage.do"/>
+		<!-- 访问无权限的资源，跳转的页面 -->
+		<property name="unauthorizedUrl" value="/jsp/layout/unauthorized.jsp"/>
+		<!-- 添加自定义验证过滤器 -->
+		<property name="filters">
+			<map>
+				<entry key="perms" value-ref="myFilter" />
+			</map>
+		</property>
+		<!-- 定义认证或授权的规则 -->
+		<property name="filterChainDefinitions">
+			<value>
+				/BS/** = anon
+				/css/** = anon
+				/js/** = anon
+				/static/** = anon
+				/ueditor/** = anon
+				/*/returnLoginPage.do=anon
+				/*/manageUserlogin.do=anon
+				/jsp/layout/login.jsp = anon
+				
+				/platform/deleteSurveyQuestionnaire.do = perms["删除问卷"]
+				/platform/deleteNiAssessQuestionnaire.do = perms["删除问卷"]
+				/platform/deleteNiVoteQuestionnaire.do = perms["删除问卷"]
+				
+				/platform/abandonedSurveyQuestionnaire.do = perms["废弃问卷"]
+				/platform/releaseNiAssessQuestionnaire.do = perms["废弃问卷"]
+				/platform/abandonedVoteQuestionnaire.do = perms["废弃问卷"]
+				
+				/platform/changeSurveyQuestionnaire.do = perms["修改问卷"]
+				/platform/changeNiAssessQuestionnaire.do = perms["修改问卷"]
+				/platform/changeVoteQuestionnaire.do = perms["修改问卷"]
+				
+				/platform/overStatSurveyDeliveryWanx.do = perms["终止投放"]
+				/platform/niAssessDeliveryWanxOver.do = perms["终止投放"]
+				/platform/niVoteDeliveryWanxOver.do = perms["终止投放"]
+				
+				/platform/stopStatSurveyDeliveryWanx.do = perms["暂停投放"]
+				/platform/niAssessDeliveryWanxStop.do = perms["暂停投放"]
+				/platform/niVoteDeliveryWanxStop.do = perms["暂停投放"]
+				
+				/platform/withdrawnQuestionnaire.do = perms["撤回投放"]
+				/platform/niAssessDeliveryWanxWithdrawn.do = perms["撤回投放"]
+				/platform/niVoteDeliveryWanxWithdrawn.do = perms["撤回投放"]
+				
+				/*.do = authc					
+				/*.jsp = authc	
+				/** = authc	
+			</value>
+		</property>
+	</bean>
+	
+	<!-- 安全管理器 -->
+	<bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+		<property name="realm" ref="xdcRealm"></property>
+	</bean>
+	
+	<!-- 自定义realm -->
+	<bean id="xdcRealm" class="com.newIns.web.XdcRealm"/>
+	<!-- 自定义授权过滤器 -->
+	<bean id="myFilter" class="com.newIns.tools.MyFilter" />
+	
+	<!-- 启动shiro注解 -->
+	<bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator" depends-on="lifecycleBeanPostProcessor">
+		<!-- 默认使用JDK代理 ，如被代理类没有实现接口，必须使用下列配置开启 cglib代理  -->
+		<property name="proxyTargetClass" value="true" />
+	</bean>
+	
+	<bean
+		class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">
+		<property name="securityManager" ref="securityManager" />
+	</bean>
+	
+	<!-- 对安全管理器 增强代码 ， spring 后处理器 -->
+	<bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor"/>
+	
+</beans>

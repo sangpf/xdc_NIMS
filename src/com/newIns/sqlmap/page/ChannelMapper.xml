@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.newIns.dao.page.ChannelDao" >
+
+	<select id="listChannel" resultType="com.newIns.model.page.Channel">
+		SELECT * from ni_channel
+	</select>
+
+	<!-- -根据主键查询 -->
+	<select id="findById" parameterType="java.lang.Integer" resultType="com.newIns.model.page.Channel">
+		select * from ni_channel where 
+		ni_channel.id = #{id}
+	</select>
+	
+	
+
+</mapper>

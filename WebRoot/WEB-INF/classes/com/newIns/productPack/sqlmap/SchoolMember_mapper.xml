@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.newIns.productPack.dao.SchoolMember_Dao" >
+
+	<select id="findAll" parameterType="hashmap" resultType="com.newIns.productPack.pojo.SchoolMember">
+		SELECT *
+		FROM ni_school_member
+	</select>
+	
+	<insert id="insert" parameterType="com.newIns.productPack.pojo.SchoolMember">
+		INSERT INTO ni_school_member(
+			schoolId,schoolName,bTime,eTime
+		)
+		VALUES (
+			#{schoolId},#{schoolName},#{bTime},#{eTime}
+		)
+	</insert>
+
+	<delete id="deleBy_KeyList" parameterType="java.lang.Integer">
+		DELETE FROM ni_school_member 
+		WHERE 
+			ni_school_member.schoolId 
+		IN
+		<foreach collection="schoolId_list" item="schoolId" open="(" close=")" separator=",">
+			#{schoolId}
+		</foreach>
+	</delete>
+	
+	<!-- 根据学校名称模糊查询 -->
+	<select id="searchSchool_byName" parameterType="java.lang.String" resultType="com.newIns.productPack.pojo.SchoolDict">
+		SELECT *
+			FROM ni_school_dict 
+			WHERE ni_school_dict.schoolName LIKE '%${_parameter}%'
+	</select>
+
+<!-- 根据学校id 查询购买的产品包 -->
+	<select id="select_School_ProductPackage" parameterType="java.lang.Integer" resultType="com.newIns.productPack.pojo.vo.School_ProductPackage">
+		SELECT
+			ni_school_member.schoolId,
+			ni_school_member.schoolName,
+			ni_school_product.id,
+			ni_school_product.bTime,
+			ni_school_product.eTime,
+			ni_school_product.packagetId,
+			ni_product_package.channelId,
+			ni_product_package.title,
+			ni_school_product.`status`
+			FROM ni_school_member,ni_product_package,ni_school_product
+			WHERE
+			ni_school_member.schoolId = ni_school_product.schoolId
+			AND ni_school_product.packagetId = ni_product_package.id
+			AND ni_school_member.schoolId = #{id}
+	</select>
+
+</mapper>

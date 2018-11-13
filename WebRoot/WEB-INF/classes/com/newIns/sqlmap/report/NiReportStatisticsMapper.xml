@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.newIns.dao.NiReportStatisticsMapper">
+
+	
+	
+	<!-- 调查部分 -->
+	
+	<!-- 调查玩校报告基本结果集 -->
+    <resultMap id="SurveyWanxReportBaseResultMap" type="com.newIns.model.report.NiReportStatistics" >
+	    <id column="reportId" property="reportId" jdbcType="INTEGER" />
+   	    <result column="sqnName" property="qnName" jdbcType="VARCHAR" />
+	    <result column="reportStatus" property="reportStatus" jdbcType="TINYINT" /> 
+	    <result column="qnType" property="qnType" jdbcType="TINYINT" />
+	    <result column="wanxViewNum" property="wanxViewNum" jdbcType="INTEGER"/>
+	    <result column="weixViewNum" property="weixViewNum" jdbcType="INTEGER"/>
+	    <result column="appViewNum" property="appViewNum" jdbcType="INTEGER"/>
+	    <result column="baseViewNum" property="baseViewNum" jdbcType="INTEGER"/>
+  	</resultMap>
+  	
+	  <!-- 根据条件查询调查玩校报告统计 -->
+  <select id="selectSurveyWanxReportList" parameterType="hashMap" resultMap="SurveyWanxReportBaseResultMap">
+	  
+	SELECT ni_report.reportId,ni_survey_questionnaire.sqnName,ni_report.reportStatus,
+	ni_report.qnType,ni_report.wanxViewNum,ni_report.weixViewNum,ni_report.appViewNum,ni_report.baseViewNum 
+	FROM ni_report,ni_survey_questionnaire
+	
+	<where>
+		<if test="reportId != null">
+			reportId = #{reportId} 
+		</if>
+		<if test="qnName != null">
+		    AND ni_survey_questionnaire.sqnName LIKE CONCAT('%',#{qnName},'%')
+		</if>
+		<if test="reportStatus != null">
+			AND ni_report.reportStatus = #{reportStatus}
+		</if>
+		AND ni_report.qnId=ni_survey_questionnaire.sqnId 
+		AND ni_report.qnType=1
+	</where>
+  </select>
+  
+  <!-- 测评部分 -->
+  
+  
+  <!-- 测评玩校报告基本结果集 -->
+    <resultMap id="AccessWanxReportBaseResultMap" type="com.newIns.model.report.NiReportStatistics" >
+	    <id column="reportId" property="reportId" jdbcType="INTEGER" />
+   	    <result column="aqnName" property="qnName" jdbcType="VARCHAR" />
+	    <result column="reportStatus" property="reportStatus" jdbcType="TINYINT" /> 
+	    <result column="qnType" property="qnType" jdbcType="TINYINT" />
+	    <result column="wanxViewNum" property="wanxViewNum" jdbcType="INTEGER"/>
+	    <result column="weixViewNum" property="weixViewNum" jdbcType="INTEGER"/>
+	    <result column="appViewNum" property="appViewNum" jdbcType="INTEGER"/>
+	    <result column="baseViewNum" property="baseViewNum" jdbcType="INTEGER"/>
+  	</resultMap>
+  	
+  	
+  	
+	  <!-- 根据条件查询测评玩校报告统计 -->
+  <select id="selectAccessWanxReportList" parameterType="hashMap" resultMap="AccessWanxReportBaseResultMap">
+	  
+	SELECT ni_report.reportId,ni_assess_questionnaire.aqnName,ni_report.reportStatus,
+	ni_report.qnType,ni_report.wanxViewNum,ni_report.weixViewNum,ni_report.appViewNum,ni_report.baseViewNum 
+	FROM ni_report,ni_assess_questionnaire
+	
+	<where>
+		<if test="reportId != null">
+			reportId = #{reportId} 
+		</if>
+		<if test="qnName != null">
+		    AND ni_assess_questionnaire.aqnName LIKE CONCAT('%',#{qnName},'%')
+		</if>
+		<if test="reportStatus != null">
+			AND ni_report.reportStatus = #{reportStatus}
+		</if>
+		AND ni_report.qnId=ni_assess_questionnaire.aqnId 
+		AND ni_report.qnType=2
+	</where>
+  </select>
+  
+  <!-- 投票部分 -->
+  
+  
+  <!-- 投票玩校报告基本结果集 -->
+    <resultMap id="VoteWanxReportBaseResultMap" type="com.newIns.model.report.NiReportStatistics" >
+	    <id column="reportId" property="reportId" jdbcType="INTEGER" />
+   	    <result column="vqnName" property="qnName" jdbcType="VARCHAR" />
+	    <result column="reportStatus" property="reportStatus" jdbcType="TINYINT" /> 
+	    <result column="qnType" property="qnType" jdbcType="TINYINT" />
+	    <result column="wanxViewNum" property="wanxViewNum" jdbcType="INTEGER"/>
+	    <result column="weixViewNum" property="weixViewNum" jdbcType="INTEGER"/>
+	    <result column="appViewNum" property="appViewNum" jdbcType="INTEGER"/>
+	    <result column="baseViewNum" property="baseViewNum" jdbcType="INTEGER"/>
+  	</resultMap>
+  	
+  	
+  	
+	  <!-- 根据条件查询投票玩校报告统计 -->
+  <select id="selectVoteWanxReportList" parameterType="hashMap" resultMap="VoteWanxReportBaseResultMap">
+	  
+	SELECT ni_report.reportId,ni_vote_questionnaire.vqnName,ni_report.reportStatus,
+	ni_report.qnType,ni_report.wanxViewNum,ni_report.weixViewNum,ni_report.appViewNum,ni_report.baseViewNum 
+	FROM ni_report,ni_vote_questionnaire
+	
+	<where>
+		<if test="reportId != null">
+			reportId = #{reportId} 
+		</if>
+		<if test="qnName != null">
+		    AND ni_vote_questionnaire.vqnName LIKE CONCAT('%',#{qnName},'%')
+		</if>
+		<if test="reportStatus != null">
+			AND ni_report.reportStatus = #{reportStatus}
+		</if>
+		AND ni_report.qnId=ni_vote_questionnaire.vqnId 
+		AND ni_report.qnType=3
+	</where>
+  </select>
+  
+  
+  
+</mapper>

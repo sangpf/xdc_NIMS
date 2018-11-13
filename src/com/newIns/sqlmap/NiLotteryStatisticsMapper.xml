@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.newIns.dao.NiLotteryStatisticsMapper">
+
+	<!-- 调查部分 -->
+	<!-- 调查玩校抽奖统计基本结果集 -->
+    <resultMap id="surveyWanxLotteryBaseResultMap" type="com.newIns.model.NiLotteryStatistics" >
+	    <id column="deliveryId" property="deliveryId" jdbcType="INTEGER" />
+   	    <result column="sqnId" property="qnId" jdbcType="INTEGER" /> 
+   	    <result column="sqnName" property="qnName" jdbcType="VARCHAR" />
+	    <result column="status" property="status" jdbcType="TINYINT" />
+	    <result column="award1Id" property="award1Id" jdbcType="INTEGER"/>
+	    <result column="award1Name" property="award1Name" jdbcType="VARCHAR" />
+        <result column="award2Id" property="award2Id" jdbcType="INTEGER"/>
+	    <result column="award2Name" property="award2Name" jdbcType="VARCHAR" />
+	    <result column="award3Id" property="award3Id" jdbcType="INTEGER"/>
+	    <result column="award3Name" property="award3Name" jdbcType="VARCHAR" />
+  	</resultMap>
+	
+	
+	
+  <!-- 根据条件查询调查玩校抽奖统计 -->
+  <select id="selectSurveyWanxLotteryList" parameterType="hashMap" resultMap="surveyWanxLotteryBaseResultMap">
+	  
+	SELECT sdelivery.deliveryId,sqn.sqnId,sqn.sqnName,sdelivery.status,
+	lottery.award1Id,lottery.award1Name,
+	lottery.award2Id,lottery.award2Name,
+	lottery.award3Id,lottery.award3Name
+	FROM ni_survey_delivery sdelivery,ni_survey_questionnaire sqn,ni_lottery_dict lottery 
+	<where>
+		<if test="deliveryId != null">
+			sdelivery.deliveryId = #{deliveryId} 
+		</if>
+		<if test="qnName != null">
+		    AND sqn.sqnName LIKE CONCAT('%',#{qnName},'%')
+		</if>
+		<if test="status != null">
+			AND sdelivery.status = #{status}
+		</if>
+		AND sdelivery.sqnId=sqn.sqnId
+		AND sdelivery.lotteryId IS NOT NULL 
+		AND sdelivery.lotteryId=lottery.lotteryId
+	</where>
+  </select>
+  
+	<!-- 调查玩校投放抽奖有效订单数统计 -->
+	<select id="selectSurveyWanxLotteryValidOrderNum" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+		SELECT count(orderId) FROM ni_survey_order WHERE sqnId=#{sqnId} AND orderStatus BETWEEN 1 AND 3
+	</select>
+	
+	<!-- 调查玩校投放抽奖参与人数统计 -->
+	<select id="selectSurveyWanxLotteryTakePartNum" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+		SELECT count(orderId) FROM ni_survey_order WHERE sqnId=#{sqnId} AND orderStatus BETWEEN 1 AND 3 AND awardId>0 AND awardMethod=2
+	</select>
+	
+	
+	<!-- 调查玩校投放抽奖三等奖领取人数统计 -->
+  	<select id="selectSurveyWanxLotteryAward3ReceiveNum" parameterType="java.lang.Integer"  resultType="java.lang.Integer">
+  		SELECT count(orderId) FROM ni_survey_order WHERE sqnId=#{sqnId} AND orderStatus BETWEEN 1 AND 3 
+		AND awardId>0 AND awardMethod=2 AND lotteryRank=3 AND awardGetStatus=2
+  	</select>
+  	<!-- 调查玩校投放抽奖二等奖领取人数统计 -->
+  	<select id="selectSurveyWanxLotteryAward2ReceiveNum" parameterType="java.lang.Integer"  resultType="java.lang.Integer">
+  		SELECT count(orderId) FROM ni_survey_order WHERE sqnId=#{sqnId} AND orderStatus BETWEEN 1 AND 3 
+		AND awardId>0 AND awardMethod=2 AND lotteryRank=2 AND awardGetStatus=2 
+  	</select>
+  	<!-- 调查玩校投放抽奖一等奖领取人数统计 -->
+  	<select id="selectSurveyWanxLotteryAward1ReceiveNum" parameterType="java.lang.Integer"  resultType="java.lang.Integer">
+  		SELECT count(orderId) FROM ni_survey_order WHERE sqnId=#{sqnId} AND orderStatus BETWEEN 1 AND 3 
+		AND awardId>0 AND awardMethod=2 AND lotteryRank=1 AND awardGetStatus=2
+  	</select>
+  	
+  <!-- 测评部分 -->
+  
+  
+  <!-- 测评玩校抽奖统计基本结果集 -->
+    <resultMap id="assessWanxLotteryBaseResultMap" type="com.newIns.model.NiLotteryStatistics" >
+	   <id column="deliveryId" property="deliveryId" jdbcType="INTEGER" />
+   	    <result column="aqnId" property="qnId" jdbcType="INTEGER" /> 
+   	    <result column="aqnName" property="qnName" jdbcType="VARCHAR" />
+	    <result column="status" property="status" jdbcType="TINYINT" />
+	    <result column="award1Id" property="award1Id" jdbcType="INTEGER"/>
+	    <result column="award1Name" property="award1Name" jdbcType="VARCHAR" />
+        <result column="award2Id" property="award2Id" jdbcType="INTEGER"/>
+	    <result column="award2Name" property="award2Name" jdbcType="VARCHAR" />
+	    <result column="award3Id" property="award3Id" jdbcType="INTEGER"/>
+	    <result column="award3Name" property="award3Name" jdbcType="VARCHAR" />
+  	</resultMap>
+  	
+  	
+	  <!-- 根据条件查询测评玩校抽奖统计 -->
+<select id="selectAssessWanxLotteryList" parameterType="hashMap" resultMap="assessWanxLotteryBaseResultMap">
+	  
+	SELECT adelivery.deliveryId,aqn.aqnId,aqn.aqnName,adelivery.status,
+	lottery.award1Id,lottery.award1Name,
+	lottery.award2Id,lottery.award2Name,
+	lottery.award3Id,lottery.award3Name
+	FROM ni_assess_delivery adelivery,ni_assess_questionnaire aqn,ni_lottery_dict lottery 
+	<where>
+		<if test="deliveryId != null">
+			adelivery.deliveryId = #{deliveryId} 
+		</if>
+		<if test="qnName != null">
+		    AND aqn.aqnName LIKE CONCAT('%',#{qnName},'%')
+		</if>
+		<if test="status != null">
+			AND adelivery.status = #{status}
+		</if>
+		AND adelivery.aqnId=aqn.aqnId
+		AND adelivery.lotteryId IS NOT NULL 
+		AND adelivery.lotteryId=lottery.lotteryId
+	</where>
+  </select>
+  
+  	<!-- 测评玩校投放抽奖有效订单数统计 -->
+	<select id="selectAssessWanxLotteryValidOrderNum" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+		SELECT count(orderId) FROM ni_assess_order WHERE aqnId=#{aqnId} AND orderStatus BETWEEN 1 AND 3
+	</select>
+	
+	<!-- 测评玩校投放抽奖参与人数统计 -->
+  	<select id="selectAssessWanxLotteryTakePartNum" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+  		SELECT count(orderId) FROM ni_assess_order WHERE aqnId=#{aqnId} AND orderStatus BETWEEN 1 AND 3 AND awardId>0 AND awardMethod=2
+  	</select>
+  	
+  	<!-- 测评玩校投放抽奖三等奖领取人数统计 -->
+  	<select id="selectAssessWanxLotteryAward3ReceiveNum" parameterType="java.lang.Integer"  resultType="java.lang.Integer">
+  		SELECT count(orderId) FROM ni_assess_order WHERE aqnId=#{aqnId} AND orderStatus BETWEEN 1 AND 3 
+		AND awardId>0 AND awardMethod=2 AND lotteryRank=3 AND awardGetStatus=2
+  	</select>
+  	<!-- 测评玩校投放抽奖二等奖领取人数统计 -->
+  	<select id="selectAssessWanxLotteryAward2ReceiveNum" parameterType="java.lang.Integer"  resultType="java.lang.Integer">
+  		SELECT count(orderId) FROM ni_assess_order WHERE aqnId=#{aqnId} AND orderStatus BETWEEN 1 AND 3 
+		AND awardId>0 AND awardMethod=2 AND lotteryRank=2 AND awardGetStatus=2 
+  	</select>
+  	<!-- 测评玩校投放抽奖一等奖领取人数统计 -->
+  	<select id="selectAssessWanxLotteryAward1ReceiveNum" parameterType="java.lang.Integer"  resultType="java.lang.Integer">
+  		SELECT count(orderId) FROM ni_assess_order WHERE aqnId=#{aqnId} AND orderStatus BETWEEN 1 AND 3 
+		AND awardId>0 AND awardMethod=2 AND lotteryRank=1 AND awardGetStatus=2
+  	</select>
+  	
+  	
+  <!-- 投票部分 -->
+  
+  
+  <!-- 投票玩校抽奖统计基本结果集 -->
+     <resultMap id="voteWanxLotteryBaseResultMap" type="com.newIns.model.NiLotteryStatistics" >
+	    <id column="deliveryId" property="deliveryId" jdbcType="INTEGER" />
+   	    <result column="vqnId" property="qnId" jdbcType="INTEGER" /> 
+   	    <result column="vqnName" property="qnName" jdbcType="VARCHAR" />
+	    <result column="status" property="status" jdbcType="TINYINT" />
+	    <result column="award1Id" property="award1Id" jdbcType="INTEGER"/>
+	    <result column="award1Name" property="award1Name" jdbcType="VARCHAR" />
+        <result column="award2Id" property="award2Id" jdbcType="INTEGER"/>
+	    <result column="award2Name" property="award2Name" jdbcType="VARCHAR" />
+	    <result column="award3Id" property="award3Id" jdbcType="INTEGER"/>
+	    <result column="award3Name" property="award3Name" jdbcType="VARCHAR" />
+  	</resultMap>
+  	
+	  <!-- 根据条件查询投票玩校抽奖统计 -->
+  <select id="selectVoteWanxLotteryList" parameterType="hashMap" resultMap="voteWanxLotteryBaseResultMap">
+	  
+	SELECT vdelivery.deliveryId,vqn.vqnId,vqn.vqnName,vdelivery.status,
+	lottery.award1Id,lottery.award1Name,
+	lottery.award2Id,lottery.award2Name,
+	lottery.award3Id,lottery.award3Name
+	FROM ni_vote_delivery vdelivery,ni_vote_questionnaire vqn,ni_lottery_dict lottery
+	<where>
+		<if test="deliveryId != null">
+			vdelivery.deliveryId = #{deliveryId} 
+		</if>
+		<if test="qnName != null">
+		    AND vqn.vqnName LIKE CONCAT('%',#{qnName},'%')
+		</if>
+		<if test="status != null">
+			AND vdelivery.status = #{status}
+		</if>
+		AND vdelivery.vqnId=vqn.vqnId
+		AND vdelivery.lotteryId IS NOT NULL 
+		AND vdelivery.lotteryId=lottery.lotteryId
+	</where>
+  </select>
+  
+    <!-- 投票玩校投放抽奖有效订单数统计 -->
+	<select id="selectVoteWanxLotteryValidOrderNum" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+		SELECT count(orderId) FROM ni_vote_order WHERE vqnId=#{vqnId} AND orderStatus BETWEEN 1 AND 3
+	</select>
+  	<!-- 投票玩校投放抽奖参与人数统计 -->
+  	<select id="selectVoteWanxLotteryTakePartNum" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+  		SELECT count(orderId) FROM ni_vote_order WHERE vqnId=#{vqnId} AND orderStatus BETWEEN 1 AND 3 AND awardId>0 AND awardMethod=2
+  	</select>
+  	<!-- 投票玩校投放抽奖三等奖领取人数统计 -->
+  	<select id="selectVoteWanxLotteryAward3ReceiveNum" parameterType="java.lang.Integer"  resultType="java.lang.Integer">
+  		SELECT count(orderId) FROM ni_vote_order WHERE vqnId=#{vqnId} AND orderStatus BETWEEN 1 AND 3 
+		AND awardId>0 AND awardMethod=2 AND lotteryRank=3 AND awardGetStatus=2
+  	</select>
+  	<!-- 投票玩校投放抽奖二等奖领取人数统计 -->
+  	<select id="selectVoteWanxLotteryAward2ReceiveNum" parameterType="java.lang.Integer"  resultType="java.lang.Integer">
+  		SELECT count(orderId) FROM ni_vote_order WHERE vqnId=#{vqnId} AND orderStatus BETWEEN 1 AND 3 
+		AND awardId>0 AND awardMethod=2 AND lotteryRank=2 AND awardGetStatus=2
+  	</select>
+  	<!-- 投票玩校投放抽奖一等奖领取人数统计 -->
+  	<select id="selectVoteWanxLotteryAward1ReceiveNum" parameterType="java.lang.Integer"  resultType="java.lang.Integer">
+  		SELECT count(orderId) FROM ni_vote_order WHERE vqnId=#{vqnId} AND orderStatus BETWEEN 1 AND 3 
+		AND awardId>0 AND awardMethod=2 AND lotteryRank=1 AND awardGetStatus=2
+  	</select>
+  
+  
+</mapper>

@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.newIns.dao.NiLotteryPreferDictMapper">
+	
+	<sql id="BASE_SQL">
+		evaluateId,
+		highBegin,highEnd,highAwardId,highAwardName,highRate,highAwardTotal,highAwardLeft,
+		midBegin,midEnd,midAwardId,midAwardName,midRate,midAwardTotal,midAwardLeft,
+		lowBegin,lowEnd,lowAwardId,lowAwardName,lowRate,lowAwardTotal,lowAwardLeft,
+		ruleName,COMMENT
+	</sql>
+	
+	<select id="findList" resultType="com.newIns.model.NiLotteryPreferDict">
+		SELECT 
+		<include refid="BASE_SQL"/>
+		FROM ni_lottery_prefer_dict ORDER BY evaluateId DESC
+	</select>
+	
+	<insert id="insert" parameterType="com.newIns.model.NiLotteryPreferDict">
+		INSERT INTO ni_lottery_prefer_dict 
+			(evaluateId,
+			highBegin,highEnd,highAwardId,highAwardName,highAwardTotal,highAwardLeft,
+			midBegin,midEnd,midAwardId,midAwardName,midAwardTotal,midAwardLeft,
+			lowBegin,lowEnd,lowAwardId,lowAwardName,lowAwardTotal,lowAwardLeft,
+			highRate,midRate,lowRate,ruleName,comment)
+		VALUES (#{evaluateId},
+			#{highBegin},#{highEnd},#{highAwardId},#{highAwardName},#{highAwardTotal},#{highAwardLeft},
+			#{midBegin},#{midEnd},#{midAwardId},#{midAwardName},#{midAwardTotal},#{midAwardLeft},
+			#{lowBegin},#{lowEnd},#{lowAwardId},#{lowAwardName},#{lowAwardTotal},#{lowAwardLeft},
+			#{highRate},#{midRate},#{lowRate},#{ruleName},#{comment})
+	</insert>
+	
+	<!-- 批量删除 -->
+	<delete id="deleteByIdList" parameterType="hashmap">
+		DELETE FROM ni_lottery_prefer_dict 
+		WHERE ni_lottery_prefer_dict.evaluateId IN 
+		<foreach collection="lotteryIdList" open="(" close=")" separator="," item="lotteryId" index="index">
+			#{lotteryId}
+		</foreach>
+	</delete>
+	
+	<!-- 根据id查询一个 -->
+	<select id="findOneById" parameterType="java.lang.Integer" resultType="com.newIns.model.NiLotteryPreferDict">
+		SELECT 
+		<include refid="BASE_SQL"/>
+		FROM ni_lottery_prefer_dict
+		where evaluateId = #{evaluateId}
+	</select>
+	
+	<!-- 根据id修改信息 -->
+	<update id="updateByPrimaryKeySelective" parameterType="com.newIns.model.NiLotteryPreferDict">
+		UPDATE ni_lottery_prefer_dict
+		<set>
+			<if test="highBegin!=null and highBegin !='' ">
+				highBegin = #{highBegin},
+			</if>
+			<if test="highEnd!=null and highEnd!=''">
+				highEnd = #{highEnd},
+			</if>
+			<if test="highAwardId != null and highAwardId !='' ">
+				highAwardId = #{highAwardId},
+			</if>
+			<if test="highAwardName != null and highAwardName != '' ">
+				highAwardName = #{highAwardName},
+			</if>
+			<if test="highAwardTotal != null and highAwardTotal != '' ">
+				highAwardTotal = #{highAwardTotal},
+			</if>
+			<if test="highAwardLeft != null and highAwardLeft != '' ">
+				highAwardLeft = #{highAwardLeft},
+			</if>
+			<if test="midBegin != null and midBegin !='' ">
+				midBegin = #{midBegin},
+			</if>
+			<if test="midEnd != null and midEnd !='' ">
+				midEnd = #{midEnd},
+			</if>
+			<if test="midAwardId != null and midAwardId !='' ">
+				midAwardId = #{midAwardId},
+			</if>
+			<if test="midAwardName != null and midAwardName != '' ">
+				midAwardName = #{midAwardName},
+			</if>
+			<if test="midAwardTotal != null and midAwardTotal !='' ">
+				midAwardTotal = #{midAwardTotal},
+			</if>
+			<if test="midAwardLeft != null and midAwardLeft !='' ">
+				midAwardLeft = #{midAwardLeft},
+			</if>			
+			<if test="lowBegin != null and lowBegin !='' ">
+				lowBegin = #{lowBegin},
+			</if>
+			<if test="lowEnd != null and lowEnd !='' ">
+				lowEnd = #{lowEnd},
+			</if>
+			<if test="lowAwardId != null and lowAwardId !='' ">
+				lowAwardId = #{lowAwardId},
+			</if>
+			<if test="lowAwardName != null and lowAwardName != '' ">
+				lowAwardName = #{lowAwardName},
+			</if>
+			<if test="lowAwardTotal != null and lowAwardTotal !='' ">
+				lowAwardTotal = #{lowAwardTotal},
+			</if>
+			<if test="lowAwardLeft != null and lowAwardLeft !='' ">
+				lowAwardLeft = #{lowAwardLeft},
+			</if>	
+			<if test="highRate != null and highRate !='' ">
+				highRate = #{highRate},
+			</if>
+			<if test="midRate != null and midRate !='' ">
+				midRate = #{midRate},
+			</if>
+			<if test="lowRate != null and lowRate !='' ">
+				lowRate = #{lowRate},
+			</if>
+			<if test="ruleName != null and ruleName !='' ">
+				ruleName = #{ruleName},
+			</if>
+			<if test="comment != null and comment !='' ">
+				comment = #{comment},
+			</if>
+		</set>		
+		where evaluateId = #{evaluateId}
+	</update>
+</mapper>

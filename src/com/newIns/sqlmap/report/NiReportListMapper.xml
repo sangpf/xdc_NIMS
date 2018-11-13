@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+  <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper .//EN" "http://www.mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.newIns.dao.NiReportListMapper">
+	<resultMap type="com.newIns.model.report.NiReportListItem" id="reportListMap">
+		<result property="reportId" column="reportId" />
+		<result property="pageStatus" column="pageStatus" />
+		<result property="reportStatus" column="reportStatus" />
+		<result property="reportTitle" column="reportTitle" />
+		<result property="uTime" column="uTime" />
+		<result property="pTime" column="pTime" />
+		<result property="isTop" column="isTop" />
+		<result property="showOrder" column="showOrder" />
+	</resultMap>
+
+	<!-- 根据报告id查询 -->
+	<select id="findByReportId" parameterType="java.lang.Integer" resultType="com.newIns.model.report.NiReport">
+		SELECT * FROM ni_report 
+		WHERE ni_report.reportId = #{id}
+	</select>
+
+	<select id="loadReportList" resultMap="reportListMap"
+		parameterType="hashmap">
+		SELECT
+		ni_report_wanx.reportId,
+		ni_report_wanx.pageStatus,
+		ni_report.reportStatus,
+		ni_report.reportTitle,
+		ni_report_wanx.uTime,
+		ni_report_wanx.pTime,
+		ni_report_wanx.isTop,
+		ni_report_wanx.showOrder
+		FROM
+		ni_report_wanx,
+		ni_report
+		<where>
+			ni_report.reportId=ni_report_wanx.reportId
+			<if test="reportName != null">
+				AND reportTitle LIKE "%${reportName}%"
+			</if>
+			<if test="reportId != null">
+				AND ni_report.reportId = #{reportId}
+			</if>
+			<if test="pageStatus != null">
+				AND pageStatus = #{pageStatus}
+			</if>
+			<if test="reportStatus != null">
+				AND reportStatus = #{reportStatus}
+			</if>
+			<if test="starTime != null">
+				AND pTime BETWEEN #{starTime} AND #{endTime}
+			</if>
+		</where>
+		ORDER BY
+		pageStatus,isTop,showOrder
+	</select>
+
+	<update id="postReportByids" parameterType="hashmap">
+		UPDATE ni_report_wanx
+		SET pageStatus =
+		#{state},pTime=#{pTime},uTime=#{uTime}
+		WHERE
+		reportId IN
+		<foreach collection="reportIds" item="reportIds" index="index"
+			open="(" separator="," close=")">
+			#{reportIds}
+		</foreach>
+	</update>
+
+	<update id="revokeReportByids" parameterType="hashmap">
+		{call
+		revokeReportByids(#{state},#{reportIds},#{uTime})}
+	</update>
+
+	<update id="topReport" parameterType="hashmap">
+		UPDATE ni_report_wanx
+		SET
+		isTop = 1,uTime=#{uTime}
+		WHERE reportId=#{reportId}
+	</update>
+
+	<update id="topCancelReport" parameterType="hashmap">
+		UPDATE ni_report_wanx
+		SET
+		isTop = 2,uTime=#{uTime}
+		WHERE reportId=#{reportId}
+	</update>
+
+	<select id="searchReportTitleById" parameterType="int"
+		resultMap="reportListMap">
+		SELECT
+		ni_report.reportTitle,ni_report.reportStatus
+		FROM
+		ni_report
+		WHERE
+		ni_report.reportId=#{reportId}
+
+	</select>
+
+	<select id="searchReportFromList" parameterType="int" resultMap="reportListMap">
+		SELECT
+		ni_report_wanx.pageStatus
+		FROM
+		ni_report_wanx
+		WHERE
+		ni_report_wanx.reportId=#{reportId}
+
+	</select>
+
+	<insert id="addReportToList" parameterType="com.newIns.model.report.NiReportListItem">
+		{call
+		addReportToList(#{reportId},#{uTime})}
+	</insert>
+
+	<update id="replaceReport" parameterType="com.newIns.model.report.NiReportListItem">
+		UPDATE
+		ni_report_wanx
+		SET
+		reportId = #{reportId},qnId=(select
+		qnId from
+		ni_report where
+		reportId=#{reportId}),qnType=(select
+		qnType from
+		ni_report where
+		reportId=#{reportId}),uTime=#{uTime}
+		WHERE
+		showOrder=#{showOrder}
+	</update>
+
+	<!-- 批量删除问卷 -->
+	<delete id="deleteReportByIds" parameterType="hashmap">
+		<!-- SET validity = #{} -->
+		DELETE FROM ni_report_wanx
+		WHERE reportId IN
+		<foreach collection="reportIds" item="reportIds" index="index"
+			open="(" separator="," close=")">
+			#{reportIds}
+		</foreach>
+
+	</delete>
+
+	<update id="moveUpReport" parameterType="hashmap" statementType="CALLABLE">
+		{call
+		moveUpReport(#{reportId},#{showOrder},#{lastShowOrder},#{lastReportId},#{uTime})}
+	</update>
+
+	<update id="moveDownReport" parameterType="hashmap"
+		statementType="CALLABLE">
+		{call
+		moveDownReport(#{reportId},#{showOrder},#{nextShowOrder},#{nextReportId},#{uTime})}
+	</update>
+
+</mapper>

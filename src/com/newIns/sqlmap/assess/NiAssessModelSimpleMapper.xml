@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.newIns.dao.assess.NiAssessModelSimpleMapper" >
+
+  <sql id="Base_Column_List" >
+    aqnId, intervalId, intervalBegin, intervalEnd, resultSummary, resultDetail, comment
+  </sql>
+
+	<!-- 查询测评结果 -->
+	<select id="selectDetailResult" parameterType="hashmap" resultType="com.newIns.model.assess.NiAssessModelSimple">
+		SELECT *
+		FROM
+		ni_assess_model_simple 
+		WHERE ni_assess_model_simple.aqnId = #{aqnId}
+		AND ni_assess_model_simple.intervalId = #{section}
+		
+	</select>
+  
+  <!-- 查询测评模型 结果页列表 -->
+  <select id="selectAssessResult" resultType="com.newIns.model.assess.AssessResult" parameterType="java.lang.Integer">
+  	 SELECT
+		ni_assess_model_simple.intervalId section,
+		ni_assess_model_simple.intervalBegin,
+		ni_assess_model_simple.intervalEnd,
+		ni_assess_model_simple.resultSummary,
+		ni_assess_model_simple.resultDetail
+		FROM ni_assess_model_simple 
+		WHERE aqnId = #{aqnId}
+		
+  </select>
+  
+  <!-- 根据测评问卷id 查询简单测评模型表 -->
+  <select id="selectByAqnId" resultType="com.newIns.model.assess.NiAssessModelSimple" parameterType="java.lang.Integer">
+  	select 
+    <include refid="Base_Column_List" />
+    from ni_assess_model_simple
+    where aqnId = #{aqnid}
+  </select>
+
+  <insert id="insert" parameterType="com.newIns.model.assess.NiAssessModelSimple" >
+    insert into ni_assess_model_simple (aqnId, intervalId, intervalBegin, 
+      intervalEnd, resultSummary, resultDetail, 
+      comment)
+    values (#{aqnid,jdbcType=INTEGER}, #{intervalid,jdbcType=INTEGER}, #{intervalbegin,jdbcType=INTEGER}, 
+      #{intervalend,jdbcType=INTEGER}, #{resultsummary,jdbcType=VARCHAR}, #{resultdetail,jdbcType=VARCHAR}, 
+      #{comment,jdbcType=VARCHAR})
+  </insert>
+  
+  <update id="updateDetailResult" parameterType="hashmap" >
+  	UPDATE ni_assess_model_simple 
+		SET ni_assess_model_simple.resultDetail = #{resultDetail}
+		WHERE ni_assess_model_simple.aqnId = #{aqnId}
+		AND ni_assess_model_simple.intervalId = #{section}
+  </update>
+  
+  <!-- 编辑测评结果 -->
+  <update id="update_AssessResult" parameterType="com.newIns.model.assess.AssessResult">
+  	  UPDATE ni_assess_model_simple
+  	  <set>
+  	  	<if test="intervalBegin != null">
+  	  		intervalBegin = #{intervalBegin},
+  	  	</if>
+  	  	<if test="intervalEnd != null">
+  	  		intervalEnd = #{intervalEnd},
+  	  	</if>
+  	  	<if test="resultSummary != null and resultSummary != '' ">
+  	  		resultSummary = #{resultSummary},
+  	  	</if>
+  	  </set>
+  	  	WHERE aqnId = #{aqnId} and intervalId = #{section}
+
+  </update>
+
+</mapper>

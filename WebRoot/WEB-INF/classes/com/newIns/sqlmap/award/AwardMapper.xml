@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.newIns.dao.award.AwardMapper">
+
+	<resultMap id="AwardResultMap" type="com.newIns.model.award.Award">
+	</resultMap>
+	
+	<select id="findAll" resultType="com.newIns.model.award.NiAward">
+		SELECT * 
+			FROM ni_award
+	</select>
+
+ <!-- 分页查询 -->
+ <select id="selectList" resultMap="AwardResultMap">
+        SELECT  ni_award.*,awardType,provider,status
+		FROM ni_award,ni_award_pool
+	<where>
+		<if test="awardName != null">
+			awardName LIKE "%${awardName}%" 
+		</if>
+		<if test="provider != null">
+		    AND provider LIKE "%${provider}%"  
+		</if>
+		<if test="awardId != null">
+			AND awardId = #{awardId}
+		</if>
+		<if test="awardType != null">
+			AND ni_award_pool.awardType = #{awardType}
+		</if>
+		<if test="status != null">
+			AND status = #{status}
+		</if>	
+	
+		<choose>
+			<when test="price =='1'.toString()">
+				AND 5>price 
+			</when>
+			<when test="price == '2'.toString()">
+			    AND price BETWEEN 5 AND 10
+			</when>
+			<when test="price == '3'.toString()">
+			    AND price BETWEEN 10 AND 20
+			</when>
+			<when test="price == '4'.toString()">
+			    AND price BETWEEN 20 AND 50
+			</when>
+			<when test="price == '5'.toString()">
+			    AND price BETWEEN 50 AND 100
+			</when>
+			<when test="price == '6'.toString()">
+			    AND price BETWEEN 100 AND 200
+			</when>
+			<when test="price == '7'.toString()">
+			    AND price BETWEEN 200 AND 500
+			</when>			
+			<when test="price == '8'.toString()">
+			    AND price BETWEEN 500 AND 1000
+			</when>	
+			<when test="price == '9'.toString()">
+			    AND price  > 1000
+			</when>					
+			<otherwise>
+			</otherwise>
+		</choose> 
+			AND ni_award.awardPoolId = ni_award_pool.awardPoolId
+			AND ni_award.awardId!=0
+	</where>
+	 ORDER BY awardId 
+   </select>
+   
+   <!-- 批量删除奖品 -->
+  <delete id="deleteAwardByIds">
+  	DELETE FROM ni_award
+	WHERE awardId IN
+  	<foreach collection="awardIdList" item="awardIdList" index="index" open="(" separator="," close=")">
+  		#{awardIdList}
+  	</foreach>
+  		 
+	</delete>
+	<!-- 查询未添加奖品信息 -->
+	<select id="searchAwardById" resultMap="AwardResultMap">
+		SELECT awardPoolName,`status`,awardType
+		FROM ni_award_pool
+		WHERE awardPoolId = #{awardPoolId}
+	</select>
+	
+	<!-- 添加奖品 -->
+	<insert id="addAward" parameterType="com.newIns.model.award.Award" >
+        <selectKey keyProperty="awardId" order="AFTER" resultType="java.lang.Integer">
+            select LAST_INSERT_ID()
+        </selectKey>
+        insert into ni_award (awardId, awardPoolId, awardNum,awardName, price,awardPic,comment)
+        values (#{awardId},#{awardPoolId},#{awardNum},#{awardName},#{awardNum}*(SELECT equalMoney FROM ni_award_pool WHERE awardPoolId=#{awardPoolId}),#{awardPic},#{comment})
+    </insert>
+   
+    <!-- 查询奖品编辑信息 -->
+    <select id="searchEditInfo" resultMap="AwardResultMap">
+		SELECT
+			awardPoolName,
+			`status`,
+			awardType,
+			ni_award.awardPoolId,
+			awardName,
+			awardNum,
+			awardId,
+			ni_award.comment,
+			ni_award.awardPic
+		FROM
+			ni_award_pool,
+			ni_award
+		WHERE
+			awardId = #{awardId} 
+			and ni_award_pool.awardPoolId=ni_award.awardPoolId
+	</select>
+	
+	<!-- 保存奖品编辑信息 -->
+	<update id="updateAward" parameterType="com.newIns.model.award.Award">
+		UPDATE ni_award
+		SET awardName=#{awardName},awardNum =#{awardNum},awardPoolId=#{awardPoolId},
+		price=#{awardNum}*(SELECT equalMoney FROM ni_award_pool 
+		WHERE awardPoolId=#{awardPoolId}),
+		<if test="awardPic != null">
+			awardPic=#{awardPic},
+		</if>
+		comment=#{comment}
+		WHERE awardId=#{awardId}
+	</update>
+</mapper>

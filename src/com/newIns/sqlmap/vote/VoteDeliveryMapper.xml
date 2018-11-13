@@ -1,0 +1,738 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.newIns.dao.vote.VoteDeliveryDao" >
+  <resultMap id="BaseResultMap" type="com.newIns.model.vote.VoteDelivery" >
+    <id column="deliveryId" property="deliveryid" jdbcType="INTEGER" />
+    <result column="vqnId" property="vqnid" jdbcType="INTEGER" />
+    <result column="collectNum" property="collectnum" jdbcType="INTEGER" />
+    <result column="bTime" property="btime" jdbcType="TIMESTAMP" />
+    <result column="eTime" property="etime" jdbcType="TIMESTAMP" />
+    <result column="reson" property="reson" jdbcType="VARCHAR" />
+    <result column="showTitle" property="showtitle" jdbcType="VARCHAR" />
+    <result column="showDes" property="showdes" jdbcType="VARCHAR" />
+    <result column="img" property="img" jdbcType="VARCHAR" />
+    <result column="collectedNum" property="collectednum" jdbcType="INTEGER" />
+    <result column="tag1Str" property="tag1str" jdbcType="VARCHAR" />
+    <result column="tag2Str" property="tag2str" jdbcType="VARCHAR" />
+    <result column="tag3Str" property="tag3str" jdbcType="VARCHAR" />
+    <result column="tag4Str" property="tag4str" jdbcType="VARCHAR" />
+    <result column="tag5Str" property="tag5str" jdbcType="VARCHAR" />
+    
+        <result column="relatedStr1" property="relatedStr1"/>
+    <result column="relatedUrl1" property="relatedUrl1"/>
+    <result column="relatedStr2" property="relatedStr2"/>
+    <result column="relatedUrl2" property="relatedUrl2"/>
+    <result column="relatedStr3" property="relatedStr3"/>
+    <result column="relatedUrl3" property="relatedUrl3"/>
+    
+    <result column="award1Id" property="award1id" jdbcType="INTEGER" />
+    <result column="award2Id" property="award2id" jdbcType="INTEGER" />
+    <result column="award3Id" property="award3id" jdbcType="INTEGER" />
+    <result column="award4Id" property="award4id" jdbcType="INTEGER" />
+    <result column="lotteryId" property="lotteryid" jdbcType="INTEGER" />
+    <result column="lotteryReady" property="lotteryReady" jdbcType="TINYINT" />
+    <result column="adId" property="adid" jdbcType="INTEGER" />
+    <result column="status" property="status" jdbcType="TINYINT" />
+    <result column="comment" property="comment" jdbcType="VARCHAR" />
+    <result column="titleTag" property="titleTag"/>
+  </resultMap>
+  
+  <resultMap type="com.newIns.model.vote.NiVoteDeliveryWanxVo" id="BaseResultMapVo">
+  	<id column="deliveryId" property="deliveryid" jdbcType="INTEGER" />
+    <result column="vqnId" property="vqnid" jdbcType="INTEGER" />
+    <result column="collectNum" property="collectnum" jdbcType="INTEGER" />
+    <result column="bTime" property="btime" jdbcType="TIMESTAMP" />
+    <result column="eTime" property="etime" jdbcType="TIMESTAMP" />
+    <result column="reson" property="reson" jdbcType="VARCHAR" />
+    <result column="showTitle" property="showtitle" jdbcType="VARCHAR" />
+    <result column="showDes" property="showdes" jdbcType="VARCHAR" />
+    <result column="img" property="img" jdbcType="VARCHAR" />
+    <result column="collectedNum" property="collectednum" jdbcType="INTEGER" />
+    <result column="tag1Str" property="tag1str" jdbcType="VARCHAR" />
+    <result column="tag2Str" property="tag2str" jdbcType="VARCHAR" />
+    <result column="tag3Str" property="tag3str" jdbcType="VARCHAR" />
+    <result column="tag4Str" property="tag4str" jdbcType="VARCHAR" />
+    <result column="tag5Str" property="tag5str" jdbcType="VARCHAR" />
+    
+        <result column="relatedStr1" property="relatedStr1"/>
+    <result column="relatedUrl1" property="relatedUrl1"/>
+    <result column="relatedStr2" property="relatedStr2"/>
+    <result column="relatedUrl2" property="relatedUrl2"/>
+    <result column="relatedStr3" property="relatedStr3"/>
+    <result column="relatedUrl3" property="relatedUrl3"/>
+    
+    <result column="award1Id" property="award1id" jdbcType="INTEGER" />
+    <result column="award2Id" property="award2id" jdbcType="INTEGER" />
+    <result column="award3Id" property="award3id" jdbcType="INTEGER" />
+    <result column="award4Id" property="award4id" jdbcType="INTEGER" />
+    <result column="lotteryId" property="lotteryid" jdbcType="INTEGER" />
+    <result column="lotteryReady" property="lotteryReady" jdbcType="TINYINT" />
+    <result column="adId" property="adid" jdbcType="INTEGER" />
+    <result column="status" property="status" jdbcType="TINYINT" />
+    <result column="comment" property="comment" jdbcType="VARCHAR" />
+    
+    <result column="vqnName" property="vqnName" jdbcType="VARCHAR" />
+    <result column="editor" property="editor" jdbcType="VARCHAR" />
+    <result column="vstatu" property="vStatus" jdbcType="VARCHAR" />
+    
+    <result column="resultMsg" property="resultMsg" jdbcType="VARCHAR"/>
+    
+  </resultMap>
+  
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    deliveryId, vqnId, collectNum,birthday,bTime, eTime, reson, showTitle, showDes, img, collectedNum, 
+    tag1Str, tag2Str, tag3Str, tag4Str, tag5Str,relatedStr1,relatedStr2,relatedStr3,relatedUrl1,relatedUrl2,relatedUrl3,
+    award1Id, award2Id, award3Id, award4Id, 
+    lotteryId, lotteryReady, adId, status, comment , resultMsg,titleTag
+  </sql>
+  
+  <select id="selectByQnId" parameterType="java.lang.Integer" resultMap="BaseResultMap"> 
+  	    select 
+    <include refid="Base_Column_List" />
+    from ni_vote_delivery
+    where vqnId = #{id}
+  </select>
+  
+  <!-- 列表查询 -->
+  <select id="selectList" parameterType="hashmap" resultMap="BaseResultMapVo">
+	select vd.*,vq.vqnName,vq.editor,vq.`status` vstatu
+	from ni_vote_delivery vd, ni_vote_questionnaire vq
+	<where>
+		vd.vqnId = vq.vqnId
+		<if test="vqnName != null">
+			and vq.vqnName like '%${vqnName}%'
+		</if>	
+		<if test="delId != null">
+			AND vd.deliveryId = #{delId}
+		</if>
+		<if test="editor != null">
+			and vq.editor like '%${editor}%'
+		</if>
+		<if test="statList!=null and statList.size()>0">
+			and vd.`status` IN 
+			<foreach collection="statList" item="stat" open="(" separator="," close=")">
+				#{stat}
+			</foreach>
+		</if>
+		<if test="adId !=null and adId!= 0 ">
+    		<if test="adId == 1">
+    			AND vd.adId IS NOT NULL
+    		</if>
+    		<if test="adId == 2">
+	    		AND vd.adId IS NULL
+    		</if>
+    	</if>
+    	<if test="channelId != null">
+    		AND vd.channelId = #{channelId}
+    	</if>
+	</where>
+	 order by vd.deliveryId DESC
+  </select>
+  
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.newIns.model.vote.NiVoteDeliveryWanxExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from ni_vote_delivery
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from ni_vote_delivery
+    where deliveryId = #{deliveryid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from ni_vote_delivery
+    where deliveryId = #{deliveryid,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.newIns.model.vote.NiVoteDeliveryWanxExample" >
+    delete from ni_vote_delivery
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.newIns.model.vote.VoteDelivery" >
+  	<selectKey keyProperty="deliveryid" order="AFTER" resultType="java.lang.Integer">
+  		select LAST_INSERT_ID()
+  	</selectKey>
+    insert into ni_vote_delivery (deliveryId, vqnId, collectNum, 
+      bTime, eTime, reson, 
+      showTitle, showDes, img, 
+      collectedNum, tag1Str, tag2Str, 
+      tag3Str, tag4Str, tag5Str, relatedStr1,relatedStr2,relatedStr3,relatedUrl1,relatedUrl2,relatedUrl3,
+      award1Id, award2Id, award3Id, 
+      award4Id, lotteryId, lotteryReady, 
+      adId, status,channelId,comment
+      )
+    values (#{deliveryid,jdbcType=INTEGER}, #{vqnid,jdbcType=INTEGER}, #{collectnum,jdbcType=INTEGER}, 
+      #{btime,jdbcType=TIMESTAMP}, #{etime,jdbcType=TIMESTAMP}, #{reson,jdbcType=VARCHAR}, 
+      #{showtitle,jdbcType=VARCHAR}, #{showdes,jdbcType=VARCHAR}, #{img,jdbcType=VARCHAR}, 
+      #{collectednum,jdbcType=INTEGER}, #{tag1str,jdbcType=VARCHAR}, #{tag2str,jdbcType=VARCHAR}, 
+      #{tag3str,jdbcType=VARCHAR}, #{tag4str,jdbcType=VARCHAR}, #{tag5str,jdbcType=VARCHAR},
+      #{relatedStr1},#{relatedStr2},#{relatedStr3},#{relatedUrl1},#{relatedUrl2},#{relatedUrl3},
+      #{award1id,jdbcType=INTEGER}, #{award2id,jdbcType=INTEGER}, #{award3id,jdbcType=INTEGER}, 
+      #{award4id,jdbcType=INTEGER}, #{lotteryid,jdbcType=INTEGER}, #{lotteryReady,jdbcType=TINYINT}, 
+      #{adid,jdbcType=INTEGER}, #{status},#{channelId}, #{comment}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.newIns.model.vote.VoteDelivery" >
+    insert into ni_vote_delivery
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="deliveryid != null" >
+        deliveryId,
+      </if>
+      <if test="vqnid != null" >
+        vqnId,
+      </if>
+      <if test="collectnum != null" >
+        collectNum,
+      </if>
+      <if test="btime != null" >
+        bTime,
+      </if>
+      <if test="etime != null" >
+        eTime,
+      </if>
+      <if test="reson != null" >
+        reson,
+      </if>
+      <if test="showtitle != null" >
+        showTitle,
+      </if>
+      <if test="showdes != null" >
+        showDes,
+      </if>
+      <if test="img != null" >
+        img,
+      </if>
+      <if test="collectednum != null" >
+        collectedNum,
+      </if>
+      <if test="tag1str != null" >
+        tag1Str,
+      </if>
+      <if test="tag2str != null" >
+        tag2Str,
+      </if>
+      <if test="tag3str != null" >
+        tag3Str,
+      </if>
+      <if test="tag4str != null" >
+        tag4Str,
+      </if>
+      <if test="tag5str != null" >
+        tag5Str,
+      </if>
+      
+      
+      <if test="relatedStr1 != null">
+      	relatedStr1,
+      </if>
+      <if test="relatedUrl1 != null">
+      	relatedUrl1,
+      </if>
+      <if test="relatedStr2 != null">
+      	relatedStr2,
+      </if>
+      <if test="relatedUrl2 != null">
+      	relatedUrl2,
+      </if>
+      <if test="relatedStr3 != null">
+      	relatedStr3,
+      </if>
+      <if test="relatedUrl3 != null">
+      	relatedUrl3,
+      </if>
+      
+      
+      <if test="award1id != null" >
+        award1Id,
+      </if>
+      <if test="award2id != null" >
+        award2Id,
+      </if>
+      <if test="award3id != null" >
+        award3Id,
+      </if>
+      <if test="award4id != null" >
+        award4Id,
+      </if>
+      <if test="lotteryid != null" >
+        lotteryId,
+      </if>
+      <if test="lotteryReady != null" >
+        lotteryReady,
+      </if>
+      <if test="adid != null" >
+        adId,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="comment != null" >
+        comment,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="deliveryid != null" >
+        #{deliveryid,jdbcType=INTEGER},
+      </if>
+      <if test="vqnid != null" >
+        #{vqnid,jdbcType=INTEGER},
+      </if>
+      <if test="collectnum != null" >
+        #{collectnum,jdbcType=INTEGER},
+      </if>
+      <if test="btime != null" >
+        #{btime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="etime != null" >
+        #{etime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="reson != null" >
+        #{reson,jdbcType=VARCHAR},
+      </if>
+      <if test="showtitle != null" >
+        #{showtitle,jdbcType=VARCHAR},
+      </if>
+      <if test="showdes != null" >
+        #{showdes,jdbcType=VARCHAR},
+      </if>
+      <if test="img != null" >
+        #{img,jdbcType=VARCHAR},
+      </if>
+      <if test="collectednum != null" >
+        #{collectednum,jdbcType=INTEGER},
+      </if>
+      <if test="tag1str != null" >
+        #{tag1str,jdbcType=VARCHAR},
+      </if>
+      <if test="tag2str != null" >
+        #{tag2str,jdbcType=VARCHAR},
+      </if>
+      <if test="tag3str != null" >
+        #{tag3str,jdbcType=VARCHAR},
+      </if>
+      <if test="tag4str != null" >
+        #{tag4str,jdbcType=VARCHAR},
+      </if>
+      <if test="tag5str != null" >
+        #{tag5str,jdbcType=VARCHAR},
+      </if>
+      
+      
+      <if test="relatedStr1 != null">
+      	#{relatedStr1},
+      </if>
+      <if test="relatedUrl1 != null">
+      	#{relatedUrl1},
+      </if>
+      <if test="relatedStr2 != null">
+      	#{relatedStr2},
+      </if>
+      <if test="relatedUrl2 != null">
+      	#{relatedUrl2},
+      </if>
+      <if test="relatedStr3 != null">
+      	#{relatedStr3},
+      </if>
+      <if test="relatedUrl3 != null">
+      	#{relatedUrl3},
+      </if>
+      
+      
+      <if test="award1id != null" >
+        #{award1id,jdbcType=INTEGER},
+      </if>
+      <if test="award2id != null" >
+        #{award2id,jdbcType=INTEGER},
+      </if>
+      <if test="award3id != null" >
+        #{award3id,jdbcType=INTEGER},
+      </if>
+      <if test="award4id != null" >
+        #{award4id,jdbcType=INTEGER},
+      </if>
+      <if test="lotteryid != null" >
+        #{lotteryid,jdbcType=INTEGER},
+      </if>
+      <if test="lotteryReady != null" >
+        #{lotteryReady,jdbcType=TINYINT},
+      </if>
+      <if test="adid != null" >
+        #{adid,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="comment != null" >
+        #{comment,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.newIns.model.vote.NiVoteDeliveryWanxExample" resultType="java.lang.Integer" >
+    select count(*) from ni_vote_delivery
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update ni_vote_delivery
+    <set >
+      <if test="record.deliveryid != null" >
+        deliveryId = #{record.deliveryid,jdbcType=INTEGER},
+      </if>
+      <if test="record.vqnid != null" >
+        vqnId = #{record.vqnid,jdbcType=INTEGER},
+      </if>
+      <if test="record.collectnum != null" >
+        collectNum = #{record.collectnum,jdbcType=INTEGER},
+      </if>
+      <if test="record.btime != null" >
+        bTime = #{record.btime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.etime != null" >
+        eTime = #{record.etime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.reson != null" >
+        reson = #{record.reson,jdbcType=VARCHAR},
+      </if>
+      <if test="record.showtitle != null" >
+        showTitle = #{record.showtitle,jdbcType=VARCHAR},
+      </if>
+      <if test="record.showdes != null" >
+        showDes = #{record.showdes,jdbcType=VARCHAR},
+      </if>
+      <if test="record.img != null" >
+        img = #{record.img,jdbcType=VARCHAR},
+      </if>
+      <if test="record.collectednum != null" >
+        collectedNum = #{record.collectednum,jdbcType=INTEGER},
+      </if>
+      <if test="record.tag1str != null" >
+        tag1Str = #{record.tag1str,jdbcType=VARCHAR},
+      </if>
+      <if test="record.tag2str != null" >
+        tag2Str = #{record.tag2str,jdbcType=VARCHAR},
+      </if>
+      <if test="record.tag3str != null" >
+        tag3Str = #{record.tag3str,jdbcType=VARCHAR},
+      </if>
+      <if test="record.tag4str != null" >
+        tag4Str = #{record.tag4str,jdbcType=VARCHAR},
+      </if>
+      <if test="record.tag5str != null" >
+        tag5Str = #{record.tag5str,jdbcType=VARCHAR},
+      </if>
+      <if test="record.award1id != null" >
+        award1Id = #{record.award1id,jdbcType=INTEGER},
+      </if>
+      <if test="record.award2id != null" >
+        award2Id = #{record.award2id,jdbcType=INTEGER},
+      </if>
+      <if test="record.award3id != null" >
+        award3Id = #{record.award3id,jdbcType=INTEGER},
+      </if>
+      <if test="record.award4id != null" >
+        award4Id = #{record.award4id,jdbcType=INTEGER},
+      </if>
+      <if test="record.lotteryid != null" >
+        lotteryId = #{record.lotteryid,jdbcType=INTEGER},
+      </if>
+      <if test="record.lotteryReady != null" >
+        lotteryReady = #{record.lotteryReady,jdbcType=TINYINT},
+      </if>
+      <if test="record.adid != null" >
+        adId = #{record.adid,jdbcType=INTEGER},
+      </if>
+      <if test="record.status != null" >
+        status = #{record.status,jdbcType=TINYINT},
+      </if>
+      <if test="record.comment != null" >
+        comment = #{record.comment,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update ni_vote_delivery
+    set deliveryId = #{record.deliveryid,jdbcType=INTEGER},
+      vqnId = #{record.vqnid,jdbcType=INTEGER},
+      collectNum = #{record.collectnum,jdbcType=INTEGER},
+      bTime = #{record.btime,jdbcType=TIMESTAMP},
+      eTime = #{record.etime,jdbcType=TIMESTAMP},
+      reson = #{record.reson,jdbcType=VARCHAR},
+      showTitle = #{record.showtitle,jdbcType=VARCHAR},
+      showDes = #{record.showdes,jdbcType=VARCHAR},
+      img = #{record.img,jdbcType=VARCHAR},
+      collectedNum = #{record.collectednum,jdbcType=INTEGER},
+      tag1Str = #{record.tag1str,jdbcType=VARCHAR},
+      tag2Str = #{record.tag2str,jdbcType=VARCHAR},
+      tag3Str = #{record.tag3str,jdbcType=VARCHAR},
+      tag4Str = #{record.tag4str,jdbcType=VARCHAR},
+      tag5Str = #{record.tag5str,jdbcType=VARCHAR},
+      award1Id = #{record.award1id,jdbcType=INTEGER},
+      award2Id = #{record.award2id,jdbcType=INTEGER},
+      award3Id = #{record.award3id,jdbcType=INTEGER},
+      award4Id = #{record.award4id,jdbcType=INTEGER},
+      lotteryId = #{record.lotteryid,jdbcType=INTEGER},
+      lotteryReady = #{record.lotteryReady,jdbcType=TINYINT},
+      adId = #{record.adid,jdbcType=INTEGER},
+      status = #{record.status,jdbcType=TINYINT},
+      comment = #{record.comment,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  
+    <!-- 判断份数，修改状态 -->
+  <update id="updateStatuByTagNum">
+	UPDATE ni_vote_delivery dw, ni_vote_order vo
+	SET dw.status = 6 
+	WHERE (SELECT COUNT(orderId) FROM ni_vote_order WHERE dw.vqnId = vo.vqnId) > dw.collectNum
+	AND dw.vqnId = vo.vqnId
+  </update>
+  
+  <!-- 判断时间，修改时间完成 -->
+  <update id="updateStatuByeTime">
+  	  update ni_vote_delivery
+		set `status` = 5
+		where NOW() > eTime AND status NOT IN (5,6)
+  </update>
+  
+  <!-- 批量修改投放管理状态 -->
+  <update id="updateStatByMap" parameterType="hashmap">
+  	  	 update ni_vote_delivery
+  	 <set>
+  	 	<if test="t_stat != null">
+  	 		status = #{t_stat},
+  	 	</if>
+  	 	<if test="u_Time != null">
+  	 		cTime = #{u_Time}
+  	 	</if>
+  	 </set>
+  	 where deliveryId IN
+  	 <foreach collection="id_list" item="diliv_id" open="(" separator="," close=")">
+  	 	 #{diliv_id}
+  	 </foreach>
+  </update>
+  
+  <update id="updateByPrimaryKeySelective" parameterType="com.newIns.model.vote.VoteDelivery" >
+    update ni_vote_delivery
+    <set>
+        lotteryId = #{lotteryid},
+        award1Id = #{award1id},
+       <if test="birthday != null" >
+        birthday = #{birthday},
+      </if>
+      <if test="vqnid != null" >
+        vqnId = #{vqnid,jdbcType=INTEGER},
+      </if>
+      <if test="collectnum != null" >
+        collectNum = #{collectnum,jdbcType=INTEGER},
+      </if>
+      <if test="btime != null" >
+        bTime = #{btime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="etime != null" >
+        eTime = #{etime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="reson != null" >
+        reson = #{reson,jdbcType=VARCHAR},
+      </if>
+      <if test="showtitle != null" >
+        showTitle = #{showtitle,jdbcType=VARCHAR},
+      </if>
+      <if test="showdes != null" >
+        showDes = #{showdes,jdbcType=VARCHAR},
+      </if>
+      <if test="img != null" >
+        img = #{img,jdbcType=VARCHAR},
+      </if>
+      <if test="collectednum != null" >
+        collectedNum = #{collectednum,jdbcType=INTEGER},
+      </if>
+      <if test="tag1str != null" >
+        tag1Str = #{tag1str,jdbcType=VARCHAR},
+      </if>
+      <if test="tag2str != null" >
+        tag2Str = #{tag2str,jdbcType=VARCHAR},
+      </if>
+      <if test="tag3str != null" >
+        tag3Str = #{tag3str,jdbcType=VARCHAR},
+      </if>
+      <if test="tag4str != null" >
+        tag4Str = #{tag4str,jdbcType=VARCHAR},
+      </if>
+      <if test="tag5str != null" >
+        tag5Str = #{tag5str,jdbcType=VARCHAR},
+      </if>
+      
+      
+      <if test="relatedStr1 != null" >
+        relatedStr1 = #{relatedStr1},
+      </if>
+      <if test="relatedUrl1 != null" >
+        relatedUrl1 = #{relatedUrl1},
+      </if>
+      <if test="relatedStr2 != null" >
+        relatedStr2 = #{relatedStr2},
+      </if>
+      <if test="relatedUrl2 != null" >
+        relatedUrl2 = #{relatedUrl2},
+      </if>
+      <if test="relatedStr3 != null" >
+        relatedStr3 = #{relatedStr3},
+      </if>
+      <if test="relatedUrl3 != null" >
+        relatedUrl3 = #{relatedUrl3},
+      </if>               
+         
+      
+      <if test="award2id != null" >
+        award2Id = #{award2id,jdbcType=INTEGER},
+      </if>
+      <if test="award3id != null" >
+        award3Id = #{award3id,jdbcType=INTEGER},
+      </if>
+      <if test="award4id != null" >
+        award4Id = #{award4id,jdbcType=INTEGER},
+      </if>
+      <if test="lotteryReady != null" >
+        lotteryReady = #{lotteryReady,jdbcType=TINYINT},
+      </if>
+      <if test="adid != null" >
+        adId = #{adid,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="comment != null" >
+        comment = #{comment,jdbcType=VARCHAR},
+      </if>
+      
+      <if test="resultMsg != null and resultMsg != '' ">
+      	 resultMsg = #{resultMsg},
+      </if>
+      <if test="titleTag != null">
+      	titleTag = #{titleTag},
+      </if>
+      <if test="channelId != null">
+      	channelId = #{channelId},
+      </if>
+      
+    </set>
+    where deliveryId = #{deliveryid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.newIns.model.vote.VoteDelivery" >
+    update ni_vote_delivery
+    set vqnId = #{vqnid,jdbcType=INTEGER},
+      collectNum = #{collectnum,jdbcType=INTEGER},
+      bTime = #{btime,jdbcType=TIMESTAMP},
+      eTime = #{etime,jdbcType=TIMESTAMP},
+      reson = #{reson,jdbcType=VARCHAR},
+      showTitle = #{showtitle,jdbcType=VARCHAR},
+      showDes = #{showdes,jdbcType=VARCHAR},
+      img = #{img,jdbcType=VARCHAR},
+      collectedNum = #{collectednum,jdbcType=INTEGER},
+      tag1Str = #{tag1str,jdbcType=VARCHAR},
+      tag2Str = #{tag2str,jdbcType=VARCHAR},
+      tag3Str = #{tag3str,jdbcType=VARCHAR},
+      tag4Str = #{tag4str,jdbcType=VARCHAR},
+      tag5Str = #{tag5str,jdbcType=VARCHAR},
+      
+      relatedStr1 = #{relatedStr1},
+      relatedUrl1 = #{relatedUrl1},
+      relatedStr2 = #{relatedStr2},
+      relatedUrl2 = #{relatedUrl2},
+      relatedStr3 = #{relatedStr3},
+      relatedUrl3 = #{relatedUrl3},
+      
+      award1Id = #{award1id,jdbcType=INTEGER},
+      award2Id = #{award2id,jdbcType=INTEGER},
+      award3Id = #{award3id,jdbcType=INTEGER},
+      award4Id = #{award4id,jdbcType=INTEGER},
+      lotteryId = #{lotteryid,jdbcType=INTEGER},
+      lotteryReady = #{lotteryReady,jdbcType=TINYINT},
+      adId = #{adid,jdbcType=INTEGER},
+      status = #{status,jdbcType=TINYINT},
+       birthday=#{birthday,jdbcType=TIMESTAMP},
+      comment = #{comment,jdbcType=VARCHAR}
+    where deliveryId = #{deliveryid,jdbcType=INTEGER}
+  </update>
+  
+      <update id="updateLotteryReady" parameterType="java.lang.Integer">
+  		update ni_vote_delivery
+	  	set lotteryReady=1
+	  	where deliveryId=#{id}
+ 	 </update>
+  	
+</mapper>

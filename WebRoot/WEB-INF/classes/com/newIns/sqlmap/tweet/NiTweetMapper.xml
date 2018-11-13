@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.newIns.dao.tweet.NiTweetMapper">
+	
+	<sql id="BASE_SQL">
+		tweetId,tweetTitle,tweetUrl,tweetStatus,comment,author,tag,
+		picUrl,pTime,wanxViewNum,weixViewNum,appViewNum
+	</sql>
+	
+	<!-- 查询所有推文 -->
+	<select id="findAll" resultType="com.newIns.model.tweet.NiTweet">
+		SELECT 
+		<include refid="BASE_SQL"/>
+		FROM ni_tweet
+	</select>
+	
+	<!-- 根据id查询 -->
+	<select id="findOneById" parameterType="java.lang.Integer" resultType="com.newIns.model.tweet.NiTweet">
+		SELECT 
+		<include refid="BASE_SQL"/>
+		FROM ni_tweet WHERE tweetId = #{tweetId}
+	</select>
+	
+	<!-- 根据名称模糊查询 -->
+	<select id="findByName" parameterType="java.lang.String" resultType="com.newIns.model.tweet.NiTweet">
+		SELECT <include refid="BASE_SQL"/>
+		FROM ni_tweet 
+		WHERE tweetTitle LIKE "%${_parameter}%"
+	</select>
+	
+	<!-- 根据id查询 -->
+	<select id="findListById" parameterType="java.lang.Integer" resultType="com.newIns.model.tweet.NiTweet">
+		SELECT
+		<include refid="BASE_SQL"/>
+		FROM ni_tweet WHERE tweetId = #{tweetId}
+	</select>
+	
+	<!-- 保存推文 -->
+	<insert id="saveTweet" parameterType="com.newIns.model.tweet.NiTweet">
+		INSERT INTO ni_tweet (tweetTitle,tweetUrl,author,tag,picUrl,pTime) 
+		VALUES (#{tweetTitle},#{tweetUrl},#{author},#{tag},#{picUrl},#{pTime})
+	</insert>
+	
+	<!-- 批量删除 -->
+	<delete id="deleteTweetByIds" parameterType="hashmap">
+		DELETE FROM ni_tweet 
+		WHERE tweetId IN 
+		<foreach collection="tweetIdList" item="tweetId" open="(" separator="," close=")">
+			#{tweetId}
+		</foreach>
+	</delete>
+	
+	<!-- 编辑 -->
+	<update id="updateById" parameterType="com.newIns.model.tweet.NiTweet">
+		UPDATE ni_tweet
+		<set>
+			<if test="tweetTitle != null">
+				tweetTitle = #{tweetTitle},
+			</if>
+			<if test="tweetUrl != null">
+				tweetUrl = #{tweetUrl},
+			</if>
+			<if test="picUrl != null">
+				picUrl = #{picUrl},
+			</if>
+			<if test="author !=null">
+				author = #{author},
+			</if>
+			<if test="tag != null">
+				tag = #{tag},
+			</if>
+			<if test="pTime != null">
+				pTime = #{pTime},
+			</if>
+		</set>
+		WHERE tweetId = #{tweetId}
+	</update>
+	
+	
+</mapper>

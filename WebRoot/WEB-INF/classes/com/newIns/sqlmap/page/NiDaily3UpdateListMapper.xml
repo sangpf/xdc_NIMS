@@ -1,0 +1,488 @@
+<?xml version="1.0" encoding="UTF-8"?>
+  <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper .//EN" "http://www.mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.newIns.dao.NiDaily3UpdateListMapper">
+	<resultMap type="com.newIns.model.page.NiDaily3UpdateListItem" id="daily3updateListMap">
+		<result property="deliveryId" column="deliveryId" />
+		<result property="pageStatus" column="pageStatus" />
+		<result property="status" column="status" />
+		<result property="collectNum" column="collectNum" />
+		<result property="showTitle" column="showTitle" />
+		<result property="uTime" column="uTime" />
+		<result property="pTime" column="pTime" />
+		<result property="isTop" column="isTop" />
+		<result property="qnType" column="qnType" />
+		<result property="showOrder" column="showOrder" />
+		<result property="qnListCategory" column="qnListCategory"/>
+	</resultMap>
+	
+	<!-- 根据投放id 类型 栏目名称 查询三更是否存在 -->
+	<select id="findDaily3UpdateByMap" parameterType="hashmap" 
+			resultType="com.newIns.model.niDailyUpdateWanx.NiDailyUpdateWanx_VO_01">
+		SELECT * FROM ni_daily3update_wanx
+		WHERE ni_daily3update_wanx.deliveryId = #{contentId}
+		AND ni_daily3update_wanx.qnType = #{contentType}
+		AND ni_daily3update_wanx.qnListCategory = #{superListCategory}
+	</select>
+	
+	<!-- 根据报告 查询  是否在三更已经存在 -->
+	<select id="findDaily3UpdatebyReport" parameterType="hashmap" 
+			resultType="com.newIns.model.niDailyUpdateWanx.NiDailyUpdateWanx_VO_01">
+		SELECT * FROM ni_daily3update_wanx
+		WHERE ni_daily3update_wanx.reportId = #{contentId}
+		AND ni_daily3update_wanx.qnListCategory = #{superListCategory}
+	</select>
+	
+	<!-- 查询推文是否在三更中存在 -->
+	<select id="findDaily3UpdatebyTweet" parameterType="hashmap" 
+			resultType="com.newIns.model.niDailyUpdateWanx.NiDailyUpdateWanx_VO_01">
+		SELECT * FROM ni_daily3update_wanx
+		WHERE ni_daily3update_wanx.tweetId = #{contentId}
+		AND ni_daily3update_wanx.qnListCategory = #{superListCategory}
+	</select>
+	
+	<!-- 编辑推文 -->
+	<update id="updateDaily3UpdatebyTweet" parameterType="hashmap">
+		UPDATE ni_daily3update_wanx SET ni_daily3update_wanx.tweetId = #{contentId} , 
+		ni_daily3update_wanx.qnListCategory = #{superListCategory} 
+		WHERE ni_daily3update_wanx.itemId = #{itemId}
+	</update>
+	
+	<!-- 编辑报告 -->
+	<update id="updateDaily3UpdatebyReport" parameterType="hashmap">
+		UPDATE ni_daily3update_wanx SET ni_daily3update_wanx.reportId = #{contentId} , 
+		ni_daily3update_wanx.qnListCategory = #{superListCategory}  
+		WHERE ni_daily3update_wanx.itemId = #{itemId}		
+	</update>
+	<!-- 编辑投放 -->
+	<update id="updateDaily3UpdateByMap" parameterType="hashmap">
+		UPDATE ni_daily3update_wanx SET ni_daily3update_wanx.deliveryId = #{contentId} , 
+		ni_daily3update_wanx.qnType = #{contentType},
+		ni_daily3update_wanx.qnListCategory = #{superListCategory}   
+		WHERE ni_daily3update_wanx.itemId = #{itemId}		
+	</update>
+	
+	<!-- 根据联合主键查询 -->
+<!-- 	<select id="selectByPrimaryKey" parameterType="hashmap" resultType="com.newIns.model.page.NiDaily3updateWanx">
+		SELECT * FROM ni_daily3update_wanx
+		WHERE deliveryId = #{deliveryId} AND qnType = #{qnType} AND qnListCategory = #{qnListCategory}
+	</select> -->
+	<!-- 通用模板添加到三更页面 , 先进行查询是否已经添加, 分别查询投放,报告,文章 -->
+	<select id="selectByPrimaryKey" parameterType="hashmap" resultType="com.newIns.model.page.NiDaily3updateWanx">
+		SELECT * FROM ni_daily3update_wanx
+		<where>
+			qnListCategory = #{qnListCategory}
+			<if test="itemType == 1">
+				AND deliveryId = #{itemId} 
+				AND qnType = #{itemType} 
+			</if>
+			<if test="itemType == 2">
+				AND deliveryId = #{itemId} 
+				AND qnType = #{itemType} 
+			</if>
+			<if test="itemType == 3">
+				AND deliveryId = #{itemId} 
+				AND qnType = #{itemType} 
+			</if>
+			<if test="itemType == 4">
+				AND reportId = #{itemId}
+			</if>
+			<if test="itemType == 5">
+				AND tweetId= #{itemId}
+			</if>
+			
+		</where>
+	</select>
+	
+	<!-- 查询三更页面 返回通用的实体类 -->
+	<select id="loadDaily3UpdateList" resultType="com.newIns.model.niDailyUpdateWanx.NiDailyUpdateWanx_VO_01" parameterType="hashmap">
+	SELECT * FROM(
+		
+		SELECT
+		DISTINCT(ni_daily3update_wanx.deliveryId) deliveryId,
+		(ni_daily3update_wanx.reportId) reportId,
+		(ni_daily3update_wanx.tweetId) tweetId,
+		ni_daily3update_wanx.pageStatus,
+		ni_survey_delivery.status itemStatus,
+		ni_survey_delivery.collectNum number,
+		ni_survey_delivery.showTitle,
+		ni_daily3update_wanx.itemId,
+		ni_daily3update_wanx.uTime,
+		ni_daily3update_wanx.pTime,
+		ni_daily3update_wanx.isTop,
+		ni_daily3update_wanx.showOrder,
+		ni_daily3update_wanx.qnType,
+		ni_daily3update_wanx.qnListCategory
+		FROM
+		ni_daily3update_wanx ,
+		ni_survey_delivery
+		<where>
+			ni_survey_delivery.deliveryId=ni_daily3update_wanx.deliveryId
+			<if test="deliveryId != null">
+				AND ni_survey_delivery.deliveryId = #{deliveryId}
+			</if>
+			<if test="qnName != null">
+				AND showTitle LIKE "%${qnName}%"
+			</if>
+			<if test="pageStatus != null">
+				AND pageStatus = #{pageStatus}
+			</if>
+			<if test="deliveryStatus != null">
+				AND status = #{deliveryStatus}
+			</if>
+			<if test="starTime != null">
+				AND pTime BETWEEN #{starTime} AND #{endTime}
+			</if>
+			<if test="qnType != null">
+				AND qnType = #{qnType}
+			</if>
+			AND ni_daily3update_wanx.qnType=1 
+			AND (ni_survey_delivery.status = 1 OR ni_survey_delivery.status =2)
+			AND ni_daily3update_wanx.qnListCategory = #{superListCategory_Str} 
+		</where>
+		
+		UNION
+		
+		SELECT
+		DISTINCT(ni_daily3update_wanx.deliveryId) deliveryId,
+		(ni_daily3update_wanx.reportId) reportId,
+		(ni_daily3update_wanx.tweetId) tweetId,
+		ni_daily3update_wanx.pageStatus,
+		ni_vote_delivery.status itemStatus,
+		ni_vote_delivery.collectNum number,
+		ni_vote_delivery.showTitle,
+		ni_daily3update_wanx.itemId,
+		ni_daily3update_wanx.uTime,
+		ni_daily3update_wanx.pTime,
+		ni_daily3update_wanx.isTop,
+		ni_daily3update_wanx.showOrder,
+		ni_daily3update_wanx.qnType,
+		ni_daily3update_wanx.qnListCategory
+		FROM
+		ni_daily3update_wanx ,
+		ni_vote_delivery
+		<where>
+			ni_vote_delivery.deliveryId=ni_daily3update_wanx.deliveryId
+			<if test="deliveryId != null">
+				AND ni_vote_delivery.deliveryId = #{deliveryId}
+			</if>
+			<if test="qnName != null">
+				AND showTitle LIKE "%${qnName}%"
+			</if>
+			<if test="pageStatus != null">
+				AND pageStatus = #{pageStatus}
+			</if>
+			<if test="deliveryStatus != null">
+				AND status = #{deliveryStatus}
+			</if>
+			<if test="starTime != null">
+				AND pTime BETWEEN #{starTime} AND #{endTime}
+			</if>
+			<if test="qnType != null">
+				AND qnType = #{qnType}
+			</if>
+			AND ni_daily3update_wanx.qnType=3
+			AND (ni_vote_delivery.status = 1 OR ni_vote_delivery.status=2)
+			AND ni_daily3update_wanx.qnListCategory = #{superListCategory_Str}
+		</where>
+		UNION
+		
+		SELECT
+		DISTINCT(ni_daily3update_wanx.deliveryId) deliveryId,
+		(ni_daily3update_wanx.reportId) reportId,
+		(ni_daily3update_wanx.tweetId) tweetId,
+		ni_daily3update_wanx.pageStatus,
+		ni_assess_delivery.status itemStatus,
+		ni_assess_delivery.collectNum number,
+		ni_assess_delivery.showTitle,
+		ni_daily3update_wanx.itemId,
+		ni_daily3update_wanx.uTime,
+		ni_daily3update_wanx.pTime,
+		ni_daily3update_wanx.isTop,
+		ni_daily3update_wanx.showOrder,
+		ni_daily3update_wanx.qnType,
+		ni_daily3update_wanx.qnListCategory
+		FROM
+		ni_daily3update_wanx ,
+		ni_assess_delivery
+		<where>
+			ni_assess_delivery.deliveryId=ni_daily3update_wanx.deliveryId
+			<if test="deliveryId != null">
+				AND ni_assess_delivery.deliveryId = #{deliveryId}
+			</if>
+			<if test="qnName != null">
+				AND showTitle LIKE "%${qnName}%"
+			</if>
+			<if test="pageStatus != null">
+				AND pageStatus = #{pageStatus}
+			</if>
+			<if test="deliveryStatus != null">
+				AND status = #{deliveryStatus}
+			</if>
+			<if test="starTime != null">
+				AND pTime BETWEEN #{starTime} AND #{endTime}
+			</if>
+			<if test="qnType != null">
+				AND qnType = #{qnType}
+			</if>
+			AND ni_daily3update_wanx.qnType=2
+			AND (ni_assess_delivery.status = 1 OR ni_assess_delivery.status=2)
+			AND ni_daily3update_wanx.qnListCategory = #{superListCategory_Str}
+		</where>
+		
+			UNION
+			SELECT
+			DISTINCT(ni_daily3update_wanx.deliveryId) deliveryId,
+			(ni_daily3update_wanx.reportId) reportId,
+			(ni_daily3update_wanx.tweetId) tweetId,
+			ni_daily3update_wanx.pageStatus,
+			ni_report.reportStatus itemStatus,
+			ni_report.wanxViewNum number,
+			ni_report.reportTitle showTitle,
+			ni_daily3update_wanx.itemId,
+			ni_daily3update_wanx.uTime,
+			ni_daily3update_wanx.pTime,
+			ni_daily3update_wanx.isTop,
+			ni_daily3update_wanx.showOrder,
+			ni_daily3update_wanx.qnType,
+			ni_daily3update_wanx.qnListCategory
+			FROM 
+			ni_daily3update_wanx,ni_report
+			<where>
+				ni_daily3update_wanx.reportId=ni_report.reportId
+				<if test="deliveryId != null">
+					AND ni_report.reportId=#{deliveryId}
+				</if>
+				<if test="qnName != null">
+					AND ni_report.reportTitle LIKE "%${qnName}%"
+				</if>
+				<if test="pageStatus != null">
+					AND ni_daily3update_wanx.pageStatus = #{pageStatus}
+				</if>
+				<if test="deliveryStatus != null">
+					AND ni_report.reportStatus = #{deliveryStatus}
+				</if>
+				<if test="starTime != null">
+					AND ni_daily3update_wanx.pTime BETWEEN #{starTime} AND #{endTime}
+				</if>
+				AND ni_daily3update_wanx.reportId IS NOT NULL
+				AND ni_daily3update_wanx.qnListCategory = #{superListCategory_Str}
+				
+			</where>
+			
+				UNION
+				SELECT
+				DISTINCT(ni_daily3update_wanx.deliveryId) deliveryId,
+				(ni_daily3update_wanx.reportId) reportId,
+				(ni_daily3update_wanx.tweetId) tweetId,
+				ni_daily3update_wanx.pageStatus,
+				ni_tweet.tweetStatus itemStatus,
+				ni_tweet.wanxViewNum number,
+				ni_tweet.tweetTitle showTitle,
+				ni_daily3update_wanx.itemId,
+				ni_daily3update_wanx.uTime,
+				ni_daily3update_wanx.pTime,
+				ni_daily3update_wanx.isTop,
+				ni_daily3update_wanx.showOrder,
+				ni_daily3update_wanx.qnType,
+				ni_daily3update_wanx.qnListCategory
+				FROM
+				ni_daily3update_wanx,ni_tweet
+				<where>
+					ni_daily3update_wanx.tweetId=ni_tweet.tweetId
+					<if test="deliveryId != null">
+						AND ni_tweet.tweetId=#{deliveryId}
+					</if>
+					<if test="qnName != null">
+						AND ni_tweet.tweetTitle LIKE "%${qnName}%"
+					</if>
+					<if test="pageStatus != null">
+						AND ni_daily3update_wanx.pageStatus = #{pageStatus}
+					</if>
+					<if test="deliveryStatus != null ">
+						AND ni_tweet.tweetStatus = #{deliveryStatus}
+					</if>
+					<if test="starTime != null">
+						AND ni_daily3update_wanx.pTime BETWEEN #{starTime} AND #{endTime}
+					</if>
+						AND ni_daily3update_wanx.tweetId IS NOT NULL
+						AND ni_daily3update_wanx.qnListCategory = #{superListCategory_Str}
+				</where>
+						
+			
+		) a
+		ORDER BY
+		pageStatus,isTop,showOrder
+	</select>
+	
+	<!-- 批量发布三更页面 -->
+	<update id="postDaily3UpdateByids" parameterType="hashmap">
+		UPDATE
+		ni_daily3update_wanx
+		SET pageStatus = #{state},pTime=#{pTime},uTime=#{uTime}
+		WHERE
+		itemId IN
+		<foreach collection="itemIdList" item="itemId" open="(" close=")" index="index" separator=",">
+			#{itemId}
+		</foreach>
+		
+	</update>
+	
+	<!-- 撤销三更页面 -->
+<!-- 	<update id="revokeDaily3UpdateByids" parameterType="hashmap"
+		statementType="CALLABLE">
+		{call
+		revokeDaily3UpdateByids(#{state},#{deliveryIds},#{qnTypes},#{uTime})}
+	</update> -->
+	<!-- 撤销三更页面   同名sql -->
+	<update id="revokeDaily3UpdateByids" parameterType="hashmap">
+		UPDATE
+		ni_daily3update_wanx
+		SET pageStatus = #{state},uTime=#{uTime}
+		WHERE
+		itemId IN
+		<foreach collection="itemIdList" item="itemId" open="(" close=")" index="index" separator=",">
+			#{itemId}
+		</foreach>
+		
+	</update>
+
+	<!-- 置顶 -->
+	<update id="topDaily3Update" parameterType="hashmap">
+		UPDATE
+		ni_daily3update_wanx
+		SET
+		isTop = 1
+		WHERE
+		itemId = #{itemId}
+	</update>
+	<!-- 取消置顶 -->
+	<update id="topCancelDaily3Update" parameterType="hashmap">
+		UPDATE
+		ni_daily3update_wanx
+		SET
+		isTop = 2
+		WHERE
+		itemId = #{itemId}
+	</update>
+	
+	<!-- 根据itemId查询 -->
+	<select id="findDaily3UpdatebyItemId" parameterType="java.lang.Integer" 
+		resultType="com.newIns.model.niDailyUpdateWanx.NiDailyUpdateWanx_VO_01">
+		SELECT * FROM ni_daily3update_wanx
+		WHERE itemId = #{id}
+	</select>
+
+	<select id="d3searchQnTitleById" parameterType="hashmap"
+		resultMap="daily3updateListMap">
+		<if test="qnType == 1">
+			SELECT
+			ni_survey_delivery.showTitle,ni_survey_delivery.status
+			FROM
+			ni_survey_delivery
+			WHERE
+			ni_survey_delivery.deliveryId=#{deliveryId}
+		</if>
+		<if test="qnType == 2">
+			SELECT
+			ni_assess_delivery.showTitle,ni_assess_delivery.status
+			FROM
+			ni_assess_delivery
+			WHERE
+			ni_assess_delivery.deliveryId=#{deliveryId}
+		</if>
+		<if test="qnType == 3">
+			SELECT
+			ni_vote_delivery.showTitle,ni_vote_delivery.status
+			FROM
+			ni_vote_delivery
+			WHERE
+			ni_vote_delivery.deliveryId=#{deliveryId}
+		</if>
+
+
+	</select>
+
+	<select id="searchDaily3UpdateDeliveryFromList" parameterType="int"
+		resultMap="daily3updateListMap">
+		SELECT
+		ni_daily3update_wanx.pageStatus
+		FROM
+		ni_daily3update_wanx
+		WHERE
+		ni_daily3update_wanx.deliveryId=#{deliveryId} AND
+		ni_daily3update_wanx.qnType=#{qnType}
+
+	</select>
+
+<!-- 此存储过程发生修改, 添加了 qnListCategory 字段-->
+<!-- 	<insert id="addDaily3UpdateDeliveryToList_new" parameterType="com.newIns.model.page.NiDaily3UpdateListItem"
+		statementType="CALLABLE">
+		{call
+		addDaily3UpdateDeliveryToList_new(#{deliveryId},#{uTime},#{qnType},#{qnListCategory})}
+	</insert> -->
+<!-- 添加三更存储过程修改   原存储过程为addDaily3UpdateDeliveryToList_new , 新存储过程添加了支持通用模板,支持新增报告和文章模板 -->
+	<insert id="addDaily3UpdateDeliveryToList_new" parameterType="com.newIns.model.page.NiDaily3UpdateListItem"
+		statementType="CALLABLE">
+		{call
+		addDaily3UpdateDeliveryToList_new_01(#{deliveryId},#{uTime},#{qnType},#{qnListCategory})}
+	</insert>
+	
+	<update id="replaceDaily3UpdateDelivery" parameterType="com.newIns.model.page.NiDaily3UpdateListItem">
+		UPDATE
+		ni_daily3update_wanx
+		<if test="qnType == 1">
+			SET
+			deliveryId = #{deliveryId},qnId=(select
+			sqnId from
+			ni_survey_delivery where
+			deliveryId=#{deliveryId}),uTime=#{uTime},qnType=1
+		</if>
+		<if test="qnType == 2">
+			SET
+			deliveryId = #{deliveryId},qnId=(select
+			aqnId from
+			ni_assess_delivery where
+			deliveryId=#{deliveryId}),uTime=#{uTime},qnType=2
+		</if>
+		<if test="qnType == 3">
+			SET
+			deliveryId = #{deliveryId},qnId=(select
+			vqnId from
+			ni_vote_delivery where
+			deliveryId=#{deliveryId}),uTime=#{uTime},qnType=3
+		</if>
+
+		WHERE
+		showOrder=#{showOrder}
+	</update>
+
+	<!-- 批量删除问卷 -->
+	<delete id="deleteDaily3UpdateByIds" parameterType="hashmap">
+		DELETE FROM ni_daily3update_wanx
+		WHERE ni_daily3update_wanx.itemId IN
+		<foreach collection="itemId_list" item="itemId" open="(" separator="," close=")" index="index">
+			#{itemId}
+		</foreach>
+	</delete>
+	
+	<!-- 上移  itemId, showOrder, lastItemId, lastShowOrder -->
+	<update id="moveUpDaily3Update" parameterType="hashmap" statementType="CALLABLE">
+		{call
+		moveUpDaily3Update(#{itemId},#{showOrder},#{lastItemId},#{lastShowOrder})}
+	</update>
+	
+	<!-- 根据itemId修改showOrder -->
+	<update id="updateShowOrderByItemId" parameterType="hashmap">
+		UPDATE  ni_daily3update_wanx 
+		SET ni_daily3update_wanx.showOrder = #{showOrder}
+		WHERE ni_daily3update_wanx.itemId = #{itemId}
+	</update>
+
+	<update id="moveDownDaily3Update" parameterType="hashmap"
+		statementType="CALLABLE">
+		{call
+		moveDownDaily3Update(#{deliveryId},#{qnType},#{showOrder},#{nextShowOrder},#{nextDeliveryId},#{nextQnType},#{uTime})}
+	</update>
+
+</mapper>

@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.newIns.dao.assess.NiAssessAnswerMapper" >
+  <resultMap id="BaseResultMap" type="com.newIns.model.assess.NiAssessAnswer" >
+    <id column="userId" property="userid" jdbcType="INTEGER" />
+    <id column="aqId" property="aqid" jdbcType="INTEGER" />
+    <result column="aqnId" property="aqnid" jdbcType="INTEGER" />
+    <result column="choice" property="choice" jdbcType="VARCHAR" />
+    <result column="selfDefine" property="selfdefine" jdbcType="VARCHAR" />
+    <result column="score" property="score" jdbcType="INTEGER" />
+    <result column="duration" property="duration" jdbcType="TIME" />
+    <result column="comment" property="comment" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    userId, aqId, aqnId, choice, selfDefine, score, duration, comment
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.newIns.model.assess.NiAssessAnswerExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from ni_assess_answer
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="com.newIns.model.assess.NiAssessAnswerKey" >
+    select 
+    <include refid="Base_Column_List" />
+    from ni_assess_answer
+    where userId = #{userid,jdbcType=INTEGER}
+      and aqId = #{aqid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="com.newIns.model.assess.NiAssessAnswerKey" >
+    delete from ni_assess_answer
+    where userId = #{userid,jdbcType=INTEGER}
+      and aqId = #{aqid,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.newIns.model.assess.NiAssessAnswerExample" >
+    delete from ni_assess_answer
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.newIns.model.assess.NiAssessAnswer" >
+    insert into ni_assess_answer (userId, aqId, aqnId, 
+      choice, selfDefine, score, 
+      duration, comment)
+    values (#{userid,jdbcType=INTEGER}, #{aqid,jdbcType=INTEGER}, #{aqnid,jdbcType=INTEGER}, 
+      #{choice,jdbcType=VARCHAR}, #{selfdefine,jdbcType=VARCHAR}, #{score,jdbcType=INTEGER}, 
+      #{duration,jdbcType=TIME}, #{comment,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.newIns.model.assess.NiAssessAnswer" >
+    insert into ni_assess_answer
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="userid != null" >
+        userId,
+      </if>
+      <if test="aqid != null" >
+        aqId,
+      </if>
+      <if test="aqnid != null" >
+        aqnId,
+      </if>
+      <if test="choice != null" >
+        choice,
+      </if>
+      <if test="selfdefine != null" >
+        selfDefine,
+      </if>
+      <if test="score != null" >
+        score,
+      </if>
+      <if test="duration != null" >
+        duration,
+      </if>
+      <if test="comment != null" >
+        comment,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="userid != null" >
+        #{userid,jdbcType=INTEGER},
+      </if>
+      <if test="aqid != null" >
+        #{aqid,jdbcType=INTEGER},
+      </if>
+      <if test="aqnid != null" >
+        #{aqnid,jdbcType=INTEGER},
+      </if>
+      <if test="choice != null" >
+        #{choice,jdbcType=VARCHAR},
+      </if>
+      <if test="selfdefine != null" >
+        #{selfdefine,jdbcType=VARCHAR},
+      </if>
+      <if test="score != null" >
+        #{score,jdbcType=INTEGER},
+      </if>
+      <if test="duration != null" >
+        #{duration,jdbcType=TIME},
+      </if>
+      <if test="comment != null" >
+        #{comment,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.newIns.model.assess.NiAssessAnswerExample" resultType="java.lang.Integer" >
+    select count(*) from ni_assess_answer
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update ni_assess_answer
+    <set >
+      <if test="record.userid != null" >
+        userId = #{record.userid,jdbcType=INTEGER},
+      </if>
+      <if test="record.aqid != null" >
+        aqId = #{record.aqid,jdbcType=INTEGER},
+      </if>
+      <if test="record.aqnid != null" >
+        aqnId = #{record.aqnid,jdbcType=INTEGER},
+      </if>
+      <if test="record.choice != null" >
+        choice = #{record.choice,jdbcType=VARCHAR},
+      </if>
+      <if test="record.selfdefine != null" >
+        selfDefine = #{record.selfdefine,jdbcType=VARCHAR},
+      </if>
+      <if test="record.score != null" >
+        score = #{record.score,jdbcType=INTEGER},
+      </if>
+      <if test="record.duration != null" >
+        duration = #{record.duration,jdbcType=TIME},
+      </if>
+      <if test="record.comment != null" >
+        comment = #{record.comment,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update ni_assess_answer
+    set userId = #{record.userid,jdbcType=INTEGER},
+      aqId = #{record.aqid,jdbcType=INTEGER},
+      aqnId = #{record.aqnid,jdbcType=INTEGER},
+      choice = #{record.choice,jdbcType=VARCHAR},
+      selfDefine = #{record.selfdefine,jdbcType=VARCHAR},
+      score = #{record.score,jdbcType=INTEGER},
+      duration = #{record.duration,jdbcType=TIME},
+      comment = #{record.comment,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.newIns.model.assess.NiAssessAnswer" >
+    update ni_assess_answer
+    <set >
+      <if test="aqnid != null" >
+        aqnId = #{aqnid,jdbcType=INTEGER},
+      </if>
+      <if test="choice != null" >
+        choice = #{choice,jdbcType=VARCHAR},
+      </if>
+      <if test="selfdefine != null" >
+        selfDefine = #{selfdefine,jdbcType=VARCHAR},
+      </if>
+      <if test="score != null" >
+        score = #{score,jdbcType=INTEGER},
+      </if>
+      <if test="duration != null" >
+        duration = #{duration,jdbcType=TIME},
+      </if>
+      <if test="comment != null" >
+        comment = #{comment,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where userId = #{userid,jdbcType=INTEGER}
+      and aqId = #{aqid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.newIns.model.assess.NiAssessAnswer" >
+    update ni_assess_answer
+    set aqnId = #{aqnid,jdbcType=INTEGER},
+      choice = #{choice,jdbcType=VARCHAR},
+      selfDefine = #{selfdefine,jdbcType=VARCHAR},
+      score = #{score,jdbcType=INTEGER},
+      duration = #{duration,jdbcType=TIME},
+      comment = #{comment,jdbcType=VARCHAR}
+    where userId = #{userid,jdbcType=INTEGER}
+      and aqId = #{aqid,jdbcType=INTEGER}
+  </update>
+</mapper>

@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+  <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper .//EN" "http://www.mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.newIns.dao.assess.NiAssessListMapper">
+	<resultMap type="com.newIns.model.assess.NiAssessListItem" id="assessListMap">
+		<result property="deliveryId" column="deliveryId" />
+		<result property="pageStatus" column="pageStatus" />
+		<result property="status" column="status" />
+		<result property="collectNum" column="collectNum" />
+		<result property="showTitle" column="showTitle" />
+		<result property="uTime" column="uTime" />
+		<result property="pTime" column="pTime" />
+		<result property="isTop" column="isTop" />
+		<result property="showOrder" column="showOrder" />
+	</resultMap>
+
+	<select id="loadAssessList" resultMap="assessListMap" parameterType="hashmap">
+		SELECT
+		ni_assess_wanx.deliveryId,
+		ni_assess_wanx.pageStatus,
+		ni_assess_delivery.status,
+		ni_assess_delivery.collectNum,
+		ni_assess_delivery.showTitle,
+		ni_assess_wanx.uTime,
+		ni_assess_wanx.pTime,
+		ni_assess_wanx.isTop,
+		ni_assess_wanx.showOrder
+		FROM
+		ni_assess_wanx ,
+		ni_assess_delivery
+		<where>
+			ni_assess_delivery.deliveryId=ni_assess_wanx.deliveryId
+			AND ni_assess_wanx.assessListCategory=#{assessListCategory}
+			<if test="deliveryId != null">
+				AND ni_assess_delivery.deliveryId = #{deliveryId}
+			</if>
+			<if test="aqnName != null">
+				AND showTitle LIKE "%${aqnName}%"
+			</if>
+			<if test="pageStatus != null">
+				AND pageStatus = #{pageStatus}
+			</if>
+			<if test="deliveryStatus != null">
+				AND status = #{deliveryStatus}
+			</if>
+			<if test="starTime != null">
+				AND pTime BETWEEN #{starTime} AND #{endTime}
+			</if>
+			AND (ni_assess_delivery.status = 1 OR ni_assess_delivery.status =2)
+		</where>
+		ORDER BY
+		pageStatus,isTop,showOrder
+	</select>
+
+	<update id="postAssessByids" parameterType="hashmap">
+		UPDATE ni_assess_wanx
+		SET pageStatus =
+		#{state},pTime=#{pTime},uTime=#{uTime}
+		WHERE
+		deliveryId IN
+		<foreach collection="deliveryIds" item="deliveryIds" index="index"
+			open="(" separator="," close=")">
+			#{deliveryIds}
+		</foreach>
+		AND assessListCategory = #{assessListCategory}
+	</update>
+
+	<update id="revokeAssessByids" parameterType="hashmap"
+		statementType="CALLABLE">
+		{call
+		revokeAssessByids(#{state},#{deliveryIds},#{assessListCategory},#{uTime})}
+	</update>
+
+
+	<update id="topAssess" parameterType="hashmap">
+		UPDATE ni_assess_wanx
+		SET
+		isTop = 1,uTime=#{uTime}
+		WHERE deliveryId=#{deliveryId}
+		AND assessListCategory=#{assessListCategory}
+	</update>
+
+	<update id="topCancelAssess" parameterType="hashmap">
+		UPDATE ni_assess_wanx
+		SET
+		isTop = 2,uTime=#{uTime}
+		WHERE deliveryId=#{deliveryId}
+		AND assessListCategory=#{assessListCategory}
+	</update>
+
+	<select id="searchQnTitleById" parameterType="int" resultMap="assessListMap">
+		SELECT
+		ni_assess_delivery.showTitle,ni_assess_delivery.status
+		FROM
+		ni_assess_delivery
+		WHERE
+		ni_assess_delivery.deliveryId=#{deliveryId}
+
+	</select>
+
+	<select id="searchAssessDeliveryFromList" parameterType="hashmap"
+		resultMap="assessListMap">
+		SELECT
+		ni_assess_wanx.pageStatus
+		FROM
+		ni_assess_wanx
+		WHERE
+		ni_assess_wanx.deliveryId=#{deliveryId}
+		AND ni_assess_wanx.assessListCategory=#{assessListCategory}
+
+	</select>
+
+	<insert id="addAssessDeliveryToList" parameterType="com.newIns.model.assess.NiAssessListItem"
+		statementType="CALLABLE">
+		{call
+		addAssessDeliveryToList(#{deliveryId},#{uTime},#{assessListCategory})}
+	</insert>
+
+	<update id="replaceAssessDelivery" parameterType="com.newIns.model.assess.NiAssessListItem">
+		UPDATE
+		ni_assess_wanx
+		SET
+		deliveryId = #{deliveryId},aqnId=(select
+		aqnId from
+		ni_assess_delivery where deliveryId=#{deliveryId}),uTime=#{uTime}
+		WHERE
+		showOrder=#{showOrder} AND assessListCategory=#{assessListCategory}
+	</update>
+
+	<!-- 批量删除问卷 -->
+	<delete id="deleteAssessByIds" parameterType="hashmap">
+		<!-- SET validity = #{} -->
+		DELETE FROM ni_assess_wanx
+		WHERE deliveryId IN
+		<foreach collection="deliveryIds" item="deliveryIds" index="index"
+			open="(" separator="," close=")">
+			#{deliveryIds}
+		</foreach>
+		AND assessListCategory = #{assessListCategory}
+
+	</delete>
+
+	<update id="moveUpAssess" parameterType="hashmap" statementType="CALLABLE">
+		{call
+		moveUpAssess(#{deliveryId},#{showOrder},#{lastShowOrder},#{lastDeliveryId},#{uTime},#{assessListCategory})}
+	</update>
+
+	<update id="moveDownAssess" parameterType="hashmap"
+		statementType="CALLABLE">
+		{call
+		moveDownAssess(#{deliveryId},#{showOrder},#{nextShowOrder},#{nextDeliveryId},#{uTime},#{assessListCategory})}
+	</update>
+	
+	  <!-- 定时发布 检测时间 发布三更页面 -->
+	  <update id="updateStateByTimer">
+		 UPDATE ni_assess_wanx SET pageStatus = 3
+		 WHERE NOW() > timer AND pageStatus = 2
+	  </update>
+	
+	<!-- 保存 定时发布时间 , 设置定时状态 -->
+	<update id="updateStateById_timer" parameterType="com.newIns.model.assess.NiAssessWanx">
+		UPDATE ni_assess_wanx 
+	  	<set>
+	  		pageStatus = 2,
+	  		<if test="timer != null ">
+	  			timer = #{timer},
+	  		</if>
+	  	</set>
+		WHERE deliveryId = #{deliveryid}
+		AND assessListCategory = #{assessListCategory}
+	</update>
+	
+	<!-- 根据投放id 查询投放信息 -->
+	<select id="select_assessDelivey_key" parameterType="java.lang.Integer" resultType="com.newIns.model.assess.AssessDelivery">
+		SELECT *
+			FROM ni_assess_delivery WHERE deliveryId = #{id}
+	</select>
+	
+	<select id="select_assessDelivey_likeName" parameterType="java.lang.String" resultType="com.newIns.model.assess.AssessDelivery">
+		SELECT *
+			FROM ni_assess_delivery 
+			WHERE ni_assess_delivery.showTitle LIKE "%${_parameter}%"
+											   
+	</select>
+
+</mapper>

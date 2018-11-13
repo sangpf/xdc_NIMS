@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.newIns.dao.NiOaManageUserMapper">
+	
+	<select id="findByAccount" parameterType="java.lang.String" resultType="com.newIns.model.NiOaManageUser">
+		SELECT * FROM ni_oa_manage_user WHERE oaUserName =  #{account} AND isValid = '1'
+	</select>
+	
+	<insert id="addUser" parameterType="com.newIns.model.NiOaManageUser" >
+		INSERT INTO ni_oa_manage_user (
+			oaUserId,oaUserName,oaPassword,isValid,comment
+		)
+		 VALUES (#{oaUserId},#{oaUserName},#{oaPassword},#{isValid},#{comment})
+	</insert>
+	
+	<!-- 后台管理根据用户id查询该用户所拥有的权限名称 -->
+	<select id="findAuthNamebyUserId" resultType="java.lang.String" parameterType="int" statementType="CALLABLE">
+		{call niOaManage_deleSurveyQue(#{id})}
+	</select>
+	
+	
+	
+</mapper>
+

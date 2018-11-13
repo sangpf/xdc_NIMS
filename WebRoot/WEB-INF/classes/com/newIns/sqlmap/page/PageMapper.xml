@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.newIns.dao.page.PageDao" >
+	
+	<!-- 列表查询 -->
+	<select id="listPage" parameterType="hashmap" resultType="com.newIns.model.page.PageVo">
+		select * from ni_page 
+		where 
+		ni_page.pageStatus IN (1,2,3)
+		<if test="chanId != null">
+			and ni_page.channelId = #{chanId}
+		</if>
+		ORDER BY isTop,pageStatus,showOrder
+	</select>
+	
+	<!-- 设置定时器 -->
+	<update id="setTimer" parameterType="hashmap">
+		update ni_page set 
+		pageStatus = 2,timer = #{timer}
+		WHERE ni_page.itemId = #{itemId}
+	</update>
+	
+	<!-- 查询调查投放页面 -->
+	<select id="findSurveyPage" parameterType="hashmap" resultType="com.newIns.model.page.Page">
+		select ni_page.* 
+		from ni_page,ni_survey_delivery
+		where ni_page.deliveryId=ni_survey_delivery.deliveryId
+		and ni_page.qnType = 1 
+		AND ni_page.deliveryId = #{itemId}
+		AND ni_page.channelId = #{channelId}
+		AND ni_page.columnId = #{columnId}
+		and ni_page.pageStatus != 4
+	</select>
+
+	<!-- 查询测评投放页面 -->
+	<select id="findAssessPage" parameterType="hashmap" resultType="com.newIns.model.page.Page">
+		select ni_page.* 
+		from ni_page,ni_assess_delivery
+		where ni_page.deliveryId=ni_assess_delivery.deliveryId
+		and ni_page.qnType = 2 
+		AND ni_page.deliveryId = #{itemId}
+		AND ni_page.channelId = #{channelId}
+		AND ni_page.columnId = #{columnId}
+		and ni_page.pageStatus != 4
+	</select>
+
+	<!-- 查询投票投放页面 -->
+	<select id="findVotePage" parameterType="hashmap" resultType="com.newIns.model.page.Page">
+		select ni_page.* 
+		from ni_page,ni_vote_delivery
+		where ni_page.deliveryId=ni_vote_delivery.deliveryId
+		and ni_page.qnType = 3 
+		AND ni_page.deliveryId = #{itemId}
+		AND ni_page.channelId = #{channelId}
+		AND ni_page.columnId = #{columnId}
+		and ni_page.pageStatus != 4
+	</select>
+
+	<!-- 查询报告页面 -->
+	<select id="findReportPage" parameterType="hashmap" resultType="com.newIns.model.page.Page">
+		select ni_page.* 
+		from ni_page,ni_report
+		where ni_page.reportId=ni_report.reportId
+		AND ni_page.reportId = #{itemId}
+		AND ni_page.channelId = #{channelId}
+		AND ni_page.columnId = #{columnId}
+		and ni_page.pageStatus != 4
+	</select>
+
+	<!-- 查询推文页面 -->
+	<select id="findTweetPage" parameterType="hashmap" resultType="com.newIns.model.page.Page">
+		select ni_page.* 
+		from ni_page,ni_tweet
+		where ni_page.tweetId=ni_tweet.tweetId
+		AND ni_page.tweetId = #{itemId}
+		AND ni_page.channelId = #{channelId}
+		AND ni_page.columnId = #{columnId}
+		and ni_page.pageStatus != 4
+	</select>
+	
+	<!-- 新增到页面 -->
+	<insert id="insertPage" parameterType="hashmap" statementType="CALLABLE">
+		
+		CALL insertPage(#{itemId},#{uTime},#{qnType},#{columnId},#{channelId})
+		
+	</insert>
+	
+	<!-- 批量修改状态 -->
+	<update id="changePageStatus" parameterType="hashmap">
+		update ni_page set ni_page.pageStatus = #{status}
+		where ni_page.itemId IN 
+		<foreach collection="itemList" item="itemId" open="(" close=")" separator=",">
+			#{itemId}
+		</foreach>
+	</update>
+	
+	<!-- 修改是否置顶 -->
+	<update id="changeTopStatus" parameterType="hashmap">
+		update ni_page set ni_page.isTop = #{isTop}
+		where ni_page.itemId = #{itemId}
+	</update>
+	
+	<!-- 修改 排序 -->
+	<update id="changeShowOrderStatus" parameterType="hashmap">
+		update ni_page set ni_page.showOrder = #{showOrder}
+		where ni_page.itemId = #{itemId}
+	</update>
+
+</mapper>

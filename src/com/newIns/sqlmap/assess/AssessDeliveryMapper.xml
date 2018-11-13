@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.newIns.dao.assess.AssessDeliveryDao" >
+
+  <sql id="Base_Column_List" >
+    deliveryId, aqnId, collectNum, birthday,bTime, eTime,lTime,cTime, reason, showTitle, showDes, img, collectedNum, 
+    tag1Str, tag2Str, tag3Str, tag4Str, tag5Str,relatedStr1,relatedStr2,relatedStr3,relatedUrl1,relatedUrl2,relatedUrl3,
+    award1Id, award2Id, award3Id, awaed4Id, 
+    lotteryReady, lotteryId, adId, status, comment , resultMsg,titleTag
+  </sql>
+   
+  <select id="selectByQnid" parameterType="java.lang.Integer" resultType="com.newIns.model.assess.NiAssessDeliveryWanxVo">
+	select *
+	    from ni_assess_delivery
+	    where aqnId = #{id}
+    
+  </select>
+  
+  <!-- 列表查询 -->
+  <select id="selectList" parameterType="hashmap" resultType="com.newIns.model.assess.NiAssessDeliveryWanxVo">
+	  SELECT ad.*,aq.aqnName,aq.editor,aq.staus
+	  FROM ni_assess_delivery ad,ni_assess_questionnaire aq
+	   <where>
+	   	    ad.aqnId = aq.aqnId
+	   	    <if test="sqnName != null" >
+	    		AND aq.aqnName LIKE '%${sqnName}%'
+	    	</if>
+	    	<if test="delId != null">
+	    		AND ad.deliveryId = #{delId}
+	    	</if>
+	    	<if test="editor != null" >
+	    		AND aq.editor LIKE '%${editor}%'
+	    	</if>
+	    	<if test="statList!=null and statList.size()>0">
+		    	AND ad.STATUS IN
+		    	<foreach collection="statList" item="stat" open="(" separator="," close=")">
+		    		#{stat}
+		    	</foreach>
+	    	</if>
+	    	<if test="adId !=null and adId!= 0 ">
+	    		<if test="adId == 1">
+	    			AND ad.adId IS NOT NULL
+	    		</if>
+	    		<if test="adId == 2">
+		    		AND ad.adId IS NULL
+	    		</if>
+	    	</if>
+	    	<if test="channelId != null">
+	    		AND ad.channelId = #{channelId}
+	    	</if>
+	   </where>
+	   ORDER BY ad.deliveryId DESC
+  </select>
+  
+  <select id="selectByPrimaryKey" resultType="com.newIns.model.assess.AssessDelivery" parameterType="java.lang.Integer" >
+    select *
+    from ni_assess_delivery
+    where deliveryId = #{id}
+  </select>
+  
+  <!-- 新增 -->
+  <insert id="insert" parameterType="com.newIns.model.assess.AssessDelivery" >
+  
+  	<selectKey keyProperty="deliveryId" order="AFTER" resultType="java.lang.Integer">
+  		select LAST_INSERT_ID()
+  	</selectKey>
+    INSERT INTO ni_assess_delivery (
+      deliveryId, aqnId, collectNum, 
+      bTime, eTime,cTime, reason, showTitle, showDes, img, collectedNum, 
+      tag1Str, tag2Str, tag3Str, tag4Str, tag5Str,
+      relatedStr1,relatedStr2,relatedStr3,relatedUrl1,relatedUrl2,relatedUrl3, 
+      award1Id, award2Id, award3Id, awaed4Id, 
+      lotteryReady, lotteryId, adId, 
+      status,channelId
+      )
+    values (
+      #{deliveryId}, #{aqnId}, #{collectNum}, 
+      #{bTime}, #{eTime},#{cTime},#{reason}, #{showTitle}, #{showDes}, #{img}, #{collectedNum}, 
+      #{tag1Str}, #{tag2Str}, #{tag3Str}, #{tag4Str}, #{tag5Str},
+      #{relatedStr1},#{relatedStr2},#{relatedStr3},#{relatedUrl1},#{relatedUrl2},#{relatedUrl3}, 
+      #{award1Id}, #{award2Id}, #{award3Id}, #{awaed4Id}, 
+      #{lotteryReady}, #{lotteryId}, #{adId}, 
+      #{status},#{channelId}
+    )
+  </insert>
+  
+  <!-- 判断份数，修改状态 -->
+  <update id="updateStatuByTagNum">
+	UPDATE ni_assess_delivery dw, ni_assess_order vo
+		SET dw.status = 6 
+		WHERE (SELECT COUNT(orderId) FROM ni_assess_order WHERE dw.aqnId = vo.aqnId) > dw.collectNum
+		AND dw.aqnId = vo.aqnId
+  </update>
+  
+  <!-- 判断时间，修改时间完成 -->
+  <update id="updateStatuByeTime">
+  	  update ni_assess_delivery
+		set `status` = 5
+		where NOW() > eTime AND status NOT IN (5,6)
+  </update>
+  
+  <!-- 批量修改状态 -->
+  <update id="updateStatByMap" parameterType="hashmap" >
+  	 update ni_assess_delivery
+  	 <set>
+  	 	<if test="t_stat != null">
+  	 		status = #{t_stat},
+  	 	</if>
+  	 	<if test="uTime != null">
+  	 		cTime = #{uTime}
+  	 	</if>
+  	 </set>
+  	 <where>
+  	 	deliveryId IN 
+  	 	 <foreach collection="id_list" item="id" open="(" separator="," close=")">
+  	 	 	#{id}
+  		 </foreach>
+  	 </where>
+  </update>
+  
+  <!-- 保持测评投放 结果页 头和尾 -->
+  <update id="updateAssessResult_head_tail" parameterType="com.newIns.model.assess.AssessDelivery">
+  	update ni_assess_delivery
+  	<set>  
+      <if test="headResultDetail != null and headResultDetail != '' ">
+      	 headResultDetail = #{headResultDetail},
+      </if>
+      <if test="tailResultDetail != null and tailResultDetail != '' ">
+      	tailResultDetail = #{tailResultDetail},
+      </if>
+  	</set>
+  	 where deliveryId = #{deliveryId}
+  </update>
+  
+  <!-- 有选择性的根据key编辑 -->
+  <update id="updateByPrimaryKeySelective" parameterType="com.newIns.model.assess.AssessDelivery" >
+    update ni_assess_delivery
+    <set >
+       <if test="lotteryId != null">
+       	lotteryId = #{lotteryId},
+       </if>
+       <if test="award1Id != null">
+       	award1Id = #{award1Id},
+       </if>
+       <if test="birthday != null" >
+        birthday = #{birthday},
+      </if>
+      <if test="aqnId != null" >
+        aqnId = #{aqnId},
+      </if>
+      <if test="lTime != null">
+      	lTime = #{lTime},
+      </if>
+      <if test="collectNum != null" >
+        collectNum = #{collectNum},
+      </if>
+      <if test="bTime != null" >
+        bTime = #{bTime},
+      </if>
+      <if test="eTime != null" >
+        eTime = #{eTime},
+      </if>
+      <if test="reason != null" >
+        reason = #{reason},
+      </if>
+      <if test="showTitle != null" >
+        showTitle = #{showTitle},
+      </if>
+      <if test="showDes != null" >
+        showDes = #{showDes},
+      </if>
+      <if test="img != null" >
+        img = #{img},
+      </if>
+      <if test="collectedNum != null" >
+        collectedNum = #{collectedNum},
+      </if>
+      <if test="tag1Str != null" >
+        tag1Str = #{tag1Str},
+      </if>
+      <if test="tag2Str != null" >
+        tag2Str = #{tag2Str},
+      </if>
+      <if test="tag3Str != null" >
+        tag3Str = #{tag3Str},
+      </if>
+      <if test="tag4Str != null" >
+        tag4Str = #{tag4Str},
+      </if>
+      <if test="tag5Str != null" >
+        tag5Str = #{tag5Str},
+      </if>
+      
+      <if test="relatedStr1 != null" >
+        relatedStr1 = #{relatedStr1},
+      </if>
+      <if test="relatedUrl1 != null" >
+        relatedUrl1 = #{relatedUrl1},
+      </if>
+      <if test="relatedStr2 != null" >
+        relatedStr2 = #{relatedStr2},
+      </if>
+      <if test="relatedUrl2 != null" >
+        relatedUrl2 = #{relatedUrl2},
+      </if>
+      <if test="relatedStr3 != null" >
+        relatedStr3 = #{relatedStr3},
+      </if>
+      <if test="relatedUrl3 != null" >
+        relatedUrl3 = #{relatedUrl3},
+      </if>
+      
+      <if test="award2Id != null" >
+        award2Id = #{award2Id},
+      </if>
+      <if test="award3Id != null" >
+        award3Id = #{award3Id},
+      </if>
+      <if test="awaed4Id != null" >
+        awaed4Id = #{awaed4Id},
+      </if>
+      <if test="lotteryReady != null" >
+        lotteryReady = #{lotteryReady},
+      </if>
+      <if test="adId != null" >
+        adId = #{adId},
+      </if>
+      <if test="status != null" >
+        status = #{status},
+      </if>
+      <if test="resultMsg != null and resultMsg != '' ">
+      	resultMsg = #{resultMsg},
+      </if>
+      <if test="titleTag != null">
+      	titleTag = #{titleTag},
+      </if>
+      <if test="channelId != null">
+      	channelId = #{channelId},
+      </if>
+      
+      <if test="price != null ">
+      	price = #{price},
+      </if>
+      <if test="payTag1 != null and payTag1 != '' ">
+      	payTag1 = #{payTag1},
+      </if>
+      <if test="payTag2 != null and payTag2 != '' ">
+      	payTag2 = #{payTag2},
+      </if>
+      <if test="payTag3 != null and payTag3 != '' ">
+      	payTag3 = #{payTag3},
+      </if>
+      <if test="discountInfo != null and discountInfo != '' ">
+      	discountInfo = #{discountInfo},
+      </if>
+      <if test="cornerFlag != null">
+      	cornerFlag = #{cornerFlag},
+      </if>  
+  
+    </set>
+    where deliveryId = #{deliveryId}
+  </update>
+  
+  <update id="updateByPrimaryKey" parameterType="com.newIns.model.assess.AssessDelivery" >
+    update ni_assess_delivery
+    set aqnId = #{aqnId},
+      collectNum = #{collectNum},
+      bTime = #{bTime},
+      eTime = #{eTime},
+      reason = #{reason},
+      showTitle = #{showTitle},
+      showDes = #{showDes},
+      img = #{img},
+      collectedNum = #{collectedNum},
+      tag1Str = #{tag1Str},
+      tag2Str = #{tag2Str},
+      tag3Str = #{tag3Str},
+      tag4Str = #{tag4Str},
+      tag5Str = #{tag5Str},
+      
+      relatedStr1 = #{relatedStr1},
+      relatedUrl1 = #{relatedUrl1},
+      relatedStr2 = #{relatedStr2},
+      relatedUrl2 = #{relatedUrl2},
+      relatedStr3 = #{relatedStr3},
+      relatedUrl3 = #{relatedUrl3},
+      
+      award1Id = #{award1Id},
+      award2Id = #{award2Id},
+      award3Id = #{award3Id},
+      awaed4Id = #{awaed4Id},
+      lotteryReady = #{lotteryReady},
+      lotteryId = #{lotteryId},
+      adId = #{adId},
+      status = #{status},
+      birthday=#{birthday},
+      comment = #{comment}
+      
+    where deliveryId = #{deliveryId}
+  </update>
+  
+    <update id="updateLotteryReady" parameterType="java.lang.Integer">
+  	update ni_assess_delivery
+	  	set lotteryReady=1
+	  	where deliveryId=#{id}
+  </update>
+</mapper>

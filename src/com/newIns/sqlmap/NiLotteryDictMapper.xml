@@ -1,0 +1,465 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.newIns.dao.NiLotteryDictMapper" >
+  <resultMap id="BaseResultMap" type="com.newIns.model.NiLotteryDict" >
+    <id column="lotteryId" property="lotteryid" jdbcType="INTEGER" />
+    <result column="lotteryName" property="lotteryname" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="TINYINT" />
+    <result column="rankNum" property="ranknum" jdbcType="TINYINT" />
+    <result column="award1Name" property="award1name" jdbcType="VARCHAR" />
+    <result column="award1Id" property="award1id" jdbcType="INTEGER" />
+    <result column="award1Rate" property="award1rate" jdbcType="REAL" />
+    <result column="award1Des" property="award1des" jdbcType="VARCHAR" />
+    <result column="award2Name" property="award2name" jdbcType="VARCHAR" />
+    <result column="award2Id" property="award2id" jdbcType="INTEGER" />
+    <result column="award2Rate" property="award2rate" jdbcType="REAL" />
+    <result column="award2Des" property="award2des" jdbcType="VARCHAR" />
+    <result column="award3Name" property="award3name" jdbcType="VARCHAR" />
+    <result column="award3Id" property="award3id" jdbcType="INTEGER" />
+    <result column="award3Rate" property="award3rate" jdbcType="REAL" />
+    <result column="award3Des" property="award3des" jdbcType="VARCHAR" />
+    <result column="award4Name" property="award4name" jdbcType="VARCHAR" />
+    <result column="award4Id" property="award4id" jdbcType="INTEGER" />
+    <result column="award4Rate" property="award4rate" jdbcType="REAL" />
+    <result column="award4Des" property="award4des" jdbcType="VARCHAR" />
+    <result column="comment" property="comment" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    lotteryId, lotteryName, status, rankNum, award1Name, award1Id, award1Rate, award1Des, 
+    award2Name, award2Id, award2Rate, award2Des, award3Name, award3Id, award3Rate, award3Des, 
+    award4Name, award4Id, award4Rate, award4Des, comment
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.newIns.model.NiLotteryDictExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from ni_lottery_dict
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from ni_lottery_dict
+    where lotteryId = #{lotteryid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from ni_lottery_dict
+    where lotteryId = #{lotteryid,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.newIns.model.NiLotteryDictExample" >
+    delete from ni_lottery_dict
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.newIns.model.NiLotteryDict" >
+    insert into ni_lottery_dict (lotteryId, lotteryName, status, 
+      rankNum, award1Name, award1Id, 
+      award1Rate, award1Des, award2Name, 
+      award2Id, award2Rate, award2Des, 
+      award3Name, award3Id, award3Rate, 
+      award3Des, award4Name, award4Id, 
+      award4Rate, award4Des, comment
+      )
+    values (#{lotteryid,jdbcType=INTEGER}, #{lotteryname,jdbcType=VARCHAR}, #{status,jdbcType=TINYINT}, 
+      #{ranknum,jdbcType=TINYINT}, #{award1name,jdbcType=VARCHAR}, #{award1id,jdbcType=INTEGER}, 
+      #{award1rate,jdbcType=REAL}, #{award1des,jdbcType=VARCHAR}, #{award2name,jdbcType=VARCHAR}, 
+      #{award2id,jdbcType=INTEGER}, #{award2rate,jdbcType=REAL}, #{award2des,jdbcType=VARCHAR}, 
+      #{award3name,jdbcType=VARCHAR}, #{award3id,jdbcType=INTEGER}, #{award3rate,jdbcType=REAL}, 
+      #{award3des,jdbcType=VARCHAR}, #{award4name,jdbcType=VARCHAR}, #{award4id,jdbcType=INTEGER}, 
+      #{award4rate,jdbcType=REAL}, #{award4des,jdbcType=VARCHAR}, #{comment,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.newIns.model.NiLotteryDict" >
+    insert into ni_lottery_dict
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="lotteryid != null" >
+        lotteryId,
+      </if>
+      <if test="lotteryname != null" >
+        lotteryName,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="ranknum != null" >
+        rankNum,
+      </if>
+      <if test="award1name != null" >
+        award1Name,
+      </if>
+      <if test="award1id != null" >
+        award1Id,
+      </if>
+      <if test="award1rate != null" >
+        award1Rate,
+      </if>
+      <if test="award1des != null" >
+        award1Des,
+      </if>
+      <if test="award2name != null" >
+        award2Name,
+      </if>
+      <if test="award2id != null" >
+        award2Id,
+      </if>
+      <if test="award2rate != null" >
+        award2Rate,
+      </if>
+      <if test="award2des != null" >
+        award2Des,
+      </if>
+      <if test="award3name != null" >
+        award3Name,
+      </if>
+      <if test="award3id != null" >
+        award3Id,
+      </if>
+      <if test="award3rate != null" >
+        award3Rate,
+      </if>
+      <if test="award3des != null" >
+        award3Des,
+      </if>
+      <if test="award4name != null" >
+        award4Name,
+      </if>
+      <if test="award4id != null" >
+        award4Id,
+      </if>
+      <if test="award4rate != null" >
+        award4Rate,
+      </if>
+      <if test="award4des != null" >
+        award4Des,
+      </if>
+      <if test="comment != null" >
+        comment,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="lotteryid != null" >
+        #{lotteryid,jdbcType=INTEGER},
+      </if>
+      <if test="lotteryname != null" >
+        #{lotteryname,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="ranknum != null" >
+        #{ranknum,jdbcType=TINYINT},
+      </if>
+      <if test="award1name != null" >
+        #{award1name,jdbcType=VARCHAR},
+      </if>
+      <if test="award1id != null" >
+        #{award1id,jdbcType=INTEGER},
+      </if>
+      <if test="award1rate != null" >
+        #{award1rate,jdbcType=REAL},
+      </if>
+      <if test="award1des != null" >
+        #{award1des,jdbcType=VARCHAR},
+      </if>
+      <if test="award2name != null" >
+        #{award2name,jdbcType=VARCHAR},
+      </if>
+      <if test="award2id != null" >
+        #{award2id,jdbcType=INTEGER},
+      </if>
+      <if test="award2rate != null" >
+        #{award2rate,jdbcType=REAL},
+      </if>
+      <if test="award2des != null" >
+        #{award2des,jdbcType=VARCHAR},
+      </if>
+      <if test="award3name != null" >
+        #{award3name,jdbcType=VARCHAR},
+      </if>
+      <if test="award3id != null" >
+        #{award3id,jdbcType=INTEGER},
+      </if>
+      <if test="award3rate != null" >
+        #{award3rate,jdbcType=REAL},
+      </if>
+      <if test="award3des != null" >
+        #{award3des,jdbcType=VARCHAR},
+      </if>
+      <if test="award4name != null" >
+        #{award4name,jdbcType=VARCHAR},
+      </if>
+      <if test="award4id != null" >
+        #{award4id,jdbcType=INTEGER},
+      </if>
+      <if test="award4rate != null" >
+        #{award4rate,jdbcType=REAL},
+      </if>
+      <if test="award4des != null" >
+        #{award4des,jdbcType=VARCHAR},
+      </if>
+      <if test="comment != null" >
+        #{comment,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.newIns.model.NiLotteryDictExample" resultType="java.lang.Integer" >
+    select count(*) from ni_lottery_dict
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update ni_lottery_dict
+    <set >
+      <if test="record.lotteryid != null" >
+        lotteryId = #{record.lotteryid,jdbcType=INTEGER},
+      </if>
+      <if test="record.lotteryname != null" >
+        lotteryName = #{record.lotteryname,jdbcType=VARCHAR},
+      </if>
+      <if test="record.status != null" >
+        status = #{record.status,jdbcType=TINYINT},
+      </if>
+      <if test="record.ranknum != null" >
+        rankNum = #{record.ranknum,jdbcType=TINYINT},
+      </if>
+      <if test="record.award1name != null" >
+        award1Name = #{record.award1name,jdbcType=VARCHAR},
+      </if>
+      <if test="record.award1id != null" >
+        award1Id = #{record.award1id,jdbcType=INTEGER},
+      </if>
+      <if test="record.award1rate != null" >
+        award1Rate = #{record.award1rate,jdbcType=REAL},
+      </if>
+      <if test="record.award1des != null" >
+        award1Des = #{record.award1des,jdbcType=VARCHAR},
+      </if>
+      <if test="record.award2name != null" >
+        award2Name = #{record.award2name,jdbcType=VARCHAR},
+      </if>
+      <if test="record.award2id != null" >
+        award2Id = #{record.award2id,jdbcType=INTEGER},
+      </if>
+      <if test="record.award2rate != null" >
+        award2Rate = #{record.award2rate,jdbcType=REAL},
+      </if>
+      <if test="record.award2des != null" >
+        award2Des = #{record.award2des,jdbcType=VARCHAR},
+      </if>
+      <if test="record.award3name != null" >
+        award3Name = #{record.award3name,jdbcType=VARCHAR},
+      </if>
+      <if test="record.award3id != null" >
+        award3Id = #{record.award3id,jdbcType=INTEGER},
+      </if>
+      <if test="record.award3rate != null" >
+        award3Rate = #{record.award3rate,jdbcType=REAL},
+      </if>
+      <if test="record.award3des != null" >
+        award3Des = #{record.award3des,jdbcType=VARCHAR},
+      </if>
+      <if test="record.award4name != null" >
+        award4Name = #{record.award4name,jdbcType=VARCHAR},
+      </if>
+      <if test="record.award4id != null" >
+        award4Id = #{record.award4id,jdbcType=INTEGER},
+      </if>
+      <if test="record.award4rate != null" >
+        award4Rate = #{record.award4rate,jdbcType=REAL},
+      </if>
+      <if test="record.award4des != null" >
+        award4Des = #{record.award4des,jdbcType=VARCHAR},
+      </if>
+      <if test="record.comment != null" >
+        comment = #{record.comment,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update ni_lottery_dict
+    set lotteryId = #{record.lotteryid,jdbcType=INTEGER},
+      lotteryName = #{record.lotteryname,jdbcType=VARCHAR},
+      status = #{record.status,jdbcType=TINYINT},
+      rankNum = #{record.ranknum,jdbcType=TINYINT},
+      award1Name = #{record.award1name,jdbcType=VARCHAR},
+      award1Id = #{record.award1id,jdbcType=INTEGER},
+      award1Rate = #{record.award1rate,jdbcType=REAL},
+      award1Des = #{record.award1des,jdbcType=VARCHAR},
+      award2Name = #{record.award2name,jdbcType=VARCHAR},
+      award2Id = #{record.award2id,jdbcType=INTEGER},
+      award2Rate = #{record.award2rate,jdbcType=REAL},
+      award2Des = #{record.award2des,jdbcType=VARCHAR},
+      award3Name = #{record.award3name,jdbcType=VARCHAR},
+      award3Id = #{record.award3id,jdbcType=INTEGER},
+      award3Rate = #{record.award3rate,jdbcType=REAL},
+      award3Des = #{record.award3des,jdbcType=VARCHAR},
+      award4Name = #{record.award4name,jdbcType=VARCHAR},
+      award4Id = #{record.award4id,jdbcType=INTEGER},
+      award4Rate = #{record.award4rate,jdbcType=REAL},
+      award4Des = #{record.award4des,jdbcType=VARCHAR},
+      comment = #{record.comment,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.newIns.model.NiLotteryDict" >
+    update ni_lottery_dict
+    <set >
+      <if test="lotteryname != null" >
+        lotteryName = #{lotteryname,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="ranknum != null" >
+        rankNum = #{ranknum,jdbcType=TINYINT},
+      </if>
+      <if test="award1name != null" >
+        award1Name = #{award1name,jdbcType=VARCHAR},
+      </if>
+      <if test="award1id != null" >
+        award1Id = #{award1id,jdbcType=INTEGER},
+      </if>
+      <if test="award1rate != null" >
+        award1Rate = #{award1rate,jdbcType=REAL},
+      </if>
+      <if test="award1des != null" >
+        award1Des = #{award1des,jdbcType=VARCHAR},
+      </if>
+      <if test="award2name != null" >
+        award2Name = #{award2name,jdbcType=VARCHAR},
+      </if>
+      <if test="award2id != null" >
+        award2Id = #{award2id,jdbcType=INTEGER},
+      </if>
+      <if test="award2rate != null" >
+        award2Rate = #{award2rate,jdbcType=REAL},
+      </if>
+      <if test="award2des != null" >
+        award2Des = #{award2des,jdbcType=VARCHAR},
+      </if>
+      <if test="award3name != null" >
+        award3Name = #{award3name,jdbcType=VARCHAR},
+      </if>
+      <if test="award3id != null" >
+        award3Id = #{award3id,jdbcType=INTEGER},
+      </if>
+      <if test="award3rate != null" >
+        award3Rate = #{award3rate,jdbcType=REAL},
+      </if>
+      <if test="award3des != null" >
+        award3Des = #{award3des,jdbcType=VARCHAR},
+      </if>
+      <if test="award4name != null" >
+        award4Name = #{award4name,jdbcType=VARCHAR},
+      </if>
+      <if test="award4id != null" >
+        award4Id = #{award4id,jdbcType=INTEGER},
+      </if>
+      <if test="award4rate != null" >
+        award4Rate = #{award4rate,jdbcType=REAL},
+      </if>
+      <if test="award4des != null" >
+        award4Des = #{award4des,jdbcType=VARCHAR},
+      </if>
+      <if test="comment != null" >
+        comment = #{comment,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where lotteryId = #{lotteryid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.newIns.model.NiLotteryDict" >
+    update ni_lottery_dict
+    set lotteryName = #{lotteryname,jdbcType=VARCHAR},
+      status = #{status,jdbcType=TINYINT},
+      rankNum = #{ranknum,jdbcType=TINYINT},
+      award1Name = #{award1name,jdbcType=VARCHAR},
+      award1Id = #{award1id,jdbcType=INTEGER},
+      award1Rate = #{award1rate,jdbcType=REAL},
+      award1Des = #{award1des,jdbcType=VARCHAR},
+      award2Name = #{award2name,jdbcType=VARCHAR},
+      award2Id = #{award2id,jdbcType=INTEGER},
+      award2Rate = #{award2rate,jdbcType=REAL},
+      award2Des = #{award2des,jdbcType=VARCHAR},
+      award3Name = #{award3name,jdbcType=VARCHAR},
+      award3Id = #{award3id,jdbcType=INTEGER},
+      award3Rate = #{award3rate,jdbcType=REAL},
+      award3Des = #{award3des,jdbcType=VARCHAR},
+      award4Name = #{award4name,jdbcType=VARCHAR},
+      award4Id = #{award4id,jdbcType=INTEGER},
+      award4Rate = #{award4rate,jdbcType=REAL},
+      award4Des = #{award4des,jdbcType=VARCHAR},
+      comment = #{comment,jdbcType=VARCHAR}
+    where lotteryId = #{lotteryid,jdbcType=INTEGER}
+  </update>
+</mapper>

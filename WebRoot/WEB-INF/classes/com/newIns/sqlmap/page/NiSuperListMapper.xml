@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8"?>
+  <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper .//EN" "http://www.mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.newIns.dao.NiSuperListMapper">
+	<resultMap type="com.newIns.model.page.NiSuperListItem" id="superListMap">
+		<result property="deliveryId" column="deliveryId" />
+		<result property="pageStatus" column="pageStatus" />
+		<result property="status" column="status" />
+		<result property="collectNum" column="collectNum" />
+		<result property="showTitle" column="showTitle" />
+		<result property="uTime" column="uTime" />
+		<result property="pTime" column="pTime" />
+		<result property="isTop" column="isTop" />
+		<result property="qnType" column="qnType" />
+		<result property="showOrder" column="showOrder" />
+		<result property="superListCategory" column="superListCategory"/>
+	</resultMap>
+
+<!-- 超级调查页面列表查询   此条查询    调查 -->
+	<select id="loadSuperList" resultMap="superListMap"	parameterType="hashmap">
+		SELECT * FROM(
+		SELECT
+		distinct(ni_super_wanx.deliveryId),
+		ni_super_wanx.pageStatus,
+		ni_survey_delivery.status,
+		ni_survey_delivery.collectNum,
+		ni_survey_delivery.showTitle,
+		ni_super_wanx.uTime,
+		ni_super_wanx.pTime,
+		ni_super_wanx.isTop,
+		ni_super_wanx.showOrder,
+		ni_super_wanx.qnType,
+		ni_super_wanx.superListCategory
+		FROM
+		ni_super_wanx ,
+		ni_survey_delivery
+		<where>
+			ni_survey_delivery.deliveryId=ni_super_wanx.deliveryId
+			<if test="deliveryId != null">
+				AND ni_survey_delivery.deliveryId = #{deliveryId}
+			</if>
+			<if test="qnName != null">
+				AND showTitle LIKE "%${qnName}%"
+			</if>
+			<if test="pageStatus != null">
+				AND pageStatus = #{pageStatus}
+			</if>
+			<if test="deliveryStatus != null">
+				AND status = #{deliveryStatus}
+			</if>
+			<if test="starTime != null">
+				AND pTime BETWEEN #{starTime} AND #{endTime}
+			</if>
+			<if test="qnType != null">
+				AND qnType = #{qnType}
+			</if>
+			AND ni_super_wanx.qnType=1 
+			AND (ni_survey_delivery.status = 1 OR ni_survey_delivery.status =2)
+	<!-- 默认查询   页面列表分类 surveyQnList, 调查，awardQnList, 有奖问卷，funQnList, 吃喝玩乐，gestureQnList, 涨姿势，roseQnList, 花式开撩 -->
+			AND ni_super_wanx.superListCategory = #{superListCategory_Str} 
+		</where>
+
+		UNION
+
+		SELECT
+		distinct(ni_super_wanx.deliveryId),
+		ni_super_wanx.pageStatus,
+		ni_vote_delivery.status,
+		ni_vote_delivery.collectNum,
+		ni_vote_delivery.showTitle,
+		ni_super_wanx.uTime,
+		ni_super_wanx.pTime,
+		ni_super_wanx.isTop,
+		ni_super_wanx.showOrder,
+		ni_super_wanx.qnType,
+		ni_super_wanx.superListCategory
+		FROM
+		ni_super_wanx ,
+		ni_vote_delivery
+		<where>
+			ni_vote_delivery.deliveryId=ni_super_wanx.deliveryId
+			<if test="qnName != null">
+				AND showTitle LIKE "%${qnName}%"
+			</if>
+			<if test="deliveryId != null">
+				AND ni_vote_delivery.deliveryId = #{deliveryId}
+			</if>
+			<if test="pageStatus != null">
+				AND pageStatus = #{pageStatus}
+			</if>
+			<if test="deliveryStatus != null">
+				AND status = #{deliveryStatus}
+			</if>
+			<if test="starTime != null">
+				AND pTime BETWEEN #{starTime} AND #{endTime}
+			</if>
+			<if test="qnType != null">
+				AND qnType = #{qnType}
+			</if>
+			AND ni_super_wanx.qnType=3
+			AND (ni_vote_delivery.status = 1 OR ni_vote_delivery.status =2)
+	<!-- 默认查询   页面列表分类 surveyQnList, 调查，awardQnList, 有奖问卷，funQnList, 吃喝玩乐，gestureQnList, 涨姿势，roseQnList, 花式开撩 -->
+			AND ni_super_wanx.superListCategory = #{superListCategory_Str} 
+		</where>
+		) a
+		ORDER BY
+		pageStatus,isTop,showOrder
+	</select>
+
+	<!-- 批量发布 -->
+	<update id="postSuperByids" parameterType="hashmap">
+		UPDATE ni_super_wanx
+		SET pageStatus = #{state},pTime=#{pTime},uTime=#{uTime}
+		WHERE 
+		deliveryId=#{deliveryIds} AND qnType=#{qnTypes} AND superListCategory=#{superListCategory}
+
+	</update>
+
+	<!-- 批量撤销 -->
+	<update id="revokeSuperByids_super" parameterType="hashmap" statementType="CALLABLE">
+		{call revokeSuperByids_super(#{state},#{deliveryIds},#{qnTypes},#{uTime},#{superListCategory})}
+	</update>
+
+	<update id="topSuper" parameterType="hashmap">
+		UPDATE ni_super_wanx
+		SET
+		isTop = 1,uTime=#{uTime}
+		WHERE deliveryId=#{deliveryId} AND
+		qnType=#{qnType} AND superListCategory = #{superListCategory}
+		
+	</update>
+
+	<update id="topCancelSuper" parameterType="hashmap">
+		UPDATE ni_super_wanx
+		SET
+		isTop = 2,uTime=#{uTime}
+		WHERE deliveryId=#{deliveryId} AND
+		qnType=#{qnType} AND superListCategory = #{superListCategory}
+	</update>
+	
+	<!-- 添加到三更的时候 , 根据投放id判断该投放是否存在 -->
+	<select id="searchQnTitleById" parameterType="hashmap" resultMap="superListMap">
+		<if test="itemType == 1">
+			SELECT
+			ni_survey_delivery.showTitle,ni_survey_delivery.status
+			FROM
+			ni_survey_delivery
+			WHERE
+			ni_survey_delivery.deliveryId=#{itemId}
+		</if>
+		<if test="itemType == 2">
+			SELECT ni_assess_delivery.showTitle,ni_assess_delivery.status
+			FROM ni_assess_delivery
+			WHERE ni_assess_delivery.deliveryId = #{itemId}
+		</if>
+		<if test="itemType == 3">
+			SELECT
+			ni_vote_delivery.showTitle,ni_vote_delivery.status
+			FROM
+			ni_vote_delivery
+			WHERE
+			ni_vote_delivery.deliveryId=#{itemId}
+		</if>
+	</select>
+
+	<select id="searchSuperDeliveryFromList" parameterType="int"
+		resultMap="superListMap">
+		SELECT
+		ni_super_wanx.pageStatus
+		FROM
+		ni_super_wanx
+		WHERE
+		ni_super_wanx.deliveryId=#{deliveryId} AND
+		ni_super_wanx.qnType=#{qnType}
+
+	</select>
+
+	<insert id="addSuperDeliveryToList" parameterType="com.newIns.model.page.NiSuperListItem"
+		statementType="CALLABLE">
+		{call
+		addSuperDeliveryToList(#{deliveryId},#{uTime},#{qnType})}
+	</insert>
+
+	<update id="replaceSuperDelivery" parameterType="com.newIns.model.page.NiSuperListItem">
+		UPDATE
+		ni_super_wanx
+		<if test="qnType == 1">
+			SET
+			deliveryId = #{deliveryId},qnId=(select
+			sqnId from
+			ni_survey_delivery where
+			deliveryId=#{deliveryId}),uTime=#{uTime},qnType=1
+		</if>
+		<if test="qnType == 3">
+			SET
+			deliveryId = #{deliveryId},qnId=(select
+			vqnId from
+			ni_vote_delivery where
+			deliveryId=#{deliveryId}),uTime=#{uTime},qnType=3
+		</if>
+
+		WHERE
+		showOrder=#{showOrder}
+	</update>
+
+	<!-- 批量删除问卷 -->
+	<delete id="deleteSuperByIds" parameterType="hashmap">
+		DELETE FROM ni_super_wanx
+		WHERE deliveryId = #{deliveryIds} AND qnType=#{qnTypes} AND superListCategory=#{superListCategory}
+
+	</delete>
+	
+	<!-- 上移动 -->
+	<update id="moveUpSuper" parameterType="hashmap"
+		statementType="CALLABLE">
+		{call
+		moveUpSuper(#{deliveryId},#{qnType},#{showOrder},#{lastShowOrder},
+		#{lastDeliveryId},#{lastQnType},#{uTime},#{superListCategory_Str},#{lastSuperListCategory_Str})}
+	</update>
+
+	<update id="moveDownSuper" parameterType="hashmap"
+		statementType="CALLABLE">
+		{call
+		moveDownSuper(#{deliveryId},#{qnType},#{showOrder},#{nextShowOrder},
+		#{nextDeliveryId},#{nextQnType},#{uTime},#{superListCategory},#{nextSuperListCategory})}
+	</update>
+	
+	  <!-- 定时发布 检测时间 发布三更页面 -->
+	  <update id="updateStateByTimer">
+		 UPDATE ni_super_wanx SET pageStatus = 3 
+		 WHERE NOW() > timer AND pageStatus = 2
+	  </update>
+	
+	<!-- 保存 定时发布时间 , 设置定时状态 -->
+	<update id="updateStateById_timer" parameterType="com.newIns.model.page.NiSuperWanx">
+		UPDATE ni_super_wanx
+	  	<set>
+	  		pageStatus = 2,
+	  		<if test="timer != null ">
+	  			timer = #{timer},
+	  		</if>
+	  	</set>
+		WHERE deliveryId = #{deliveryId} AND qnType=#{qnType} AND superListCategory=#{superListCategory}
+	</update>
+
+</mapper>

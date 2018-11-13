@@ -1,0 +1,348 @@
+.resultArea {
+    font-size: 14px;
+    text-align: left;
+    padding: 10px;
+    width:414px;
+    height:736px;
+    margin-left:35%;
+    display:none;
+}
+.editor_box{
+	margin-left:25%;
+}
+.qe_Profile{
+	padding-top:5%;
+	padding-left:20%;
+}
+.editor_box p{
+	color:black;
+}
+/**
+ * 閿熸枻鎷烽敓鏂ゆ嫹閿熸枻鎷烽敓鏂ゆ嫹閿熸枻鎷锋ā閿熸枻鎷� */
+
+
+.assess-result-report table{
+	margin-left: 25%;
+}
+.assess-result-report td.assess-result-reportdescription-text p{
+	text-align: center;
+	font-size: 15px;
+	color: #008000;
+	margin-top:5px;
+}
+.assess-result-report table hr{
+	height:3px;
+	border:none;
+	border-top:1px solid #008000
+}
+.assess-result-report .assessresult-baogao-content{
+	width: 90%;
+	margin-top: 2%;
+}
+.assess-result-report .assessresult-baogao-content li{
+	font-size: 13px;
+}
+.assess-result-reportdescription{
+	background: white;
+	padding-top: 2%;
+	padding-bottom: 2%;
+}
+.assess-result-report .assessresult-baogao-content ul{
+	margin: 0px;
+}
+.assess-result-report .assessresult-abstract{
+	background-color: white;
+	margin-top: 5px;
+	padding-top: 2%;
+	padding-bottom: 2%;
+}
+ p.assessresult-abstract-title{
+	font-size: 14px;
+	margin-left: 22%;
+	padding-bottom: 2%;
+}
+.assess-result-report .assessresult-abstract .assessresult-abstract-content-box p.assessresult-abstract-content-text{
+	width: 90%;
+	font-size: 13px;
+	text-indent: 2em;
+	margin-left:5%;
+	padding-left:18px;
+}
+.assess-result-report .assessresult-abstract .assessresult-abstract-content-box{
+	margin-top: 2%;
+}
+.assessresult-yourperformance{
+	background-color:white;
+	margin-top:2%;
+	padding-bottom:2%;
+	padding-top:2%;
+	display: none;
+}
+p.assessresult-yourperformance-content-top{
+	font-size:13px;
+	width:90%;
+	margin-left:5%;
+	text-indent:2em;
+}
+p.assessresult-yourperformance-content-tag{
+	font-size:13px;
+	width:90%;
+	margin-left:5%;
+}
+.assessresult-yourperformance-content-box span.yourperformancetag-text{
+	color: #008000;
+}
+/**
+ * 缁撮敓鏂ゆ嫹涓� */
+.dimension-one-head{
+	background-color:white;
+	margin-top:5px;
+	padding-top:2%;
+	padding-bottom:2%;
+}
+.dimension-one-head p.assessresult-abstract-content-text{
+	width:90%;
+	margin-left:5%;
+	font-size: 13px;
+	text-indent: 2em;
+}
+.dimension-assessresult-yourperformance{
+	background-color:white;
+	padding-bottom:2%;
+	padding-top:2%;
+}
+.dimension-reasonanalysis-box{
+	background-color:white;
+	padding-top:2%;
+	padding-bottom: 2%;
+}
+.dimension-reasonanalysis-box .reasonanalysis-contentbox{
+	width:90%;
+	margin-left:5%;
+	margin-top:2%;
+}
+.dimension-reasonanalysis-box .reasonanalysis-contentbox p.reasonanalysis-content{
+	font-size:13px;
+	text-indent:2em;
+}
+.dimension-two-box{
+	display: none;
+}
+/**
+ * 缁撮敓鏂ゆ嫹閿熸枻鎷� */
+.dimension-three-box{
+	display: none;
+}
+/**
+ * 缁撮敓鏂ゆ嫹閿熸枻鎷� */
+.dimension-four-box{
+	display: none;
+}
+/**
+ * 缁撮敓鏂ゆ嫹閿熸枻鎷� */
+.dimension-five-box{
+	display: none;
+}
+/**
+ * 缁撮敓鏂ゆ嫹閿熸枻鎷烽敓绲沬v
+ */
+.dimension-one-box{
+	display: none;
+}
+/**
+ * 
+ */
+.reasonanalysis-box{
+	background-color:white;
+	margin-top:2%;
+	padding-top:2%;
+	padding-bottom: 2%;
+	display: none;
+}
+.reasonanalysis-box .reasonanalysis-contentbox{
+	width:90%;
+	margin-left:5%;
+	margin-top: 2%;
+}
+.reasonanalysis-box .reasonanalysis-contentbox p.reasonanalysis-content{
+	font-size: 13px;
+	text-indent: 2em;
+}
+.assess-result-report .littlestory-box{
+	background:white;
+	margin-top:2%;
+	padding-top:2%;
+	padding-bottom:2%;
+	display: none;
+}
+.littlestory-box .littlestory-contentbox{
+	width:90%;
+	margin-left:5%;
+	margin-top:2%;
+}
+.littlestory-box .littlestory-contentbox p.littlestory-content-text{
+	font-size:13px;
+	text-indent: 2em;
+}
+.assess-result-report .tips-box{
+	background:white;
+	margin-top:2%;
+	padding-top:2%;
+	padding-bottom:2%;
+	display: none;
+}
+.assess-result-report .tips-box .tips-contentbox{
+	width:90%;
+	margin-left:5%;
+}
+.assess-result-report .tips-box .tips-contentbox p.tips-content-text{
+	font-size:13px;
+	text-indent:2em;
+	margin-top:2%;
+}
+.assess-result-report .recommended-box{
+	background:white;
+	margin-top:2%;
+	padding-top:2%;
+	padding-bottom:2%;
+	display: none;
+}
+.recommended-box .recommended-contentbox{
+	text-align:center;
+	margin-top:2%;
+}
+.recommended-contentbox p.recommended-content{
+	font-size:13px;
+}
+.assess-result-report .activity-box{
+	background:white;
+	margin-top:2%;
+	padding-top:2%;
+	padding-bottom:2%;
+	display: none;
+}
+.activity-box .activity-contentbox{
+	padding-top:2%;
+	width: 90%;
+	margin-left: 5%;
+}
+.activity-contentbox p.activity-content-text{
+	font-size: 13px;
+	text-indent:2em;
+}
+.assess-result-report .operation-box{
+	background-color: white;
+	margin-top: 2%;
+	padding-top: 5%;
+	padding-bottom: 2%;
+	display: none;
+}
+.operation-box .mui-col-sm-3.mui-col-xs-3.operation-row{
+	border: 1px solid #C0C0C0;
+	margin-left:6%;
+	width:25%;
+	height:1.5em;
+	border-radius:15px;
+}
+.operation-box p.operation-true-text{
+	float: left;
+	font-size: 13px;
+	width: 25%;
+	margin-left: 15%;
+}
+.operation-box p.operation-true-number{
+	font-size:13px;
+	white-space:nowrap;
+	overflow: hidden;
+	text-align: center;
+}
+.operation-box p.operation-false-text{
+	float: left;
+	font-size: 13px;
+	width: 40%;
+	margin-left: 10%;
+}
+.operation-box p.operation-false-number{
+	font-size:13px;
+	white-space:nowrap;
+	overflow: hidden;
+	text-align: center;
+}
+.operation-box p.operation-reward-text{
+	float: left;
+	font-size: 13px;
+	width: 20%;
+	margin-left: 15%;
+}
+.operation-box p.operation-reward-number{
+	font-size:13px;
+	white-space:nowrap;
+	overflow: hidden;
+	text-align: center;
+}
+.operation-box .operation-contentbox{
+	width: 90%;
+	margin-left: 5%;
+	margin-top: 5%;
+}
+.operation-contentbox p.operation-content-text{
+	font-size:13px;
+	color:#008000;
+	text-indent: 2em;
+}
+.assess-result-report .behavior-box{
+	background-color:white;
+	text-align:center;
+	font-size:0.8em;
+	padding-bottom:2%;
+}
+.assess-result-report .behavior-box img{
+	width: 8%;
+}
+.assess-result-report div#behavior-n-box{
+	width: 45%;
+	margin-left: 30%;
+}
+
+.colse-img{
+	width:30px;
+	margin-top:-7px;
+	padding: 0px;
+}
+/**
+ *閿熸枻鎷烽敓鎺ュ府鎷烽挳 
+ */
+button.mui-btn.mui-btn-primary.mui-btn-outlined.increase-button{
+	margin-left:40%;
+	margin-top:5%;
+}
+
+/**
+ * 褰曢敓鏂ゆ嫹閿熸枻鎷蜂範閿熻剼锟�*/
+.insert-ok{
+	margin-top:5%
+}
+/**
+ * 閿熸枻鎷烽敓鏂ゆ嫹
+ */
+.add-button{
+	margin-left:36%;
+	margin-top:5%;
+}
+.assess-result-report p{
+	color: #615e5e;
+}
+.wangEditor-ok{
+	margin-left: 40%;
+	margin-top:10%;
+}
+.wangEditor-box{
+	margin-left: -25%;
+	margin-top: 5%;
+	background-color: white;
+	
+}
+input.title-text{
+	width:100px;
+	height:0px;
+}

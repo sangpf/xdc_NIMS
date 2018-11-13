@@ -1,0 +1,87 @@
+	//mui初始化
+	mui.init();
+
+	/**
+	 * “展开”、“收起”报告
+	 */
+	function changeStyle() {
+	   
+	   var reportState=document.getElementById('behavior-n-box').getAttribute('state');
+	   //判断是展开还是收起状态
+	   if(reportState=='true'){
+	   		//进入这里表示当前报告是收起状态
+	   		//1.将标签的state属性设置为false表示已经是展开状态的
+	   		document.getElementById('behavior-n-box').setAttribute('state','false')
+	   		//2.需要将文本和图片换成收起状态的
+	   		document.getElementById('behavior-img').setAttribute('src','images/tap-up.png')
+	   		document.getElementById('behavior-text').innerHTML='收起详细报告'
+	   		//3.将隐藏的各个报告区域显示出来
+	   		//先判断要显示的标签id是否存在，如果存在再显示，否则会报错
+	   		//显示"你的表现区域"
+	   		if(document.getElementById('assessresult-yourperformance')!=null){
+	   			document.getElementById('assessresult-yourperformance').style.display='block';
+	   		}
+	   		//显示"原因分析区域"
+	   		if(document.getElementById('reasonanalysis-box')!=null){
+	   			document.getElementById('reasonanalysis-box').style.display='block'
+	   		}
+	   		//显示"小故事区域"
+	   		if(document.getElementById('littlestory-box')!=null){
+	   			document.getElementById('littlestory-box').style.display='block'
+	   		}
+	   		//显示"小贴士区域"
+	   		if(document.getElementById('tips-box')!=null){
+	   			document.getElementById('tips-box').style.display='block'
+	   		}
+	   		//显示"推荐阅读区域"
+	   		if(document.getElementById('recommended-box')!=null){
+	   			document.getElementById('recommended-box').style.display='block'
+	   		}
+	   		//显示"活动提示区域"
+	   		if(document.getElementById('activity-box')!=null){
+	   			document.getElementById('activity-box').style.display='block'
+	   		}
+	   		//显示"操作区域"
+	   		if(document.getElementById('operation-box')!=null){
+	   			document.getElementById('operation-box').style.display='block'
+	   		}
+	   }else{
+	   		//进入这里表示当前报告是展开状态
+	   		//1.将标签的state属性设置为true表示已经是未展开状态的
+	   		document.getElementById('behavior-n-box').setAttribute('state','true')
+	   		//2.需要将文本和图片换成收起状态的
+	   		document.getElementById('behavior-img').setAttribute('src','images/tap-dowm.png')
+	   		document.getElementById('behavior-text').innerHTML='查看详细报告'
+	   		//先判断要隐藏的标签id是否存在，如果存在再隐藏，否则会报错
+	   		//隐藏"你的表现区域"
+	   		if(document.getElementById('assessresult-yourperformance')!=null){
+	   			document.getElementById('assessresult-yourperformance').style.display='none';
+	   		}
+	   		//隐藏"原因分析区域"
+	   		if(document.getElementById('reasonanalysis-box')!=null){
+	   			document.getElementById('reasonanalysis-box').style.display='none'
+	   		}
+	   		//隐藏"小故事区域"
+	   		if(document.getElementById('littlestory-box')!=null){
+	   			document.getElementById('littlestory-box').style.display='none'
+	   		}
+	   		//隐藏"小贴士区域"
+	   		if(document.getElementById('tips-box')!=null){
+	   			document.getElementById('tips-box').style.display='none'
+	   		}
+	   		//隐藏"推荐阅读区域"
+	   		if(document.getElementById('recommended-box')!=null){
+	   			document.getElementById('recommended-box').style.display='none'
+	   		}
+	   		//隐藏"活动提示区域"
+	   		if(document.getElementById('activity-box')!=null){
+	   			document.getElementById('activity-box').style.display='none'
+	   		}
+	   		//隐藏"操作区域"
+	   		if(document.getElementById('operation-box')!=null){
+	   			document.getElementById('operation-box').style.display='none'
+	   		}
+	   }
+	}
+
+

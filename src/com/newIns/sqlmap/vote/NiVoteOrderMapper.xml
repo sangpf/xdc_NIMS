@@ -1,0 +1,376 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.newIns.dao.vote.NiVoteOrderMapper" >
+  <resultMap id="BaseResultMap" type="com.newIns.model.vote.NiVoteOrder" >
+    <id column="orderId" property="orderid" jdbcType="INTEGER" />
+    <result column="userId" property="userid" jdbcType="INTEGER" />
+    <result column="vqnId" property="vqnid" jdbcType="INTEGER" />
+    <result column="sequenceNum" property="sequencenum" jdbcType="INTEGER" />
+    <result column="orderCTime" property="orderctime" jdbcType="TIMESTAMP" />
+    <result column="answerBTime" property="answerbtime" jdbcType="TIMESTAMP" />
+    <result column="answerETime" property="answeretime" jdbcType="TIMESTAMP" />
+    <result column="orderStatus" property="orderstatus" jdbcType="TINYINT" />
+    <result column="awardId" property="awardid" jdbcType="INTEGER" />
+    <result column="reviewer" property="reviewer" jdbcType="VARCHAR" />
+    <result column="awardGetStatus" property="awardgetstatus" jdbcType="TINYINT" />
+    <result column="awardPayStatus" property="awardpaystatus" jdbcType="TINYINT" />
+    <result column="awardGetTime" property="awardgettime" jdbcType="TIMESTAMP" />
+    <result column="awardPayTime" property="awardpaytime" jdbcType="TIMESTAMP" />
+    <result column="comment" property="comment" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    orderId, userId, vqnId, sequenceNum, orderCTime, answerBTime, answerETime, orderStatus, 
+    awardId, reviewer, awardGetStatus, awardPayStatus, awardGetTime, awardPayTime, comment
+  </sql>
+  
+    <!-- 根据订单表主键查询记录数 -->
+  <select id="selectCountNumbysqnId" resultType="int" parameterType="java.lang.Integer">
+  	 SELECT COUNT(orderId) FROM ni_vote_order WHERE vqnId = #{id}
+  </select>
+  
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.newIns.model.vote.NiVoteOrderExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from ni_vote_order
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from ni_vote_order
+    where orderId = #{orderid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from ni_vote_order
+    where orderId = #{orderid,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.newIns.model.vote.NiVoteOrderExample" >
+    delete from ni_vote_order
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.newIns.model.vote.NiVoteOrder" >
+    insert into ni_vote_order (orderId, userId, vqnId, 
+      sequenceNum, orderCTime, answerBTime, 
+      answerETime, orderStatus, awardId, 
+      reviewer, awardGetStatus, awardPayStatus, 
+      awardGetTime, awardPayTime, comment
+      )
+    values (#{orderid,jdbcType=INTEGER}, #{userid,jdbcType=INTEGER}, #{vqnid,jdbcType=INTEGER}, 
+      #{sequencenum,jdbcType=INTEGER}, #{orderctime,jdbcType=TIMESTAMP}, #{answerbtime,jdbcType=TIMESTAMP}, 
+      #{answeretime,jdbcType=TIMESTAMP}, #{orderstatus,jdbcType=TINYINT}, #{awardid,jdbcType=INTEGER}, 
+      #{reviewer,jdbcType=VARCHAR}, #{awardgetstatus,jdbcType=TINYINT}, #{awardpaystatus,jdbcType=TINYINT}, 
+      #{awardgettime,jdbcType=TIMESTAMP}, #{awardpaytime,jdbcType=TIMESTAMP}, #{comment,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.newIns.model.vote.NiVoteOrder" >
+    insert into ni_vote_order
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="orderid != null" >
+        orderId,
+      </if>
+      <if test="userid != null" >
+        userId,
+      </if>
+      <if test="vqnid != null" >
+        vqnId,
+      </if>
+      <if test="sequencenum != null" >
+        sequenceNum,
+      </if>
+      <if test="orderctime != null" >
+        orderCTime,
+      </if>
+      <if test="answerbtime != null" >
+        answerBTime,
+      </if>
+      <if test="answeretime != null" >
+        answerETime,
+      </if>
+      <if test="orderstatus != null" >
+        orderStatus,
+      </if>
+      <if test="awardid != null" >
+        awardId,
+      </if>
+      <if test="reviewer != null" >
+        reviewer,
+      </if>
+      <if test="awardgetstatus != null" >
+        awardGetStatus,
+      </if>
+      <if test="awardpaystatus != null" >
+        awardPayStatus,
+      </if>
+      <if test="awardgettime != null" >
+        awardGetTime,
+      </if>
+      <if test="awardpaytime != null" >
+        awardPayTime,
+      </if>
+      <if test="comment != null" >
+        comment,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="orderid != null" >
+        #{orderid,jdbcType=INTEGER},
+      </if>
+      <if test="userid != null" >
+        #{userid,jdbcType=INTEGER},
+      </if>
+      <if test="vqnid != null" >
+        #{vqnid,jdbcType=INTEGER},
+      </if>
+      <if test="sequencenum != null" >
+        #{sequencenum,jdbcType=INTEGER},
+      </if>
+      <if test="orderctime != null" >
+        #{orderctime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="answerbtime != null" >
+        #{answerbtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="answeretime != null" >
+        #{answeretime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="orderstatus != null" >
+        #{orderstatus,jdbcType=TINYINT},
+      </if>
+      <if test="awardid != null" >
+        #{awardid,jdbcType=INTEGER},
+      </if>
+      <if test="reviewer != null" >
+        #{reviewer,jdbcType=VARCHAR},
+      </if>
+      <if test="awardgetstatus != null" >
+        #{awardgetstatus,jdbcType=TINYINT},
+      </if>
+      <if test="awardpaystatus != null" >
+        #{awardpaystatus,jdbcType=TINYINT},
+      </if>
+      <if test="awardgettime != null" >
+        #{awardgettime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="awardpaytime != null" >
+        #{awardpaytime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="comment != null" >
+        #{comment,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.newIns.model.vote.NiVoteOrderExample" resultType="java.lang.Integer" >
+    select count(*) from ni_vote_order
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update ni_vote_order
+    <set >
+      <if test="record.orderid != null" >
+        orderId = #{record.orderid,jdbcType=INTEGER},
+      </if>
+      <if test="record.userid != null" >
+        userId = #{record.userid,jdbcType=INTEGER},
+      </if>
+      <if test="record.vqnid != null" >
+        vqnId = #{record.vqnid,jdbcType=INTEGER},
+      </if>
+      <if test="record.sequencenum != null" >
+        sequenceNum = #{record.sequencenum,jdbcType=INTEGER},
+      </if>
+      <if test="record.orderctime != null" >
+        orderCTime = #{record.orderctime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.answerbtime != null" >
+        answerBTime = #{record.answerbtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.answeretime != null" >
+        answerETime = #{record.answeretime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.orderstatus != null" >
+        orderStatus = #{record.orderstatus,jdbcType=TINYINT},
+      </if>
+      <if test="record.awardid != null" >
+        awardId = #{record.awardid,jdbcType=INTEGER},
+      </if>
+      <if test="record.reviewer != null" >
+        reviewer = #{record.reviewer,jdbcType=VARCHAR},
+      </if>
+      <if test="record.awardgetstatus != null" >
+        awardGetStatus = #{record.awardgetstatus,jdbcType=TINYINT},
+      </if>
+      <if test="record.awardpaystatus != null" >
+        awardPayStatus = #{record.awardpaystatus,jdbcType=TINYINT},
+      </if>
+      <if test="record.awardgettime != null" >
+        awardGetTime = #{record.awardgettime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.awardpaytime != null" >
+        awardPayTime = #{record.awardpaytime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.comment != null" >
+        comment = #{record.comment,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update ni_vote_order
+    set orderId = #{record.orderid,jdbcType=INTEGER},
+      userId = #{record.userid,jdbcType=INTEGER},
+      vqnId = #{record.vqnid,jdbcType=INTEGER},
+      sequenceNum = #{record.sequencenum,jdbcType=INTEGER},
+      orderCTime = #{record.orderctime,jdbcType=TIMESTAMP},
+      answerBTime = #{record.answerbtime,jdbcType=TIMESTAMP},
+      answerETime = #{record.answeretime,jdbcType=TIMESTAMP},
+      orderStatus = #{record.orderstatus,jdbcType=TINYINT},
+      awardId = #{record.awardid,jdbcType=INTEGER},
+      reviewer = #{record.reviewer,jdbcType=VARCHAR},
+      awardGetStatus = #{record.awardgetstatus,jdbcType=TINYINT},
+      awardPayStatus = #{record.awardpaystatus,jdbcType=TINYINT},
+      awardGetTime = #{record.awardgettime,jdbcType=TIMESTAMP},
+      awardPayTime = #{record.awardpaytime,jdbcType=TIMESTAMP},
+      comment = #{record.comment,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.newIns.model.vote.NiVoteOrder" >
+    update ni_vote_order
+    <set >
+      <if test="userid != null" >
+        userId = #{userid,jdbcType=INTEGER},
+      </if>
+      <if test="vqnid != null" >
+        vqnId = #{vqnid,jdbcType=INTEGER},
+      </if>
+      <if test="sequencenum != null" >
+        sequenceNum = #{sequencenum,jdbcType=INTEGER},
+      </if>
+      <if test="orderctime != null" >
+        orderCTime = #{orderctime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="answerbtime != null" >
+        answerBTime = #{answerbtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="answeretime != null" >
+        answerETime = #{answeretime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="orderstatus != null" >
+        orderStatus = #{orderstatus,jdbcType=TINYINT},
+      </if>
+      <if test="awardid != null" >
+        awardId = #{awardid,jdbcType=INTEGER},
+      </if>
+      <if test="reviewer != null" >
+        reviewer = #{reviewer,jdbcType=VARCHAR},
+      </if>
+      <if test="awardgetstatus != null" >
+        awardGetStatus = #{awardgetstatus,jdbcType=TINYINT},
+      </if>
+      <if test="awardpaystatus != null" >
+        awardPayStatus = #{awardpaystatus,jdbcType=TINYINT},
+      </if>
+      <if test="awardgettime != null" >
+        awardGetTime = #{awardgettime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="awardpaytime != null" >
+        awardPayTime = #{awardpaytime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="comment != null" >
+        comment = #{comment,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where orderId = #{orderid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.newIns.model.vote.NiVoteOrder" >
+    update ni_vote_order
+    set userId = #{userid,jdbcType=INTEGER},
+      vqnId = #{vqnid,jdbcType=INTEGER},
+      sequenceNum = #{sequencenum,jdbcType=INTEGER},
+      orderCTime = #{orderctime,jdbcType=TIMESTAMP},
+      answerBTime = #{answerbtime,jdbcType=TIMESTAMP},
+      answerETime = #{answeretime,jdbcType=TIMESTAMP},
+      orderStatus = #{orderstatus,jdbcType=TINYINT},
+      awardId = #{awardid,jdbcType=INTEGER},
+      reviewer = #{reviewer,jdbcType=VARCHAR},
+      awardGetStatus = #{awardgetstatus,jdbcType=TINYINT},
+      awardPayStatus = #{awardpaystatus,jdbcType=TINYINT},
+      awardGetTime = #{awardgettime,jdbcType=TIMESTAMP},
+      awardPayTime = #{awardpaytime,jdbcType=TIMESTAMP},
+      comment = #{comment,jdbcType=VARCHAR}
+    where orderId = #{orderid,jdbcType=INTEGER}
+  </update>
+</mapper>

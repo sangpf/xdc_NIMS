@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+  <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper .//EN" "http://www.mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.newIns.dao.NiCarouselMapper">
+
+	<resultMap type="com.newIns.model.NiAdInfo" id="AdInfoMap">
+		<result property="adId" column="adId" />
+		<result property="adTitle" column="adTitle" />
+		<result property="adType" column="adTpye" />
+		<result property="adImg" column="adImg" />
+		<result property="adLink" column="adLink" />
+		<result property="adETime" column="adETime" />
+		<result property="adBTime" column="adBTime" />
+		<result property="adStatus" column="adStatus" />
+	</resultMap>
+
+	<!-- 查询轮播图列表 -->
+	<select id="loadCarouselList" resultType="com.newIns.model.NiCarousel" >
+		select
+		ni_carousel_wanx.*,ni_ad_info.*
+		from
+		ni_ad_info,ni_carousel_wanx
+		where
+		ni_ad_info.adId=ni_carousel_wanx.adId
+		order by
+		ni_carousel_wanx.channelId,
+		ni_carousel_wanx.showOrder
+	</select>
+
+	<update id="postCarouselByids" parameterType="hashmap">
+		UPDATE ni_carousel_wanx
+		SET status = #{state}, pTime= #{pTime},
+		uTime=#{uTime}
+		WHERE adId IN
+		<foreach collection="adIds" item="adIds" index="index" open="("
+			separator="," close=")">
+			#{adIds}
+		</foreach>
+	</update>
+
+	<update id="revokeCarouselByids" parameterType="hashmap">
+		UPDATE ni_carousel_wanx
+		SET status = #{state}, uTime= #{uTime}
+		WHERE
+		adId IN
+		<foreach collection="adIds" item="adIds" index="index" open="("
+			separator="," close=")">
+			#{adIds}
+		</foreach>
+	</update>
+
+	<select id="loadAdInfoList" resultMap="AdInfoMap">
+		select *
+		from
+		ni_ad_info
+	</select>
+
+	<update id="replaceCarousel" parameterType="hashmap">
+	
+		<if test="adImg==''">
+			UPDATE
+			ni_carousel_wanx set adId=(select adId from
+			ni_ad_info where
+			adTitle=#{adTitle}),uTime=#{uTime} 
+			where
+			carouselId=#{carouselId}
+		</if>
+		
+		<if test="adImg!=''">
+			UPDATE
+			ni_carousel_wanx set adId=(select adId from
+			ni_ad_info where
+			adTitle=#{adTitle}),uTime=#{uTime} 
+			where
+			carouselId=#{carouselId};
+			UPDATE
+			ni_ad_info set adImg=#{adImg} 
+			where
+			adTitle=#{adTitle}
+		</if>
+		
+	</update>
+	
+		<update id="moveUpCarousel" parameterType="hashmap" statementType="CALLABLE">
+		{call
+		moveUpCarousel(#{carouselId},#{showOrder},#{lastShowOrder},#{lastCarouselId},#{uTime})}
+	</update>
+
+	<update id="moveDownCarousel" parameterType="hashmap"
+		statementType="CALLABLE">
+		{call
+		moveDownCarousel(#{carouselId},#{showOrder},#{nextShowOrder},#{nextCarouselId},#{uTime})}
+	</update>
+	
+	<!-- 根据主键查询 -->
+	<select id="findById" parameterType="java.lang.Integer" resultType="com.newIns.model.NiCarousel">
+		SELECT 
+		ni_carousel_wanx.*,
+		ni_ad_info.*
+		from ni_carousel_wanx,ni_ad_info
+		where 
+		ni_carousel_wanx.adId = ni_ad_info.adId
+		AND ni_carousel_wanx.carouselId = #{carouselId}
+	</select>
+	
+	<!-- 新增 -->
+	<insert id="insert" parameterType="com.newIns.model.NiCarousel">
+		INSERT INTO ni_carousel_wanx (
+		adId,deliveryId,qnType,showOrder,pTime,uTime,operator,status,channelId,comment
+		)
+		VALUES (
+		#{adId},#{deliveryId},#{qnType},#{showOrder},#{pTime},#{uTime},#{operator},#{status},#{channelId},#{comment})
+	</insert>
+	
+	<!-- 编辑 -->
+	<update id="updateByEntity" parameterType="com.newIns.model.NiCarousel">
+		UPDATE ni_carousel_wanx
+		<set>
+			<if test="channelId != null and channelId != '' ">
+				channelId = #{channelId},
+			</if>
+			<if test="adId != null and adId != '' ">
+				adId = #{adId},
+			</if>
+		
+		</set>
+		where carouselId = #{carouselId}
+	</update>
+	
+</mapper>

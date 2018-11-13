@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.newIns.dao.user.AuthorDao">
+	
+	
+	
+	
+	<select id="author_List" parameterType="hashmap" resultType="com.newIns.model.user.Author">
+		
+		SELECT *
+			FROM ni_author
+	</select>
+	
+	<select id="selectOneById" parameterType="java.lang.Integer" resultType="com.newIns.model.user.Author">
+		SELECT *
+			FROM ni_author
+			WHERE id =  #{id}
+	</select>
+	
+	<!-- 根据id编辑 -->
+	<update id="updateById" parameterType="com.newIns.model.user.Author">
+		UPDATE ni_author 
+		<set>
+			<if test="userName != null and userName != '' ">
+				userName = #{userName},
+			</if>
+			<if test="introduce != null and introduce != '' ">
+				introduce = #{introduce},
+			</if>
+			<if test="headImg != null and headImg != '' ">
+				headImg = #{headImg},
+			</if>
+		</set>
+		WHERE id = #{id}
+		
+	</update>
+	
+	<insert id="insert" parameterType="com.newIns.model.user.Author">
+		INSERT INTO ni_author 
+			(userName,introduce,headImg) 
+			VALUES (
+				#{userName},#{introduce},#{headImg}
+			)
+		
+	</insert>
+
+
+</mapper>

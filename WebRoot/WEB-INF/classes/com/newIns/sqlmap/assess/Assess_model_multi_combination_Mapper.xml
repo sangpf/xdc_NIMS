@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.newIns.dao.assess.Assess_model_multi_combination_Dao" >
+
+  <!-- 新增 -->
+  <insert id="insert" parameterType="com.newIns.model.assess.Assess_model_multi_combination" >
+    INSERT INTO ni_assess_model_multi_combination (
+	    aqnId,
+		dimension,
+		section,
+		upperNum,
+		lowNum
+		)
+    values (
+    	#{aqnId}, #{dimension}, #{section}, #{upperNum}, #{lowNum}
+    	)
+  </insert>
+  
+  <insert id="insert_Assess_model_multi_combination_relation" parameterType="com.newIns.model.assess.Assess_model_multi_combination_relation">
+   	INSERT INTO ni_assess_model_multi_combination_relation (
+	    aqnId,
+		dimension_combination,
+		resultSummary,
+		resultDetail
+		)
+    values (
+    	#{aqnId}, #{dimension_combination}, #{resultSummary}, #{resultDetail}
+    	)
+  </insert>
+
+	<!-- 查询测评模型 结果页列表 -->
+    <select id="selectAssessResult" resultType="com.newIns.model.assess.AssessResult" parameterType="java.lang.Integer">
+		SELECT 
+			dimension_combination as dimensionStr,
+			resultSummary,
+			resultDetail
+		FROM ni_assess_model_multi_combination_relation
+		WHERE aqnId = #{aqnId}
+	</select>
+	
+	<update id="udpateDetailRelationResult" parameterType="hashmap">
+		UPDATE ni_assess_model_multi_combination_relation
+		SET resultDetail = #{resultDetail}
+		WHERE 
+			aqnId = #{aqnId}
+			AND dimension_combination = #{dimensionStr}
+	</update>
+	
+	<update id="updateDetailRelationResult_assessResult" parameterType="com.newIns.model.assess.AssessResult">
+		UPDATE ni_assess_model_multi_combination_relation
+		<set>
+			<if test="resultSummary != null and resultSummary != '' ">
+				resultSummary = #{resultSummary},
+			</if>
+			<if test="resultDetail != null and resultDetail != '' ">
+				resultDetail = #{resultDetail},
+			</if>
+		</set>
+		WHERE 
+			aqnId = #{aqnId}
+			AND dimension_combination = #{dimensionStr}
+	</update>
+	
+	<select id="getAssess_model_multi_combination_relation_list" parameterType="hashmap" 
+			resultType="com.newIns.model.assess.Assess_model_multi_combination_relation">
+		SELECT *
+		FROM ni_assess_model_multi_combination_relation
+		WHERE aqnId = #{aqnId}
+		AND dimension_combination = #{dimension_combination}
+		
+	</select>
+
+</mapper>

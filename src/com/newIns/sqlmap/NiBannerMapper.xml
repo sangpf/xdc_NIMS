@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+  <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper .//EN" "http://www.mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.newIns.dao.NiBannerMapper">
+	<resultMap type="com.newIns.model.NiBanner" id="bannerMap">
+		<result property="adId" column="adId" />
+		<result property="adPos" column="adPos" />
+		<result property="adTitle" column="adTitle" />
+		<result property="adImg" column="adImg" />
+		<result property="adPosDes" column="adPosDes" />
+		<result property="adLink" column="adLink" />
+		<result property="pTime" column="pTime" />
+		<result property="uTime" column="uTime" />
+		<result property="status" column="status" />
+	</resultMap>
+	<resultMap type="com.newIns.model.NiAdInfo" id="AdInfoMap">
+		<result property="adId" column="adId" />
+		<result property="adTitle" column="adTitle" />
+		<result property="adType" column="adTpye" />
+		<result property="adImg" column="adImg" />
+		<result property="adLink" column="adLink" />
+		<result property="adETime" column="adETime" />
+		<result property="adBTime" column="adBTime" />
+		<result property="adStatus" column="adStatus" />
+	</resultMap>
+
+	<select id="loadBannerList" resultMap="bannerMap">
+		select
+		ni_admisc_wanx.adId,ni_admisc_wanx.adPos,ni_admisc_wanx.adPosDes,ni_ad_info.adTitle,ni_ad_info.adImg,ni_admisc_wanx.pTime,ni_admisc_wanx.uTime,ni_admisc_wanx.status
+		from
+		ni_ad_info,ni_admisc_wanx
+		where
+		ni_ad_info.adId=ni_admisc_wanx.adId
+		order by ni_admisc_wanx.adPosId
+	</select>
+
+	<update id="postBannerByids" parameterType="hashmap">
+		UPDATE ni_admisc_wanx
+		SET status = #{state},pTime= #{pTime},
+		uTime=#{uTime}
+		WHERE adPos IN
+		<foreach collection="adIds" item="adIds" index="index" open="("
+			separator="," close=")">
+			#{adIds}
+		</foreach>
+	</update>
+
+	<update id="revokeBannerByids" parameterType="hashmap">
+		UPDATE ni_admisc_wanx
+		SET status = #{state},uTime= #{uTime}
+		WHERE adPos
+		IN
+		<foreach collection="adIds" item="adIds" index="index" open="("
+			separator="," close=")">
+			#{adIds}
+		</foreach>
+	</update>
+
+	<select id="loadAdInfoList" resultMap="AdInfoMap">
+		select *
+		from
+		ni_ad_info
+	</select>
+
+	<update id="replaceBanner" parameterType="hashmap">
+		<if test="adImg==''">
+			UPDATE
+			ni_admisc_wanx set adId=(select adId from ni_ad_info
+			where
+			adTitle=#{adTitle}),uTime= #{uTime} where adPosDes=#{adPosDes}
+		</if>
+		<if test="adImg!=''">
+			UPDATE
+			ni_admisc_wanx set adId=(select adId from ni_ad_info where
+			adTitle=#{adTitle}),uTime= #{uTime} where adPosDes=#{adPosDes};
+			UPDATE
+			ni_ad_info set adImg=#{adImg} where
+			adTitle=#{adTitle}
+		</if>
+	</update>
+
+</mapper>

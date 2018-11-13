@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.newIns.dao.NiAdStatisticsMapper">
+	<!-- 基本结果集(广告统计表和广告信息表的联合结果集) -->
+	<resultMap id="BaseResultMap" type="com.newIns.model.NiAdStatistics" >
+    	<id column="adId" property="adId" jdbcType="INTEGER" />
+    	<result column="adChannel" property="adChannel" jdbcType="INTEGER" />	
+		<result column="adPosCode" property="adPosCode" jdbcType="VARCHAR" />
+		<result column="adViewCount" property="adViewCount" jdbcType="INTEGER" />
+		<result column="adTapCount" property="adTapCount" jdbcType="INTEGER" />
+		<result column="Comment" property="Comment" jdbcType="VARCHAR" />
+		<result column="adStatus" property="adStatus" jdbcType="INTEGER" />
+		<result column="adTitle" property="adTitle" jdbcType="VARCHAR" />
+	</resultMap>
+ 	<!-- 基本列(广告统计表和广告信息表的联合列) -->
+ 	<sql id="Base_Column_List" >
+	    ni_ad_statistics.adId, adChannel,adPosCode,adViewCount,
+	    adTapCount,ni_ad_statistics.Comment,adStatus,adTitle
+  	</sql>
+  	
+  	
+  	<!-- 根据条件查询 -->
+  	<select id="selectList" parameterType="hashMap" resultMap="BaseResultMap">
+  		SELECT
+  		<include refid="Base_Column_List"></include>
+  		FROM ni_ad_statistics,ni_ad_info
+  		<where>
+  			<if test="adId != null">
+  				ni_ad_statistics.adId=#{adId}
+  			</if>
+  			<if test="adTitle != null">
+  				AND ni_ad_info.adTitle LIKE CONCAT('%',#{adTitle},'%')
+  			</if>  			
+  		    <if test="adChannel != null">
+  				AND adChannel=#{adChannel}
+  			</if>
+  			<if test="adStatus != null">
+  				AND ni_ad_info.adStatus=#{adStatus}
+  			</if>
+  			AND ni_ad_statistics.adId=ni_ad_info.adId
+  		</where>
+  		
+  		ORDER BY ni_ad_statistics.adId
+  	</select>
+  	
+ 
+ 
+ 
+	
+
+</mapper>

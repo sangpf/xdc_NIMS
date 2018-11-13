@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.newIns.dao.NiReportMapper">
+	<resultMap id="reportResultMap" type="com.newIns.model.report.NiReport">
+		<id column="reportId" property="reportId" jdbcType="INTEGER" />
+		<result column="reportTitle" property="reportTitle" jdbcType="VARCHAR" />
+		<result column="reportStatus" property="reportStatus" jdbcType="TINYINT" />
+		<result column="reportImg" property="reportImg" jdbcType="VARCHAR" />
+		<result column="viewNum" property="viewNum" jdbcType="INTEGER" />
+		<result column="commentNum" property="commentNum" jdbcType="INTEGER" />
+		<result column="reportClassId" property="reportClassId"
+			jdbcType="INTEGER" />
+		<result column="reportClassName" property="reportClassName"
+			jdbcType="VARCHAR" />
+		<result column="tag1Id" property="tag1Id" jdbcType="INTEGER" />
+		<result column="tag2Id" property="tag2Id" jdbcType="INTEGER" />
+		<result column="tag3Id" property="tag3Id" jdbcType="INTEGER" />
+		<result column="tag4Id" property="tag4Id" jdbcType="INTEGER" />
+		<result column="tag1Str" property="tag1Str" jdbcType="VARCHAR" />
+		<result column="tag2Str" property="tag2Str" jdbcType="VARCHAR" />
+		<result column="tag3Str" property="tag3Str" jdbcType="VARCHAR" />
+		<result column="tag4Str" property="tag4Str" jdbcType="VARCHAR" />
+		<result column="qnId" property="qnId" jdbcType="INTEGER" />
+		<result column="qnType" property="qnType" jdbcType="TINYINT" />
+		<result column="summary" property="summary" jdbcType="VARCHAR" />
+		<result column="reportUrl" property="reportUrl" jdbcType="VARCHAR" />
+		<result column="publisher" property="publisher" jdbcType="VARCHAR" />
+		<result column="pTime" property="pTime" jdbcType="TIMESTAMP" />
+		<result column="comment" property="comment" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		reportId, reportTitle, reportStatus, reportImg,
+		baseViewNum,
+		commentNum,
+		reportClassId,
+		tag1Id, tag2Id, tag3Id, tag4Id,
+		tag1Str,
+		tag2Str, tag3Str, tag4Str, qnId,qnCollectedNum,
+		qnType,
+		summary, reportUrl, publisher,author,
+		pTime, comment
+	</sql>
+
+	<select id="selectList" resultMap="reportResultMap">
+		SELECT ni_report.*,reportClassName
+		FROM ni_report,ni_reportclass_dict
+		<where>
+			<if test="reportTitle != null">
+				reportTitle LIKE "%${reportTitle}%"
+			</if>
+			<if test="publisher != null">
+				AND publisher LIKE "%${publisher}%"
+			</if>
+			<if test="reportId != null">
+				reportId = #{reportId}
+			</if>
+			<if test="qnType != null">
+				AND qnType = #{qnType}
+			</if>
+			<if test="reportClassId != null">
+				AND ni_report.reportClassId = #{reportClassId}
+			</if>
+			<if test="starTime != null">
+				AND pTime BETWEEN #{starTime} AND #{endTime}
+			</if>
+			<choose>
+				<when test="reportStatus != null">
+					AND reportStatus = #{reportStatus}
+				</when>
+				<when test="reportStatus == null or reportStatus == ''">
+					AND reportStatus != 3
+				</when>
+				<otherwise>
+				</otherwise>
+			</choose>
+			AND ni_report.reportClassId = ni_reportclass_dict.reportClassId
+		</where>
+		ORDER BY reportId
+	</select>
+
+	<update id="updateByPrimaryKey" parameterType="com.newIns.model.report.NiReport">
+		UPDATE ni_report
+		<set>
+			<if test="reportTitle != null">
+				reportTitle = #{reportTitle, jdbcType=VARCHAR},
+			</if>
+			<if test="reportStatus != null">
+				reportStatus = #{reportStatus, jdbcType=TINYINT},
+			</if>
+			<if test="reportImg != null">
+				reportImg = #{reportImg, jdbcType=INTEGER},
+			</if>
+			<if test="viewNum != null">
+				viewNum = #{viewNum, jdbcType=VARCHAR},
+			</if>
+			<if test="commentNum != null">
+				commentNum = #{commentNum, jdbcType=INTEGER},
+			</if>
+			<if test="reportClassId != null">
+				reportClassId = #{reportClassId, jdbcType=INTEGER},
+			</if>
+			<if test="tag1Id != null">
+				tag1Id = #{tag1Id, jdbcType=INTEGER},
+			</if>
+			<if test="tag2Id != null">
+				tag2Id = #{tag2Id, jdbcType=INTEGER},
+			</if>
+			<if test="tag3Id != null">
+				tag3Id = #{tag3Id, jdbcType=INTEGER},
+			</if>
+			<if test="tag4Id != null">
+				tag4Id = #{tag4Id, jdbcType=INTEGER},
+			</if>
+			<if test="tag1Str != null">
+				tag1Str = #{tag1Str, jdbcType=VARCHAR},
+			</if>
+			<if test="tag2Str != null">
+				tag2Str = #{tag2Str, jdbcType=VARCHAR},
+			</if>
+			<if test="tag3Str != null">
+				tag3Str = #{tag3Str, jdbcType=VARCHAR},
+			</if>
+			<if test="tag4Str != null">
+				tag4Str = #{tag4Str, jdbcType=VARCHAR},
+			</if>
+			<if test="qnId != null">
+				qnId = #{qnId, jdbcType=INTEGER},
+			</if>
+			<if test="qnType != null">
+				qnType = #{qnType, jdbcType=TINYINT},
+			</if>
+			<if test="summary != null">
+				summary = #{summary, jdbcType=VARCHAR},
+			</if>
+
+			<if test="reportUrl != null">
+				reportUrl = #{reportUrl, jdbcType=VARCHAR},
+			</if>
+			<if test="publisher != null">
+				publisher = #{publisher, jdbcType=VARCHAR},
+			</if>
+			<if test="pTime != null">
+				pTime = #{pTime, jdbcType=TIMESTAMP},
+			</if>
+
+			<if test="comment != null">
+				comment = #{comment, jdbcType=VARCHAR},
+			</if>
+		</set>
+		WHERE reportId = #{reportId, jdbcType=INTEGER}
+	</update>
+
+	<insert id="insert" parameterType="com.newIns.model.report.NiReport">
+		<selectKey keyProperty="reportId" order="AFTER" resultType="java.lang.Integer">
+			select LAST_INSERT_ID()
+		</selectKey>
+		insert into ni_report (reportTitle, reportStatus,reportImg,
+		baseViewNum,qnCollectedNum,commentNum,reportClassId, tag1Id,
+		tag2Id,tag3Id, tag4Id,
+		tag1Str,tag2Str, tag3Str, tag4Str,
+		qnId, qnType,
+		summary,
+		reportUrl,
+		publisher, cTime,pTime,
+		comment,author)
+		values
+		(#{reportTitle,jdbcType=VARCHAR},
+		#{reportStatus,jdbcType=TINYINT},
+		#{reportImg,jdbcType=VARCHAR},
+		#{baseViewNum,jdbcType=VARCHAR},#{qnCollectedNum,jdbcType=VARCHAR},
+		#{commentNum,jdbcType=INTEGER},
+		#{reportClassId,jdbcType=INTEGER},
+		#{tag1Id,jdbcType=INTEGER},
+		#{tag2Id,jdbcType=INTEGER},
+		#{tag3Id,jdbcType=INTEGER}, #{tag4Id,jdbcType=INTEGER},
+		#{tag1Str,jdbcType=VARCHAR},
+		#{tag2Str,jdbcType=VARCHAR},
+		#{tag3Str,jdbcType=VARCHAR},
+		#{tag4Str,jdbcType=VARCHAR},
+		#{qnId,jdbcType=INTEGER}, #{qnType,jdbcType=TINYINT},
+		#{summary,jdbcType=VARCHAR},
+		#{reportUrl,jdbcType=VARCHAR},
+		#{publisher,jdbcType=VARCHAR},
+		#{cTime,jdbcType=TIMESTAMP},
+		#{pTime,jdbcType=TIMESTAMP},
+		#{comment,jdbcType=VARCHAR},#{author,jdbcType=VARCHAR})
+	</insert>
+
+	<select id="selectAllListByReportClassId" resultMap="reportResultMap">
+		SELECT
+		*
+
+		FROM
+		ni_report report ,
+		ni_reportclass_dict reportClass
+		WHERE
+		report.reportClassId = reportClass.reportClassId
+		ORDER BY
+		report.reportId
+
+	</select>
+
+	<select id="selectByPrimaryKey" resultMap="reportResultMap" parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from ni_report
+		where reportId = #{reportid,jdbcType=INTEGER}
+	</select>
+
+	<!-- 批量删除 -->
+	<update id="deleteReportByIds">
+		DELETE FROM ni_report
+		WHERE reportId IN
+		<foreach collection="reportIds" item="reportIds" index="index"
+			open="(" separator="," close=")">
+			#{reportIds}
+		</foreach>
+	</update>
+
+	<!-- 批量更新报告状态 -->
+	<update id="updateReportStatus">
+		UPDATE ni_report
+		SET reportStatus = #{reportStatus}
+		<if test="reportStatus == 2">
+			,pTime=NOW()
+		</if>
+		WHERE reportId IN
+		<foreach collection="reportIds" item="reportIds" index="index"
+			open="(" separator="," close=")">
+			#{reportIds}
+		</foreach>
+
+	</update>
+
+	<select id="getReportIdByReportInfo" parameterType="com.newIns.model.report.NiReport"
+		resultMap="reportResultMap">
+		select reportId from ni_report where
+		reportTitle=#{reportTitle} AND
+		qnId=#{qnId} AND
+		qnType=#{qnType} AND
+		reportClassId=#{reportClassId} AND
+		publisher=#{publisher} AND
+		author=#{author} AND
+		qnCollectedNum=#{qnCollectedNum} AND
+		baseViewNum=#{baseViewNum} AND
+		summary=#{summary} AND
+		cTime=#{cTime}
+
+	</select>
+
+	<update id="updateImgUrl" parameterType="hashmap">
+		UPDATE ni_report
+		SET
+		reportImg = #{reportImg}
+		WHERE reportId = #{reportId}
+
+	</update>
+	<update id="updateReportUrl" parameterType="hashmap">
+		UPDATE ni_report
+		SET
+		reportUrl = #{reportUrl}
+		WHERE reportId = #{reportId}
+
+	</update>
+	<update id="edit" parameterType="com.newIns.model.report.NiReport">
+		UPDATE ni_report
+		SET
+		reportTitle=#{reportTitle},reportStatus=#{reportStatus},
+		qnId=#{qnId},
+		qnType=#{qnType},
+		reportClassId=#{reportClassId},
+		publisher=#{publisher},
+		author=#{author},
+		qnCollectedNum=#{qnCollectedNum},
+		baseViewNum=#{baseViewNum},
+		summary=#{summary}
+		WHERE reportId =
+		#{reportId}
+	</update>
+
+</mapper>

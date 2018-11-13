@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.newIns.dao.page.ColumnDao" >
+	
+	<select id="listColumn" resultType="com.newIns.model.page.Column">
+		SELECT * from ni_column
+	</select>
+	
+	<!-- 根据主键查询 -->
+	<select id="findById" parameterType="java.lang.Integer" resultType="com.newIns.model.page.Column">
+		select * from ni_column where 
+		ni_column.id = #{id}
+	</select>
+	
+</mapper>

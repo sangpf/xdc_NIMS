@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.newIns.dao.NiDaily3updateWanxMapper" >
+  <resultMap id="BaseResultMap" type="com.newIns.model.page.NiDaily3updateWanx" >
+    <id column="deliveryId" property="deliveryid" jdbcType="INTEGER" />
+    <id column="qnType" property="qntype" jdbcType="TINYINT" />
+    <result column="qnId" property="qnid" jdbcType="INTEGER" />
+    <result column="pageStatus" property="pagestatus" jdbcType="TINYINT" />
+    <result column="isTop" property="istop" jdbcType="TINYINT" />
+    <result column="showOrder" property="showorder" jdbcType="TINYINT" />
+    <result column="operator" property="operator" jdbcType="VARCHAR" />
+    <result column="uTime" property="utime" jdbcType="TIMESTAMP" />
+    <result column="pTime" property="ptime" jdbcType="TIMESTAMP" />
+    <result column="comment" property="comment" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    deliveryId, qnType, qnId, pageStatus, isTop, showOrder, operator, uTime, pTime, comment
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.newIns.model.page.NiDaily3updateWanxExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from ni_daily3update_wanx
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="com.newIns.model.page.NiDaily3updateWanxKey" >
+    select 
+    <include refid="Base_Column_List" />
+    from ni_daily3update_wanx
+    where deliveryId = #{deliveryid,jdbcType=INTEGER}
+      and qnType = #{qntype,jdbcType=TINYINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="com.newIns.model.page.NiDaily3updateWanxKey" >
+    delete from ni_daily3update_wanx
+    where deliveryId = #{deliveryid,jdbcType=INTEGER}
+      and qnType = #{qntype,jdbcType=TINYINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.newIns.model.page.NiDaily3updateWanxExample" >
+    delete from ni_daily3update_wanx
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.newIns.model.page.NiDaily3updateWanx" >
+    insert into ni_daily3update_wanx (deliveryId, qnType, qnId, 
+      pageStatus, isTop, showOrder, 
+      operator, uTime, pTime, 
+      comment)
+    values (#{deliveryid,jdbcType=INTEGER}, #{qntype,jdbcType=TINYINT}, #{qnid,jdbcType=INTEGER}, 
+      #{pagestatus,jdbcType=TINYINT}, #{istop,jdbcType=TINYINT}, #{showorder,jdbcType=TINYINT}, 
+      #{operator,jdbcType=VARCHAR}, #{utime,jdbcType=TIMESTAMP}, #{ptime,jdbcType=TIMESTAMP}, 
+      #{comment,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.newIns.model.page.NiDaily3updateWanx" >
+    insert into ni_daily3update_wanx
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="deliveryid != null" >
+        deliveryId,
+      </if>
+      <if test="qntype != null" >
+        qnType,
+      </if>
+      <if test="qnid != null" >
+        qnId,
+      </if>
+      <if test="pagestatus != null" >
+        pageStatus,
+      </if>
+      <if test="istop != null" >
+        isTop,
+      </if>
+      <if test="showorder != null" >
+        showOrder,
+      </if>
+      <if test="operator != null" >
+        operator,
+      </if>
+      <if test="utime != null" >
+        uTime,
+      </if>
+      <if test="ptime != null" >
+        pTime,
+      </if>
+      <if test="comment != null" >
+        comment,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="deliveryid != null" >
+        #{deliveryid,jdbcType=INTEGER},
+      </if>
+      <if test="qntype != null" >
+        #{qntype,jdbcType=TINYINT},
+      </if>
+      <if test="qnid != null" >
+        #{qnid,jdbcType=INTEGER},
+      </if>
+      <if test="pagestatus != null" >
+        #{pagestatus,jdbcType=TINYINT},
+      </if>
+      <if test="istop != null" >
+        #{istop,jdbcType=TINYINT},
+      </if>
+      <if test="showorder != null" >
+        #{showorder,jdbcType=TINYINT},
+      </if>
+      <if test="operator != null" >
+        #{operator,jdbcType=VARCHAR},
+      </if>
+      <if test="utime != null" >
+        #{utime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="ptime != null" >
+        #{ptime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="comment != null" >
+        #{comment,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.newIns.model.page.NiDaily3updateWanxExample" resultType="java.lang.Integer" >
+    select count(*) from ni_daily3update_wanx
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update ni_daily3update_wanx
+    <set >
+      <if test="record.deliveryid != null" >
+        deliveryId = #{record.deliveryid,jdbcType=INTEGER},
+      </if>
+      <if test="record.qntype != null" >
+        qnType = #{record.qntype,jdbcType=TINYINT},
+      </if>
+      <if test="record.qnid != null" >
+        qnId = #{record.qnid,jdbcType=INTEGER},
+      </if>
+      <if test="record.pagestatus != null" >
+        pageStatus = #{record.pagestatus,jdbcType=TINYINT},
+      </if>
+      <if test="record.istop != null" >
+        isTop = #{record.istop,jdbcType=TINYINT},
+      </if>
+      <if test="record.showorder != null" >
+        showOrder = #{record.showorder,jdbcType=TINYINT},
+      </if>
+      <if test="record.operator != null" >
+        operator = #{record.operator,jdbcType=VARCHAR},
+      </if>
+      <if test="record.utime != null" >
+        uTime = #{record.utime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.ptime != null" >
+        pTime = #{record.ptime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.comment != null" >
+        comment = #{record.comment,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update ni_daily3update_wanx
+    set deliveryId = #{record.deliveryid,jdbcType=INTEGER},
+      qnType = #{record.qntype,jdbcType=TINYINT},
+      qnId = #{record.qnid,jdbcType=INTEGER},
+      pageStatus = #{record.pagestatus,jdbcType=TINYINT},
+      isTop = #{record.istop,jdbcType=TINYINT},
+      showOrder = #{record.showorder,jdbcType=TINYINT},
+      operator = #{record.operator,jdbcType=VARCHAR},
+      uTime = #{record.utime,jdbcType=TIMESTAMP},
+      pTime = #{record.ptime,jdbcType=TIMESTAMP},
+      comment = #{record.comment,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.newIns.model.page.NiDaily3updateWanx" >
+    update ni_daily3update_wanx
+    <set >
+      <if test="qnid != null" >
+        qnId = #{qnid,jdbcType=INTEGER},
+      </if>
+      <if test="pagestatus != null" >
+        pageStatus = #{pagestatus,jdbcType=TINYINT},
+      </if>
+      <if test="istop != null" >
+        isTop = #{istop,jdbcType=TINYINT},
+      </if>
+      <if test="showorder != null" >
+        showOrder = #{showorder,jdbcType=TINYINT},
+      </if>
+      <if test="operator != null" >
+        operator = #{operator,jdbcType=VARCHAR},
+      </if>
+      <if test="utime != null" >
+        uTime = #{utime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="ptime != null" >
+        pTime = #{ptime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="comment != null" >
+        comment = #{comment,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where deliveryId = #{deliveryid,jdbcType=INTEGER}
+      and qnType = #{qntype,jdbcType=TINYINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.newIns.model.page.NiDaily3updateWanx" >
+    update ni_daily3update_wanx
+    set qnId = #{qnid,jdbcType=INTEGER},
+      pageStatus = #{pagestatus,jdbcType=TINYINT},
+      isTop = #{istop,jdbcType=TINYINT},
+      showOrder = #{showorder,jdbcType=TINYINT},
+      operator = #{operator,jdbcType=VARCHAR},
+      uTime = #{utime,jdbcType=TIMESTAMP},
+      pTime = #{ptime,jdbcType=TIMESTAMP},
+      comment = #{comment,jdbcType=VARCHAR}
+    where deliveryId = #{deliveryid,jdbcType=INTEGER}
+      and qnType = #{qntype,jdbcType=TINYINT}
+  </update>
+  
+  <!-- 定时发布 检测时间 发布三更页面 -->
+  <update id="updateStateByTimer">
+	 UPDATE ni_daily3update_wanx SET pageStatus = 3 
+	 WHERE NOW() > timer AND pageStatus = 2
+  </update>
+  
+  <!-- 保存 定时发布时间 , 设置定时状态 -->
+  <update id="updateStateById_timer" parameterType="com.newIns.model.page.NiDaily3updateWanx">
+  	UPDATE ni_daily3update_wanx 
+  	<set>
+  		pageStatus = 2,
+  		<if test="timer != null ">
+  			timer = #{timer},
+  		</if>
+  	</set>
+	WHERE itemId = #{itemId}
+  </update>
+  
+</mapper>

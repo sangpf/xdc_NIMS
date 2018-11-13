@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.newIns.productPack.dao.ProductRecommend_Dao" >
+
+	<select id="list_ProductRecommend" resultType="com.newIns.productPack.pojo.vo.ProductRecommend_Vo" parameterType="hashmap">
+		SELECT
+			DISTINCT ni_product_recommend.sourceId,
+			ni_product_recommend.sourceType,
+			(
+			CASE 
+			WHEN ni_product_recommend.sourceType = '1' THEN (
+				SELECT ni_survey_delivery.showTitle FROM ni_survey_delivery WHERE ni_survey_delivery.deliveryId = ni_product_recommend.sourceId
+				)
+			WHEN ni_product_recommend.sourceType = '2' THEN (
+				SELECT ni_assess_delivery.showTitle FROM ni_assess_delivery WHERE ni_assess_delivery.deliveryId = ni_product_recommend.sourceId
+				)
+			WHEN ni_product_recommend.sourceType = '3' THEN (
+				SELECT ni_vote_delivery.showTitle FROM ni_vote_delivery WHERE ni_vote_delivery.deliveryId = ni_product_recommend.sourceId
+				)
+			WHEN ni_product_recommend.sourceType = '4' THEN (
+				SELECT ni_tweet.tweetTitle FROM ni_tweet WHERE ni_tweet.tweetId = ni_product_recommend.sourceId
+				)
+			END
+			) AS sourceTitle
+	
+			FROM ni_product_recommend
+			<where>
+				1 = 1
+				<if test="sourceId != null">
+					AND ni_product_recommend.sourceId = #{sourceId}
+				</if>
+				<if test="sourceType != null">
+					AND ni_product_recommend.sourceType = #{sourceType}
+				</if>
+			</where>
+			ORDER BY ni_product_recommend.showOrder ASC
+	</select>
+	
+	<select id="list_ProductRecommend_target" resultType="com.newIns.productPack.pojo.vo.ProductRecommend_Vo" parameterType="hashmap">
+		SELECT
+			ni_product_recommend.id,
+			ni_product_recommend.targetId,
+			ni_product_recommend.targetType,
+			ni_product_recommend.showOrder,
+			(
+			CASE 
+			WHEN ni_product_recommend.targetType = '1' THEN (
+				SELECT ni_survey_delivery.showTitle FROM ni_survey_delivery WHERE ni_survey_delivery.deliveryId = ni_product_recommend.targetId
+				)
+			WHEN ni_product_recommend.targetType = '2' THEN (
+				SELECT ni_assess_delivery.showTitle FROM ni_assess_delivery WHERE ni_assess_delivery.deliveryId = ni_product_recommend.targetId
+				)
+			WHEN ni_product_recommend.targetType = '3' THEN (
+				SELECT ni_vote_delivery.showTitle FROM ni_vote_delivery WHERE ni_vote_delivery.deliveryId = ni_product_recommend.targetId
+				)
+			WHEN ni_product_recommend.targetType = '4' THEN (
+				SELECT ni_tweet.tweetTitle FROM ni_tweet WHERE ni_tweet.tweetId = ni_product_recommend.targetId
+				)
+			END
+			) AS targetTitle
+		
+			FROM ni_product_recommend
+		WHERE 
+		ni_product_recommend.sourceId = #{sourceId}
+		AND ni_product_recommend.sourceType = #{sourceType}
+		ORDER BY ni_product_recommend.showOrder ASC
+		
+	</select>
+	
+	<!-- 根据 原 id 类型, 目标 id 类型 查询是否已经添加 -->
+	<select id="list_ProductRecommend_model" parameterType="com.newIns.productPack.pojo.ProductRecommend" resultType="com.newIns.productPack.pojo.ProductRecommend">
+		
+		SELECT *
+			FROM ni_product_recommend
+			WHERE 
+			ni_product_recommend.sourceId = #{sourceId}
+			AND ni_product_recommend.sourceType = #{sourceType}
+			AND ni_product_recommend.targetId = #{targetId}
+			AND ni_product_recommend.targetType = #{targetType}
+		
+	</select>
+	
+	<insert id="insert_ProductRecommend" parameterType="com.newIns.productPack.pojo.ProductRecommend">
+		INSERT INTO ni_product_recommend (
+			sourceId,sourceType,targetId,targetType,showOrder
+		)
+		VALUES (
+			#{sourceId},#{sourceType},#{targetId},#{targetType},1
+		)
+	</insert>
+	
+	<update id="update_ShowOrder_Source" parameterType="com.newIns.productPack.pojo.ProductRecommend">
+		UPDATE ni_product_recommend
+			SET showOrder = (showOrder+1)
+			WHERE sourceId = #{sourceId}
+			AND sourceType = #{sourceType}
+		
+	</update>
+	
+	<delete id="delete_productRecommend_Id_list" parameterType="hashmap">
+		DELETE FROM 
+			ni_product_recommend
+			WHERE id IN 
+		<foreach collection="productRecommend_Id_list" item="productRecommend_Id" open="(" close=")" separator=",">
+			#{productRecommend_Id}
+		</foreach>
+				
+	</delete>
+	
+	<update id="update_model" parameterType="com.newIns.productPack.pojo.ProductRecommend">
+		UPDATE ni_product_recommend
+			<set>
+				<if test="showOrder != null">
+					showOrder = #{showOrder},
+				</if>
+			</set>
+			<where>
+				id = #{id}
+			</where>
+			
+	</update>
+
+</mapper>

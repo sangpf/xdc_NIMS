@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.newIns.dao.NiReportClassMapper" >
+  <resultMap id="BaseResultMap" type="com.newIns.model.report.NiReportClass" >
+    <id column="reportClassId" property="reportclassid" jdbcType="INTEGER" />
+    <result column="reportClassName" property="reportclassname" jdbcType="VARCHAR" />
+    <result column="reportClassDes" property="reportclassdes" jdbcType="VARCHAR" />
+    <result column="comment" property="comment" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    reportClassId, reportClassName, reportClassDes, comment
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from ni_reportclass_dict
+    where reportClassId = #{reportclassid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from ni_reportclass_dict
+    where reportClassId = #{reportclassid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.newIns.model.report.NiReportClass" >
+    insert into ni_reportclass_dict (reportClassId, reportClassName, reportClassDes, 
+      comment)
+    values (#{reportclassid,jdbcType=INTEGER}, #{reportclassname,jdbcType=VARCHAR}, #{reportclassdes,jdbcType=VARCHAR}, 
+      #{comment,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.newIns.model.report.NiReportClass" >
+    insert into ni_reportclass_dict
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="reportclassid != null" >
+        reportClassId,
+      </if>
+      <if test="reportclassname != null" >
+        reportClassName,
+      </if>
+      <if test="reportclassdes != null" >
+        reportClassDes,
+      </if>
+      <if test="comment != null" >
+        comment,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="reportclassid != null" >
+        #{reportclassid,jdbcType=INTEGER},
+      </if>
+      <if test="reportclassname != null" >
+        #{reportclassname,jdbcType=VARCHAR},
+      </if>
+      <if test="reportclassdes != null" >
+        #{reportclassdes,jdbcType=VARCHAR},
+      </if>
+      <if test="comment != null" >
+        #{comment,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.newIns.model.report.NiReportClass" >
+    update ni_reportclass_dict
+    <set >
+      <if test="reportclassname != null" >
+        reportClassName = #{reportclassname,jdbcType=VARCHAR},
+      </if>
+      <if test="reportclassdes != null" >
+        reportClassDes = #{reportclassdes,jdbcType=VARCHAR},
+      </if>
+      <if test="comment != null" >
+        comment = #{comment,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where reportClassId = #{reportclassid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.newIns.model.report.NiReportClass" >
+    update ni_reportclass_dict
+    set reportClassName = #{reportclassname,jdbcType=VARCHAR},
+      reportClassDes = #{reportclassdes,jdbcType=VARCHAR},
+      comment = #{comment,jdbcType=VARCHAR}
+    where reportClassId = #{reportclassid,jdbcType=INTEGER}
+  </update>
+</mapper>

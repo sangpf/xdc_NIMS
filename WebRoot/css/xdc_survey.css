@@ -1,0 +1,217 @@
+/*这是问卷答题页的样式文件，单独使用（不与xdc_main.css配合使用）
+ * css的部分是原作者仅为了实现设计稿而快速搭建的样式如有不妥或者可能的兼容性问题的话请改正
+ */
+
+@media screen and (max-width: 320px) {
+    html, body {
+        font-size: 16px;
+    }
+
+    .title-desc {
+        letter-spacing: 0;
+        font-size: 14px;
+    }
+}
+
+@media screen and (min-width: 331px) {
+    html, body {
+        font-size: 18px;
+    }
+
+    .title-desc {
+        letter-spacing: 0;
+        font-size: 16px;
+    }
+}
+
+.title-desc span {
+    margin-right: 20px;
+}
+
+h5 {
+    padding-top: 15px;
+    color: #6b6767;
+    letter-spacing: 1px;
+    /*font-size: 1em;*/
+}
+
+label {
+    /*font-size: 15px;*/
+    line-height: 1.3 !important;
+}
+
+p {
+    color: #585656;
+    /*letter-spacing: 1px;*/
+}
+
+.field-contain label {
+    width: auto;
+    padding-right: 0;
+}
+
+.field-contain input[type='text'] {
+    width: 40px;
+    height: 30px;
+    padding: 5px 0;
+    float: none;
+    text-align: center;
+}
+
+.ui-alert {
+    text-align: center;
+    padding: 20px 10px;
+    font-size: 16px;
+}
+
+.xdc-title {
+    margin: 12px 15px 10px;
+    color: #f37164;
+    font-size: 15px;
+}
+
+h1.mui-title {
+    color: white;
+    line-height: 36px;
+}
+
+.mui-bar {
+    height: 36px;
+}
+
+.xdc-btn-submit {
+    color: #fff;
+    border: 1px solid #bae363;
+    background-color: #bae363;
+    padding: 8px 0;
+}
+
+.xdc-btn-submit:enabled:active {
+    border: 1px solid #B3D465;
+    background-color: #B3D465;
+}
+
+.graph {
+    position: relative;
+    width: 100%;
+    height: 20px;
+    /*background: #B3D465;*/
+}
+
+.graph .green {
+    height: 20px;
+    background: #bae363;
+}
+
+.graph .trans {
+    width: 0;
+    transition-delay: 2s;
+    /* Firefox 4 */
+    -moz-transition-delay: 2s;
+    /* Safari 和 Chrome */
+    -webkit-transition-delay: 2s;
+    /* Opera */
+    -o-transition-delay: 2s;
+    transition: width 2s;
+    /* Firefox 4 */
+    -moz-transition: width 2s;
+    /* Safari 和 Chrome */
+    -webkit-transition: width 2s;
+    /* Opera */
+    -o-transition: width 2s;
+}
+
+.graph p {
+    height: 20px;
+    line-height: 20px;
+    padding-bottom: 0px;
+    margin: 0;
+    padding: 0px 0 3px 10px;
+    font-size: 12px;
+}
+
+.mui-card {
+    margin-bottom: 10px;
+    border: 1px solid #B3D465;
+}
+
+.vote {
+    margin-bottom: 40px;
+    padding-top: 10px !important;
+    overflow: hidden;
+    background: #fff;
+}
+
+.vote-answer {
+    position: absolute;
+    top: 0;
+}
+
+.vote .list {
+    margin: 0 10px;
+}
+
+.vote .mui-card {
+    margin: 0 0 10px 0;
+}
+
+/* 题目新样式 */
+
+.mui-input-group .mui-input-row {
+    height: auto;
+}
+
+.mui-radio input[type='radio'], .mui-checkbox input[type='checkbox'] {
+    top: 50%;
+    margin-top: -13px;
+}
+
+.mui-btn-radius {
+    border-radius: 5px;
+    -webkit-border-radius: 5px;
+}
+
+#subbtn {
+    text-align: center;
+}
+
+#list {
+    /*margin: 15px;*/
+}
+
+#title {
+    line-height: 1.5;
+    margin-bottom: 10px;
+}
+
+#list font {
+    font-size: 12px;
+}
+
+#result-title {
+    /*color: #333;*/
+    font-weight: bold;
+}
+
+.eva-result-wrapper {
+    overflow: hidden;
+    width: 80%;
+    margin: 0 auto;
+}
+
+.eva-thanks {
+    padding-top: 30px;
+    margin-bottom: 0;
+    color: #333;
+    font-weight: bold;
+}
+
+.eva-result-detail {
+    width: 80%;
+    margin: 0 auto;
+}
+
+.statement {
+    letter-spacing: 0;
+    font-size: 12px;
+}

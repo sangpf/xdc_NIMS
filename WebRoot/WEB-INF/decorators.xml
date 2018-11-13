@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<decorators defaultdir="/jsp/layout/">
+	<!-- 不使用布局  -->
+	<excludes>
+		<pattern>/test/*</pattern>
+		<pattern>/static/*</pattern>
+		<pattern>/common/upload/*</pattern>
+		<pattern>/unauthorized.jsp</pattern>
+	</excludes>
+
+
+	<!-- 默认公共布局 -->
+	<decorator name="default" page="default_layout.jsp">
+		<pattern>/login</pattern> 
+		<pattern>/login/*</pattern> 
+		<pattern>/activate/*</pattern> 
+		<pattern>/regist/*</pattern> 
+		<pattern>/company/regist/*</pattern> 
+		<pattern>/common/job/*</pattern>
+		<pattern>/platform/audit/detail/*</pattern>
+		<pattern>/company/salaryEmp/settingEdit/*</pattern>
+	</decorator>
+	
+	<!-- 后台管理布局 -->
+	<decorator name="platform" page="public_manager.jsp">
+		<pattern>/platform/*</pattern>
+		<pattern>/light/*</pattern>
+	</decorator>
+	
+	<!-- 企业管理布局 -->
+	<decorator name="company" page="platform_layout.jsp">
+		<pattern>/company/*</pattern>
+	</decorator>
+	
+	<!-- 前台默认布局 -->
+	<decorator name="normal" page="normal_layout.jsp">
+		<pattern>/normal/*</pattern>
+		<pattern>/user/*</pattern>
+	</decorator>
+</decorators>

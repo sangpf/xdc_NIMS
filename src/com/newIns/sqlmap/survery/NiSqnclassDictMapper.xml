@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.newIns.dao.NiSqnclassDictMapper" >
+  <resultMap id="BaseResultMap" type="com.newIns.model.NiSqnclassDict" >
+    <id column="sqnClassId" property="sqnclassid" jdbcType="INTEGER" />
+    <result column="sqnClassName" property="sqnclassname" jdbcType="VARCHAR" />
+    <result column="sqnClassDes" property="sqnclassdes" jdbcType="VARCHAR" />
+    <result column="comment" property="comment" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    sqnClassId, sqnClassName, sqnClassDes, comment
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.newIns.model.NiSqnclassDictExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from ni_sqnclass_dict
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from ni_sqnclass_dict
+    where sqnClassId = #{sqnclassid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from ni_sqnclass_dict
+    where sqnClassId = #{sqnclassid,jdbcType=INTEGER}
+  </delete>
+  
+  <select id="selectList" resultMap="BaseResultMap">
+  	    select 
+    <include refid="Base_Column_List" />
+    from ni_sqnclass_dict
+  </select>
+  
+  <delete id="deleteByExample" parameterType="com.newIns.model.NiSqnclassDictExample" >
+    delete from ni_sqnclass_dict
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.newIns.model.NiSqnclassDict" >
+    insert into ni_sqnclass_dict (sqnClassId, sqnClassName, sqnClassDes, 
+      comment)
+    values (#{sqnclassid,jdbcType=INTEGER}, #{sqnclassname,jdbcType=VARCHAR}, #{sqnclassdes,jdbcType=VARCHAR}, 
+      #{comment,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.newIns.model.NiSqnclassDict" >
+    insert into ni_sqnclass_dict
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="sqnclassid != null" >
+        sqnClassId,
+      </if>
+      <if test="sqnclassname != null" >
+        sqnClassName,
+      </if>
+      <if test="sqnclassdes != null" >
+        sqnClassDes,
+      </if>
+      <if test="comment != null" >
+        comment,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="sqnclassid != null" >
+        #{sqnclassid,jdbcType=INTEGER},
+      </if>
+      <if test="sqnclassname != null" >
+        #{sqnclassname,jdbcType=VARCHAR},
+      </if>
+      <if test="sqnclassdes != null" >
+        #{sqnclassdes,jdbcType=VARCHAR},
+      </if>
+      <if test="comment != null" >
+        #{comment,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.newIns.model.NiSqnclassDictExample" resultType="java.lang.Integer" >
+    select count(*) from ni_sqnclass_dict
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update ni_sqnclass_dict
+    <set >
+      <if test="record.sqnclassid != null" >
+        sqnClassId = #{record.sqnclassid,jdbcType=INTEGER},
+      </if>
+      <if test="record.sqnclassname != null" >
+        sqnClassName = #{record.sqnclassname,jdbcType=VARCHAR},
+      </if>
+      <if test="record.sqnclassdes != null" >
+        sqnClassDes = #{record.sqnclassdes,jdbcType=VARCHAR},
+      </if>
+      <if test="record.comment != null" >
+        comment = #{record.comment,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update ni_sqnclass_dict
+    set sqnClassId = #{record.sqnclassid,jdbcType=INTEGER},
+      sqnClassName = #{record.sqnclassname,jdbcType=VARCHAR},
+      sqnClassDes = #{record.sqnclassdes,jdbcType=VARCHAR},
+      comment = #{record.comment,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.newIns.model.NiSqnclassDict" >
+    update ni_sqnclass_dict
+    <set >
+      <if test="sqnclassname != null" >
+        sqnClassName = #{sqnclassname,jdbcType=VARCHAR},
+      </if>
+      <if test="sqnclassdes != null" >
+        sqnClassDes = #{sqnclassdes,jdbcType=VARCHAR},
+      </if>
+      <if test="comment != null" >
+        comment = #{comment,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where sqnClassId = #{sqnclassid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.newIns.model.NiSqnclassDict" >
+    update ni_sqnclass_dict
+    set sqnClassName = #{sqnclassname,jdbcType=VARCHAR},
+      sqnClassDes = #{sqnclassdes,jdbcType=VARCHAR},
+      comment = #{comment,jdbcType=VARCHAR}
+    where sqnClassId = #{sqnclassid,jdbcType=INTEGER}
+  </update>
+</mapper>

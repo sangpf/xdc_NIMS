@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.newIns.productPack.dao.ProductPackage_Dao" >
+
+	<select id="list_ProductPackage" parameterType="hashmap" resultType="com.newIns.productPack.pojo.ProductPackage">
+		
+		SELECT * FROM ni_product_package ORDER BY id DESC
+	</select>
+	
+	<!-- 上下架 -->
+	<update id="update_up_down" parameterType="java.util.List">
+		UPDATE ni_product_package 
+		SET ni_product_package.status = 
+		(
+		   SELECT 
+		   CASE WHEN (
+				ni_product_package.status = 1
+			)  THEN 2 
+				 WHEN (
+				ni_product_package.status = 2
+			) THEN 1 
+			  ELSE 2
+			END AS status
+		)
+		<where>
+			id IN 
+			<if test="list != null">
+				<foreach collection="list" item="id" open="(" close=")" separator=",">
+					#{id}
+				</foreach>
+			</if>
+		</where>
+	</update>
+	
+	<insert id="insert_ProductPackage" parameterType="com.newIns.productPack.pojo.ProductPackage">
+	
+	  <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+	  	select LAST_INSERT_ID()
+	  </selectKey>
+	  
+		INSERT INTO ni_product_package (
+			picUrl,unlockPic,unlockedPic,pendingOpenPic,title,subtitle,tag1,tag2,tag3,introduce,price,discount,
+			adId,status,channelId,column1Name,column2Name,comment
+		)
+		VALUES (
+			#{picUrl},#{unlockPic},#{unlockedPic},#{pendingOpenPic},#{title},#{subtitle},#{tag1},#{tag2},#{tag3},#{introduce},#{price},#{discount},
+			#{adId},#{status},#{channelId},#{column1Name},#{column2Name},#{comment}
+		)
+	  
+	</insert>
+	
+	<select id="select_key" parameterType="java.lang.Integer" resultType="com.newIns.productPack.pojo.ProductPackage">
+		SELECT *
+		FROM ni_product_package
+		WHERE ni_product_package.id = #{id}
+	</select>
+
+	<update id="update_key" parameterType="com.newIns.productPack.pojo.ProductPackage">
+		UPDATE ni_product_package
+		<set>
+			<if test="picUrl != null">
+				picUrl = #{picUrl},
+			</if>
+			<if test="unlockPic != null">
+				unlockPic = #{unlockPic},
+			</if>
+			<if test="unlockedPic != null">
+				unlockedPic = #{unlockedPic},
+			</if>
+			<if test="pendingOpenPic != null">
+				pendingOpenPic = #{pendingOpenPic},
+			</if>
+			<if test="title != null">
+				title = #{title},
+			</if>
+			<if test="subtitle != null">
+				subtitle = #{subtitle},
+			</if>
+			<if test="tag1 != null">
+				tag1 = #{tag1},
+			</if>
+			<if test="tag2 != null">
+				tag2 = #{tag2},
+			</if>
+			<if test="tag3 != null">
+				tag3 = #{tag3},
+			</if>
+			<if test="introduce != null">
+				introduce = #{introduce},
+			</if>
+			<if test="price != null">
+				price = #{price},
+			</if>
+			<if test="discount != null">
+				discount = #{discount},
+			</if>
+			<if test="adId != null">
+				adId = #{adId},
+			</if>
+			<if test="channelId != null">
+				channelId = #{channelId},
+			</if>
+			<if test="column1Name != null">
+				column1Name = #{column1Name},
+			</if>
+			<if test="column2Name != null">
+				column2Name = #{column2Name},
+			</if>
+		</set>
+		<where>
+			id = #{id}
+		</where>
+	</update>
+
+</mapper>

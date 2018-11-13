@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.newIns.dao.assess.AssessModelBigFiveDao" >
+
+	<insert id="insert" parameterType="com.newIns.model.assess.AssessModelBigFive">
+		INSERT INTO ni_assess_model_bigfive (
+	  	  aqnId,dimension,section,resultSummary,resultDetail,upperNum,lowNum,comment
+		)
+		values (
+			#{aqnId},#{dimension},#{section},#{resultSummary},#{resultDetail},#{upperNum},#{lowNum},#{comment}
+		)
+	
+	</insert>
+
+	  <!-- 查询测评模型 结果页列表 -->
+	  <select id="selectAssessResult" resultType="com.newIns.model.assess.AssessResult" parameterType="java.lang.Integer">
+	  	SELECT 
+			ni_assess_model_bigfive.dimension,
+			ni_assess_model_bigfive.section,
+			ni_assess_model_bigfive.upperNum intervalBegin,
+			ni_assess_model_bigfive.lowNum intervalEnd,
+			ni_assess_model_bigfive.resultSummary,
+			ni_assess_model_bigfive.resultDetail
+			FROM ni_assess_model_bigfive
+			WHERE aqnId = #{aqnId}
+			
+	  </select>
+	  
+	  <select id="selectDetailResult" parameterType="hashmap" resultType="com.newIns.model.assess.AssessModelBigFive">
+	  	  SELECT *
+			FROM
+			ni_assess_model_bigfive
+			WHERE ni_assess_model_bigfive.aqnId = #{aqnId}
+			AND ni_assess_model_bigfive.dimension = #{dimension}
+			AND ni_assess_model_bigfive.section = #{section}
+	  </select>
+	  
+	  <update id="updateDetailResult" parameterType="hashmap">
+	  	UPDATE ni_assess_model_bigfive
+			SET ni_assess_model_bigfive.resultDetail = #{resultDetail}
+			WHERE ni_assess_model_bigfive.aqnId = #{aqnId}
+			AND ni_assess_model_bigfive.dimension = #{dimension}
+			AND ni_assess_model_bigfive.section = #{section}
+	  	
+	  </update>
+	  
+	  <update id="update_AssessResult" parameterType="com.newIns.model.assess.AssessResult">
+	  	UPDATE ni_assess_model_bigfive
+	  		<set>
+	  			<if test="intervalBegin != null">
+	  				upperNum = #{intervalBegin},
+	  			</if>
+	  			<if test="intervalEnd != null">
+	  				lowNum = #{intervalEnd},
+	  			</if>
+	  			<if test="resultSummary != null and resultSummary != '' ">
+	  				resultSummary = #{resultSummary},
+	  			</if>
+	  		</set>
+	  		WHERE 
+				aqnId = #{aqnId}
+				AND dimension = #{dimension}
+				AND section = #{section}
+	  			
+	  </update>
+	
+</mapper>

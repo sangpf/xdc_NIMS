@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.newIns.dao.assess.AssessModelMBTIDao" >
+
+
+	<insert id="insert" parameterType="com.newIns.model.assess.AssessModelMBTI">
+		INSERT INTO ni_assess_model_mbti (
+			aqnId,dimension,leftSecond,rightSecond,comment
+		)	
+		values (
+			#{aqnId},#{dimension},#{leftSecond},#{rightSecond},#{comment}
+		)	
+	</insert>
+
+	<insert id="insertMbtiCombination">
+		INSERT INTO ni_assess_model_mbti_comb (
+			aqnId,dimensionStr,resultSummary,resultDetail,comment
+		)
+		values (
+			#{aqnId},#{dimensionStr},#{resultSummary},#{resultDetail},#{comment}
+		)
+		
+	</insert>
+	
+	  <!-- 查询测评模型 结果页列表 -->
+  <select id="selectAssessResult" resultType="com.newIns.model.assess.AssessResult" parameterType="java.lang.Integer">
+		SELECT 
+			ni_assess_model_mbti_comb.dimensionStr,
+			ni_assess_model_mbti_comb.resultSummary,
+			ni_assess_model_mbti_comb.resultDetail
+			FROM ni_assess_model_mbti_comb
+			WHERE aqnId = #{aqnId}
+		
+  </select>
+  
+  <!-- 查询组合输出 -->
+  <select id="selectDetailRelationResult" parameterType="hashmap" resultType="com.newIns.model.assess.AssessModelMbtiCombination">
+  	SELECT *
+		FROM ni_assess_model_mbti_comb
+		WHERE ni_assess_model_mbti_comb.aqnId = #{aqnId}
+		AND ni_assess_model_mbti_comb.dimensionStr = #{dimensionStr}
+		
+  </select>
+
+	<update id="udpateDetailRelationResult" parameterType="hashmap">
+		UPDATE ni_assess_model_mbti_comb
+			SET ni_assess_model_mbti_comb.resultDetail = #{resultDetail}
+			WHERE ni_assess_model_mbti_comb.aqnId = #{aqnId}
+			AND ni_assess_model_mbti_comb.dimensionStr = #{dimensionStr}
+							
+	</update>
+	
+	<update id="update_AssessResult" parameterType="com.newIns.model.assess.AssessResult">
+		UPDATE 
+			ni_assess_model_mbti_comb 
+			SET resultSummary = #{resultSummary}
+			WHERE aqnId = #{aqnId}
+			AND dimensionStr = #{dimensionStr}
+	</update>
+
+</mapper>

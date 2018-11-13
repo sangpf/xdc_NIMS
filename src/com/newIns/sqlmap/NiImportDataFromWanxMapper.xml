@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.newIns.dao.NiImportDataFromWanxMapper">
+	<resultMap id="WQDataRowFromWanxResultMap" type="com.newIns.model.WQDataRowFromWanx">
+		<id column="id" property="id" jdbcType="VARCHAR" />
+		<result column="nickname" property="nickname" jdbcType="VARCHAR" />
+		<result column="mobile" property="mobile" jdbcType="VARCHAR" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="sex" property="sex" jdbcType="VARCHAR" />
+		<result column="cerno" property="cerno" jdbcType="VARCHAR" />
+		<result column="createstamp" property="createstamp" jdbcType="VARCHAR" />
+		<result column="bindmail" property="bindmail" jdbcType="VARCHAR" />
+		<result column="usersn" property="usersn" jdbcType="VARCHAR" />
+		<result column="role" property="role" jdbcType="VARCHAR" />
+		<result column="bind_card" property="bind_card" jdbcType="VARCHAR" />
+		<result column="bind_stu" property="bind_stu" jdbcType="VARCHAR" />
+		<result column="score" property="score" jdbcType="VARCHAR" />
+		<result column="account" property="account" jdbcType="VARCHAR" />
+		<result column="school" property="school" jdbcType="VARCHAR" />
+		<result column="region_code" property="region_code" jdbcType="VARCHAR" />
+		<result column="telephone_model" property="telephone_model"
+			jdbcType="VARCHAR" />
+		<result column="customer_code" property="customer_code"
+			jdbcType="VARCHAR" />
+		<result column="region_name" property="region_name" jdbcType="VARCHAR" />	
+	</resultMap>
+
+	<resultMap type="com.newIns.model.WQRegion" id="WQRegionResultMap">
+		<result column="regionCode" property="regionCode" jdbcType="VARCHAR" />
+		<result column="regionId" property="regionId" jdbcType="INTEGER" />
+		<result column="regionName" property="regionName" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<resultMap type="com.newIns.model.WQSchool" id="WQSchoolResultMap">
+		<result column="schoolName" property="schoolName" jdbcType="VARCHAR" />
+		<result column="schoolId" property="schoolId" jdbcType="INTEGER" />
+	</resultMap>
+	<!-- 分页查询 -->
+	<select id="selectDataFromWanx" resultMap="WQDataRowFromWanxResultMap">
+		SELECT
+		id,nickname,mobile,name,sex,cerno,createstamp,bindmail,usersn,role,bind_card,bind_stu,score,account,school,region_code,telephone_model,customer_code,region_name
+		FROM ${tableName}
+		<!-- WHERE id>=${from} -->
+		LIMIT ${from},${length}
+	</select>
+	<select id="getCountOfWanx" resultType="java.lang.Integer">
+		SELECT count(*) from
+		${tableName}
+	</select>
+
+	<select id="selectAllDataFromRegionDict" resultMap="WQRegionResultMap">
+		SELECT
+		regionCode,regionId,regionName
+		FROM ${tableName}
+	</select>
+	<select id="selectAllDataFromSchoolDict" resultMap="WQSchoolResultMap">
+		SELECT
+		schoolId,schoolName
+		FROM ${tableName}
+		WHERE schoolName IS NOT null
+	</select>
+	<!-- <insert id="insertDataIntoDatabase" parameterType="java.util.List"> 
+		<selectKey keyProperty="userId" order="AFTER" resultType="java.lang.Integer"> 
+		select LAST_INSERT_ID() </selectKey> <choose> <when test="#{tableName}=='ni_user_identifer'.toString()"> 
+		INSERT INTO ni_user_identifer (wanxUserId,wanxNickname) VALUES <foreach collection="dataList" 
+		item="item" index="index" separator=","> (#{item.wanxUserId,jdbcType=INTEGER},#{item.wanxNickname,jdbcType=VARCHAR}) 
+		</foreach> </when> <when test="#{tableName}=='ni_user_base'.toString()"> 
+		</when> <when test="#{tableName}=='ni_user_education'.toString()"> </when> 
+		<when test="#{tableName}=='ni_user_device'.toString()"> </when> <when test="#{tableName}=='ni_school_dict'.toString()"> 
+		</when> </choose> </insert> -->
+	<insert id="insertDataIntoIdentifer" parameterType="java.util.List">
+		<selectKey keyProperty="userId" order="AFTER" resultType="java.lang.Integer">
+			select LAST_INSERT_ID()
+		</selectKey>
+		INSERT INTO ni_user_identifer (userId,wanxUserId,wanxNickname)
+		VALUES
+		<foreach collection="dataList" item="item" index="index"
+			separator=",">
+			(#{item.userId,jdbcType=INTEGER},#{item.wanxUserId,jdbcType=INTEGER},#{item.wanxNickname,jdbcType=VARCHAR})
+		</foreach>
+	</insert>
+
+	<insert id="insertDataIntoBase" parameterType="java.util.List">
+		<selectKey keyProperty="userId" order="AFTER" resultType="java.lang.Integer">
+			select LAST_INSERT_ID()
+		</selectKey>
+		INSERT INTO
+		ni_user_base(userId,phone,userName,gender,idCard,userCTime,email)
+		VALUES
+		<foreach collection="dataList" item="item" index="index"
+			separator=",">
+			(#{item.userId,jdbcType=INTEGER},#{item.phone,jdbcType=VARCHAR},#{item.userName,jdbcType=VARCHAR},
+			#{item.gender,jdbcType=TINYINT},#{item.idCard,jdbcType=VARCHAR},#{item.userCTime,jdbcType=TIMESTAMP},
+			#{item.email,jdbcType=VARCHAR})
+		</foreach>
+	</insert>
+
+	<insert id="insertDataIntoEducation" parameterType="java.util.List">
+		<selectKey keyProperty="userId" order="AFTER" resultType="java.lang.Integer">
+			select LAST_INSERT_ID()
+		</selectKey>
+		INSERT INTO
+		ni_user_education(userId,userSn,role,bindCard,bindStudent,wanxScore,wanxAccount,schoolId,schoolName,regionId,regionName)
+		VALUES
+		<foreach collection="dataList" item="item" index="index"
+			separator=",">
+			(#{item.userId,jdbcType=INTEGER},#{item.userSn,jdbcType=VARCHAR},#{item.role,jdbcType=TINYINT},
+			#{item.bindCard,jdbcType=TINYINT},#{item.bindStudent,jdbcType=TINYINT},#{item.wanxScore,jdbcType=INTEGER},
+			#{item.wanxAccount,jdbcType=VARCHAR},#{item.schoolId,jdbcType=INTEGER},#{item.schoolName,jdbcType=VARCHAR},
+			#{item.regionId,jdbcType=INTEGER},#{item.regionName,jdbcType=VARCHAR})
+		</foreach>
+	</insert>
+
+	<insert id="insertDataIntoDevice" parameterType="java.util.List">
+		<selectKey keyProperty="userId" order="AFTER" resultType="java.lang.Integer">
+			select LAST_INSERT_ID()
+		</selectKey>
+		INSERT INTO
+		ni_user_device(userId,model)
+		VALUES
+		<foreach collection="dataList" item="item" index="index"
+			separator=",">
+			(#{item.userId,jdbcType=INTEGER},#{item.model,jdbcType=VARCHAR})
+		</foreach>
+	</insert>
+	<insert id="insertDataIntoSchoolDict" parameterType="java.util.List">
+		<selectKey keyProperty="userId" order="AFTER" resultType="java.lang.Integer">
+			select LAST_INSERT_ID()
+		</selectKey>
+		INSERT INTO
+		ni_school_dict(schoolId,wanxSchoolCode,wanxSchoolName,regionCode,regionName,addTime)
+		VALUES
+		<foreach collection="dataList" item="item" index="index"
+			separator=",">
+			(#{item.schoolId,jdbcType=INTEGER},#{item.wanxSchoolCode,jdbcType=VARCHAR},#{item.wanxSchoolName,jdbcType=VARCHAR},#{item.regionCode,jdbcType=VARCHAR},#{item.regionName,jdbcType=VARCHAR},#{item.addTime,jdbcType=TIMESTAMP})
+		</foreach>
+		ON DUPLICATE KEY UPDATE wanxSchoolCode=VALUES(wanxSchoolCode),wanxSchoolName=VALUES(wanxSchoolName)
+	</insert>
+</mapper>

@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.newIns.dao.assess.NiAssessOrderMapper" >
+  <resultMap id="BaseResultMap" type="com.newIns.model.assess.NiAssessOrder" >
+    <id column="orderId" property="orderid" jdbcType="INTEGER" />
+    <result column="userId" property="userid" jdbcType="INTEGER" />
+    <result column="aqnId" property="aqnid" jdbcType="INTEGER" />
+    <result column="orderCTime" property="orderctime" jdbcType="TIMESTAMP" />
+    <result column="answerBTime" property="answerbtime" jdbcType="TIMESTAMP" />
+    <result column="answerETime" property="answeretime" jdbcType="TIMESTAMP" />
+    <result column="orderStatus" property="orderstatus" jdbcType="TINYINT" />
+    <result column="sequenceNum" property="sequencenum" jdbcType="INTEGER" />
+    <result column="awardId" property="awardid" jdbcType="INTEGER" />
+    <result column="reviewer" property="reviewer" jdbcType="VARCHAR" />
+    <result column="answerChannel" property="answerchannel" jdbcType="BIT" />
+    <result column="totalScore" property="totalscore" jdbcType="INTEGER" />
+    <result column="resultSummary" property="resultsummary" jdbcType="VARCHAR" />
+    <result column="resultDetail" property="resultdetail" jdbcType="VARCHAR" />
+    <result column="awardGetStatus" property="awardgetstatus" jdbcType="TINYINT" />
+    <result column="awardPayStatus" property="awardpaystatus" jdbcType="TINYINT" />
+    <result column="awardGetTime" property="awardgettime" jdbcType="TIMESTAMP" />
+    <result column="awardPayTime" property="awardpaytime" jdbcType="TIMESTAMP" />
+    <result column="comment" property="comment" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    orderId, userId, aqnId, orderCTime, answerBTime, answerETime, orderStatus, sequenceNum, 
+    awardId, reviewer, answerChannel, totalScore, resultSummary, resultDetail, awardGetStatus, 
+    awardPayStatus, awardGetTime, awardPayTime, comment
+  </sql>
+  
+    <!-- 根据订单表主键查询记录数 -->
+  <select id="selectCountNumbysqnId" resultType="int" parameterType="java.lang.Integer">
+  	 SELECT COUNT(orderId) FROM ni_assess_order WHERE aqnId = #{id}
+  </select>
+  
+  <!-- 根据 投放 id 查询订单表数据  -->
+  <select id="get_count_order_by_deliveryId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+  	SELECT count(1) AS orderNum 
+  	FROM ni_assess_order 
+  	where deliveryId = #{deliveryId}
+  </select>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from ni_assess_order
+    where orderId = #{orderid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from ni_assess_order
+    where orderId = #{orderid,jdbcType=INTEGER}
+  </delete>
+
+  <insert id="insert" parameterType="com.newIns.model.assess.NiAssessOrder" >
+    insert into ni_assess_order (orderId, userId, aqnId, 
+      orderCTime, answerBTime, answerETime, 
+      orderStatus, sequenceNum, awardId, 
+      reviewer, answerChannel, totalScore, 
+      resultSummary, resultDetail, awardGetStatus, 
+      awardPayStatus, awardGetTime, awardPayTime, 
+      comment)
+    values (#{orderid,jdbcType=INTEGER}, #{userid,jdbcType=INTEGER}, #{aqnid,jdbcType=INTEGER}, 
+      #{orderctime,jdbcType=TIMESTAMP}, #{answerbtime,jdbcType=TIMESTAMP}, #{answeretime,jdbcType=TIMESTAMP}, 
+      #{orderstatus,jdbcType=TINYINT}, #{sequencenum,jdbcType=INTEGER}, #{awardid,jdbcType=INTEGER}, 
+      #{reviewer,jdbcType=VARCHAR}, #{answerchannel,jdbcType=BIT}, #{totalscore,jdbcType=INTEGER}, 
+      #{resultsummary,jdbcType=VARCHAR}, #{resultdetail,jdbcType=VARCHAR}, #{awardgetstatus,jdbcType=TINYINT}, 
+      #{awardpaystatus,jdbcType=TINYINT}, #{awardgettime,jdbcType=TIMESTAMP}, #{awardpaytime,jdbcType=TIMESTAMP}, 
+      #{comment,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.newIns.model.assess.NiAssessOrder" >
+    insert into ni_assess_order
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="orderid != null" >
+        orderId,
+      </if>
+      <if test="userid != null" >
+        userId,
+      </if>
+      <if test="aqnid != null" >
+        aqnId,
+      </if>
+      <if test="orderctime != null" >
+        orderCTime,
+      </if>
+      <if test="answerbtime != null" >
+        answerBTime,
+      </if>
+      <if test="answeretime != null" >
+        answerETime,
+      </if>
+      <if test="orderstatus != null" >
+        orderStatus,
+      </if>
+      <if test="sequencenum != null" >
+        sequenceNum,
+      </if>
+      <if test="awardid != null" >
+        awardId,
+      </if>
+      <if test="reviewer != null" >
+        reviewer,
+      </if>
+      <if test="answerchannel != null" >
+        answerChannel,
+      </if>
+      <if test="totalscore != null" >
+        totalScore,
+      </if>
+      <if test="resultsummary != null" >
+        resultSummary,
+      </if>
+      <if test="resultdetail != null" >
+        resultDetail,
+      </if>
+      <if test="awardgetstatus != null" >
+        awardGetStatus,
+      </if>
+      <if test="awardpaystatus != null" >
+        awardPayStatus,
+      </if>
+      <if test="awardgettime != null" >
+        awardGetTime,
+      </if>
+      <if test="awardpaytime != null" >
+        awardPayTime,
+      </if>
+      <if test="comment != null" >
+        comment,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="orderid != null" >
+        #{orderid,jdbcType=INTEGER},
+      </if>
+      <if test="userid != null" >
+        #{userid,jdbcType=INTEGER},
+      </if>
+      <if test="aqnid != null" >
+        #{aqnid,jdbcType=INTEGER},
+      </if>
+      <if test="orderctime != null" >
+        #{orderctime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="answerbtime != null" >
+        #{answerbtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="answeretime != null" >
+        #{answeretime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="orderstatus != null" >
+        #{orderstatus,jdbcType=TINYINT},
+      </if>
+      <if test="sequencenum != null" >
+        #{sequencenum,jdbcType=INTEGER},
+      </if>
+      <if test="awardid != null" >
+        #{awardid,jdbcType=INTEGER},
+      </if>
+      <if test="reviewer != null" >
+        #{reviewer,jdbcType=VARCHAR},
+      </if>
+      <if test="answerchannel != null" >
+        #{answerchannel,jdbcType=BIT},
+      </if>
+      <if test="totalscore != null" >
+        #{totalscore,jdbcType=INTEGER},
+      </if>
+      <if test="resultsummary != null" >
+        #{resultsummary,jdbcType=VARCHAR},
+      </if>
+      <if test="resultdetail != null" >
+        #{resultdetail,jdbcType=VARCHAR},
+      </if>
+      <if test="awardgetstatus != null" >
+        #{awardgetstatus,jdbcType=TINYINT},
+      </if>
+      <if test="awardpaystatus != null" >
+        #{awardpaystatus,jdbcType=TINYINT},
+      </if>
+      <if test="awardgettime != null" >
+        #{awardgettime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="awardpaytime != null" >
+        #{awardpaytime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="comment != null" >
+        #{comment,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.newIns.model.assess.NiAssessOrder" >
+    update ni_assess_order
+    <set >
+      <if test="userid != null" >
+        userId = #{userid,jdbcType=INTEGER},
+      </if>
+      <if test="aqnid != null" >
+        aqnId = #{aqnid,jdbcType=INTEGER},
+      </if>
+      <if test="orderctime != null" >
+        orderCTime = #{orderctime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="answerbtime != null" >
+        answerBTime = #{answerbtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="answeretime != null" >
+        answerETime = #{answeretime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="orderstatus != null" >
+        orderStatus = #{orderstatus,jdbcType=TINYINT},
+      </if>
+      <if test="sequencenum != null" >
+        sequenceNum = #{sequencenum,jdbcType=INTEGER},
+      </if>
+      <if test="awardid != null" >
+        awardId = #{awardid,jdbcType=INTEGER},
+      </if>
+      <if test="reviewer != null" >
+        reviewer = #{reviewer,jdbcType=VARCHAR},
+      </if>
+      <if test="answerchannel != null" >
+        answerChannel = #{answerchannel,jdbcType=BIT},
+      </if>
+      <if test="totalscore != null" >
+        totalScore = #{totalscore,jdbcType=INTEGER},
+      </if>
+      <if test="resultsummary != null" >
+        resultSummary = #{resultsummary,jdbcType=VARCHAR},
+      </if>
+      <if test="resultdetail != null" >
+        resultDetail = #{resultdetail,jdbcType=VARCHAR},
+      </if>
+      <if test="awardgetstatus != null" >
+        awardGetStatus = #{awardgetstatus,jdbcType=TINYINT},
+      </if>
+      <if test="awardpaystatus != null" >
+        awardPayStatus = #{awardpaystatus,jdbcType=TINYINT},
+      </if>
+      <if test="awardgettime != null" >
+        awardGetTime = #{awardgettime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="awardpaytime != null" >
+        awardPayTime = #{awardpaytime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="comment != null" >
+        comment = #{comment,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where orderId = #{orderid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.newIns.model.assess.NiAssessOrder" >
+    update ni_assess_order
+    set userId = #{userid,jdbcType=INTEGER},
+      aqnId = #{aqnid,jdbcType=INTEGER},
+      orderCTime = #{orderctime,jdbcType=TIMESTAMP},
+      answerBTime = #{answerbtime,jdbcType=TIMESTAMP},
+      answerETime = #{answeretime,jdbcType=TIMESTAMP},
+      orderStatus = #{orderstatus,jdbcType=TINYINT},
+      sequenceNum = #{sequencenum,jdbcType=INTEGER},
+      awardId = #{awardid,jdbcType=INTEGER},
+      reviewer = #{reviewer,jdbcType=VARCHAR},
+      answerChannel = #{answerchannel,jdbcType=BIT},
+      totalScore = #{totalscore,jdbcType=INTEGER},
+      resultSummary = #{resultsummary,jdbcType=VARCHAR},
+      resultDetail = #{resultdetail,jdbcType=VARCHAR},
+      awardGetStatus = #{awardgetstatus,jdbcType=TINYINT},
+      awardPayStatus = #{awardpaystatus,jdbcType=TINYINT},
+      awardGetTime = #{awardgettime,jdbcType=TIMESTAMP},
+      awardPayTime = #{awardpaytime,jdbcType=TIMESTAMP},
+      comment = #{comment,jdbcType=VARCHAR}
+    where orderId = #{orderid,jdbcType=INTEGER}
+  </update>
+</mapper>

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+  <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper .//EN" "http://www.mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.newIns.dao.award.AwardPoolMapper">
+	<resultMap type="com.newIns.model.award.AwardPool" id="awardpool">
+		<result property="awardPoolId" column="awardPoolId" />
+		<result property="awardType" column="awardType" />
+		<result property="awardPoolName" column="awardPoolName" />
+		<result property="img" column="img" />
+		<result property="equalMoney" column="equalMoney" />
+		<result property="provider" column="provider" />
+		<result property="status" column="status" />
+		<result property="validBTime" column="validBTime" />
+		<result property="validETime" column="validETime" />
+		<result property="ownerId" column="ownerId" />
+		<result property="totalNum" column="totalNum" />
+		<result property="awardDes" column="awardDes" />
+		<result property="comment" column="comment" />
+	</resultMap>
+
+<!-- 条件查询 -->
+	 <select id="searchAwardByCondition" parameterType="hashmap" resultMap="awardpool">
+		SELECT
+		*
+		FROM
+		ni_award_pool
+		<where>
+			awardType !=0
+		<if test="awardPoolName != null">
+			AND awardPoolName LIKE "%${awardPoolName}%" 
+		</if>
+		<if test="provider != null">
+		    AND provider LIKE "%${provider}%"  
+		</if>
+		<if test="awardPoolId != null">
+			AND awardPoolId = #{awardPoolId}
+		</if>
+		<if test="status!=null">
+			AND status = #{status}
+		</if>
+		<if test="starTime!=null and starTime!='' " >
+			AND validBTime BETWEEN #{starTime} AND #{endTime}
+			AND validETime BETWEEN #{starTime} AND #{endTime} 
+		</if>
+		<if test="lprice!=null">
+			AND equalMoney BETWEEN #{lprice} AND #{hprice}
+		</if>
+		<if test="awardType!=null">
+			AND awardType = #{awardType}
+		</if>
+	    </where>
+	</select> 
+
+<!-- 分页查询 -->	
+	<select id="selectList" parameterType="com.newIns.model.award.AwardPool" resultMap="awardpool">
+		SELECT
+		*
+		FROM
+		ni_award_pool
+		where awardType !=0
+	</select>
+
+<!-- 批量删除 -->
+  	<delete id="deleteAwardPool">
+  	DELETE FROM ni_award_pool
+	WHERE awardPoolId IN
+  	<foreach collection="awardPoolIds" item="awardPoolIds" index="index" open="(" separator="," close=")">
+  		#{awardPoolIds}
+  	</foreach>
+
+<!-- 更新奖池状态 -->  		 
+	</delete>
+	<update id="updatestatusAwardPool" parameterType="hashmap">
+		UPDATE ni_award_pool
+		SET status =#{status} 
+		WHERE awardPoolId IN
+  		<foreach collection="awardPoolIds" item="awardPoolIds" index="index" open="(" separator="," close=")">
+  			#{awardPoolIds}
+  		</foreach>
+	
+	</update>
+
+	<!-- 添加奖池 -->
+	<insert id="addAwardPool" parameterType="com.newIns.model.award.AwardPool">
+		insert into ni_award_pool(awardPoolName,provider,equalMoney,totalNum,awardType,awardLink,validBTime,validETime,status,awardDes) 
+		values(#{awardPoolName},#{provider},#{equalMoney},#{totalNum},#{awardType},#{awardLink},#{validBTime},#{validETime},2,#{awardDes})
+	</insert>
+	
+<!-- 查询单个奖池信息 -->
+	<select id="getAwardPoolInfo" parameterType="com.newIns.model.award.AwardPool" resultMap="awardpool">
+		SELECT
+		*
+		FROM
+		ni_award_pool
+		where awardPoolId =#{awardPoolId}
+	</select>
+	
+	<!-- 编辑奖池 -->
+	<update id="editAwardPool" parameterType="com.newIns.model.award.AwardPool">
+		UPDATE ni_award_pool
+		SET awardPoolName =#{awardPoolName},provider=#{provider},equalMoney=#{equalMoney},totalNum=#{totalNum},awardType=#{awardType},awardLink=#{awardLink},validBTime=#{validBTime},validETime=#{validETime},awardDes=#{awardDes}
+		WHERE awardPoolId=#{awardPoolId}
+	</update>
+</mapper>

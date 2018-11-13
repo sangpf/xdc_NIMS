@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.newIns.dao.NiWanxPointStatisticsMapper">
+	<!-- 玩校积分统计信息结果集 -->
+	<resultMap id="wanxPointStatisticsBaseResultMap" type="com.newIns.model.NiWanxPointStatistics">
+		<!-- <id column="userAwardFlowId" property="userAwardFlowId" jdbcType="INTEGER" /> -->
+		<result column="qnChannel" property="qnChannel" jdbcType="INTEGER" />
+		<result column="date_str" property="awardGetTime" jdbcType="DATE" />
+		<result column="awardSumNum" property="awardNum" jdbcType="INTEGER" />
+	</resultMap>
+
+	<!-- 搜索玩校积分基本信息 -->
+	<select id="selectWanxPointInfo" parameterType="hashmap" resultMap="wanxPointStatisticsBaseResultMap">
+		SELECT ni_user_award_statistics.qnChannel,DATE_FORMAT(ni_user_award_statistics.awardGetTime,'%Y-%m-%d') date_str,sum(ni_award.awardNum) awardSumNum
+		FROM ni_user_award_statistics,ni_award,ni_award_pool
+		<where>
+			<if test="starTime != null">
+				AND ni_user_award_statistics.awardGetTime BETWEEN #{starTime} AND #{endTime}
+			</if>
+			<if test="qnChannel != null">
+				AND ni_user_award_statistics.qnChannel=#{qnChannel}
+			</if>
+			AND ni_user_award_statistics.awardId=ni_award.awardId
+			AND ni_award.awardPoolId=ni_award_pool.awardPoolId
+			AND ni_award_pool.awardType=3 AND awardMethod=#{awardMethod}
+		</where>
+		GROUP BY date_str 
+		ORDER BY awardGetTime DESC
+	</select>
+</mapper>

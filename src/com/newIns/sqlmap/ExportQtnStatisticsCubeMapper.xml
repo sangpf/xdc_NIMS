@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.newIns.dao.ExportQtnStatisticsCubeMapper">
+	<resultMap id="aqnOpenCubeResultMap"
+		type="com.newIns.model.QuestionnaireStatisticsBaseCube">
+		<result column="aqnId" property="qnid" jdbcType="INTEGER" />
+		<result column="userId" property="userId" jdbcType="INTEGER" />
+		<result column="orderCTime" property="tapTime" jdbcType="TIMESTAMP" />
+		<result column="timeLength" property="timeLength" jdbcType="INTEGER" />
+		<result column="aqnClassName" property="qnClassName" jdbcType="VARCHAR" />
+		<result column="gender" property="gender" jdbcType="INTEGER" />
+		<result column="province" property="province" jdbcType="VARCHAR" />
+		<result column="regionName" property="regionName" jdbcType="VARCHAR" />
+		<result column="schoolName" property="schoolName" jdbcType="VARCHAR" />
+		<result column="qnType" property="qnType" jdbcType="INTEGER" />
+		<result column="eventType" property="eventType" jdbcType="INTEGER" />
+	</resultMap>
+
+	<resultMap id="sqnOpenCubeResultMap"
+		type="com.newIns.model.QuestionnaireStatisticsBaseCube">
+		<result column="sqnId" property="qnid" jdbcType="INTEGER" />
+		<result column="userId" property="userId" jdbcType="INTEGER" />
+		<result column="orderCTime" property="tapTime" jdbcType="TIMESTAMP" />
+		<result column="timeLength" property="timeLength" jdbcType="INTEGER" />
+		<result column="sqnClassName" property="qnClassName" jdbcType="VARCHAR" />
+		<result column="gender" property="gender" jdbcType="INTEGER" />
+		<result column="province" property="province" jdbcType="VARCHAR" />
+		<result column="regionName" property="regionName" jdbcType="VARCHAR" />
+		<result column="schoolName" property="schoolName" jdbcType="VARCHAR" />
+		<result column="qnType" property="qnType" jdbcType="INTEGER" />
+		<result column="eventType" property="eventType" jdbcType="INTEGER" />
+	</resultMap>
+
+	<resultMap id="vqnOpenCubeResultMap"
+		type="com.newIns.model.QuestionnaireStatisticsBaseCube">
+		<result column="vqnId" property="qnid" jdbcType="INTEGER" />
+		<result column="userId" property="userId" jdbcType="INTEGER" />
+		<result column="orderCTime" property="tapTime" jdbcType="TIMESTAMP" />
+		<result column="timeLength" property="timeLength" jdbcType="INTEGER" />
+		<result column="vqnClassName" property="qnClassName" jdbcType="VARCHAR" />
+		<result column="gender" property="gender" jdbcType="INTEGER" />
+		<result column="province" property="province" jdbcType="VARCHAR" />
+		<result column="regionName" property="regionName" jdbcType="VARCHAR" />
+		<result column="schoolName" property="schoolName" jdbcType="VARCHAR" />
+		<result column="qnType" property="qnType" jdbcType="INTEGER" />
+		<result column="eventType" property="eventType" jdbcType="INTEGER" />
+	</resultMap>
+
+	<resultMap id="sqnTapCubeResultMap"
+		type="com.newIns.model.QuestionnaireStatisticsBaseCube">
+		<result column="sqnId" property="qnid" jdbcType="INTEGER"/>
+		<result column="userId" property="userId" jdbcType="INTEGER" />
+		<result column="tapTime" property="tapTime" jdbcType="TIMESTAMP" />
+		<result column="tapSource" property="tapSource" jdbcType="INTEGER"/>
+		<result column="sqnClassName" property="qnClassName" jdbcType="VARCHAR" />
+		<result column="gender" property="gender" jdbcType="INTEGER" />
+		<result column="province" property="province" jdbcType="VARCHAR" />
+		<result column="regionName" property="regionName" jdbcType="VARCHAR" />
+		<result column="schoolName" property="schoolName" jdbcType="VARCHAR" />
+		<result column="qnType" property="qnType" jdbcType="INTEGER" />
+		<result column="eventType" property="eventType" jdbcType="INTEGER" />
+	</resultMap>
+	
+	<resultMap id="aqnTapCubeResultMap"
+		type="com.newIns.model.QuestionnaireStatisticsBaseCube">
+		<result column="aqnId" property="qnid" jdbcType="INTEGER"/>
+		<result column="userId" property="userId" jdbcType="INTEGER" />
+		<result column="tapTime" property="tapTime" jdbcType="TIMESTAMP" />
+		<result column="tapSource" property="tapSource" jdbcType="INTEGER"/>
+		<result column="aqnClassName" property="qnClassName" jdbcType="VARCHAR" />
+		<result column="gender" property="gender" jdbcType="INTEGER" />
+		<result column="province" property="province" jdbcType="VARCHAR" />
+		<result column="regionName" property="regionName" jdbcType="VARCHAR" />
+		<result column="schoolName" property="schoolName" jdbcType="VARCHAR" />
+		<result column="qnType" property="qnType" jdbcType="INTEGER" />
+		<result column="eventType" property="eventType" jdbcType="INTEGER" />
+	</resultMap>
+	
+	<resultMap id="vqnTapCubeResultMap"
+		type="com.newIns.model.QuestionnaireStatisticsBaseCube">
+		<result column="vqnId" property="qnid" jdbcType="INTEGER"/>
+		<result column="userId" property="userId" jdbcType="INTEGER" />
+		<result column="tapTime" property="tapTime" jdbcType="TIMESTAMP" />
+		<result column="tapSource" property="tapSource" jdbcType="INTEGER"/>
+		<result column="vqnClassName" property="qnClassName" jdbcType="VARCHAR" />
+		<result column="gender" property="gender" jdbcType="INTEGER" />
+		<result column="province" property="province" jdbcType="VARCHAR" />
+		<result column="regionName" property="regionName" jdbcType="VARCHAR" />
+		<result column="schoolName" property="schoolName" jdbcType="VARCHAR" />
+		<result column="qnType" property="qnType" jdbcType="INTEGER" />
+		<result column="eventType" property="eventType" jdbcType="INTEGER" />
+	</resultMap>
+
+	<!-- 分页查询 -->
+	<select id="selectAssessOpenStatisticsCube" resultMap="aqnOpenCubeResultMap"
+		resultType="java.lang.Integer">
+		select
+		table3.aqnId,table3.userId,table3.orderCTime,table3.timeLength,table3.aqnClassName,
+		ni_user_base.gender,ni_region_dict.province,ni_region_dict.regionName,ni_user_education.schoolName,2
+		as qnType,2 as eventType
+		from (select
+		table2.*,ni_aqnclass_dict.aqnClassName from (select
+		table1.*,ni_assess_questionnaire.aqnClassId from (select
+		ni_assess_delivery_wanx.aqnId,ni_assess_order.userId,ni_assess_order.orderCTime,
+		TIMESTAMPDIFF(SECOND,ni_assess_order.answerBTime,ni_assess_order.answerETime)
+		AS timeLength
+		from ni_assess_delivery_wanx,ni_assess_order
+		where
+		ni_assess_delivery_wanx.deliveryId = #{deliveryId}
+		and
+		ni_assess_delivery_wanx.aqnId = ni_assess_order.aqnId) as
+		table1,ni_assess_questionnaire
+		where table1.aqnId =
+		ni_assess_questionnaire.aqnId) as
+		table2,ni_aqnclass_dict
+		where
+		table2.aqnClassId = ni_aqnclass_dict.aqnClassId) as
+		table3,ni_user_base,ni_user_education,ni_region_dict
+		where
+		table3.userId = ni_user_base.userId
+		and table3.userId =
+		ni_user_base.userId and table3.userId =
+		ni_user_education.userId
+		and
+		ni_user_education.regionId = ni_region_dict.regionId;
+	</select>
+
+	<select id="selectSurveyOpenStatisticsCube" resultMap="sqnOpenCubeResultMap"
+		resultType="java.lang.Integer">
+		select
+		table3.sqnId,table3.userId,table3.orderCTime,table3.timeLength,table3.sqnClassName,
+		ni_user_base.gender,ni_region_dict.province,ni_region_dict.regionName,
+		ni_user_education.schoolName,1 as qnType,2 as eventType
+		from (select
+		table2.*,ni_sqnclass_dict.sqnClassName from (select
+		table1.*,ni_survey_questionnaire.sqnClassId from (select
+		ni_survey_delivery_wanx.sqnId,ni_survey_order.userId,ni_survey_order.orderCTime,
+		TIMESTAMPDIFF(SECOND,ni_survey_order.answerBTime,ni_survey_order.answerETime)
+		AS timeLength
+		from ni_survey_delivery_wanx,ni_survey_order
+		where
+		ni_survey_delivery_wanx.deliveryId = #{deliveryId}
+		and
+		ni_survey_delivery_wanx.sqnId = ni_survey_order.sqnId) as
+		table1,ni_survey_questionnaire
+		where table1.sqnId =
+		ni_survey_questionnaire.sqnId) as
+		table2,ni_sqnclass_dict
+		where
+		table2.sqnClassId = ni_sqnclass_dict.sqnClassId) as
+		table3,ni_user_base,ni_user_education,ni_region_dict
+		where
+		table3.userId = ni_user_base.userId
+		and table3.userId =
+		ni_user_base.userId and table3.userId =
+		ni_user_education.userId
+		and
+		ni_user_education.regionId = ni_region_dict.regionId;
+	</select>
+
+	<select id="selectVoteOpenStatisticsCube" resultMap="vqnOpenCubeResultMap"
+		resultType="java.lang.Integer">
+		select
+		table3.vqnId,table3.userId,table3.orderCTime,table3.timeLength,table3.vqnClassName,
+		ni_user_base.gender,ni_region_dict.province,ni_region_dict.regionName,ni_user_education.schoolName,3
+		as qnType,2 as eventType
+		from (select
+		table2.*,ni_vqnclass_dict.vqnClassName from (select
+		table1.*,ni_vote_questionnaire.vqnClassId from (select
+		ni_vote_delivery_wanx.vqnId,ni_vote_order.userId,ni_vote_order.orderCTime,
+		TIMESTAMPDIFF(SECOND,ni_vote_order.answerBTime,ni_vote_order.answerETime)
+		AS timeLength
+		from ni_vote_delivery_wanx,ni_vote_order
+		where
+		ni_vote_delivery_wanx.deliveryId = #{deliveryId}
+		and
+		ni_vote_delivery_wanx.vqnId = ni_vote_order.vqnId) as
+		table1,ni_vote_questionnaire
+		where table1.vqnId =
+		ni_vote_questionnaire.vqnId) as
+		table2,ni_vqnclass_dict
+		where
+		table2.vqnClassId = ni_vqnclass_dict.vqnClassId) as
+		table3,ni_user_base,ni_user_education,ni_region_dict
+		where
+		table3.userId = ni_user_base.userId
+		and table3.userId =
+		ni_user_base.userId and table3.userId =
+		ni_user_education.userId
+		and
+		ni_user_education.regionId = ni_region_dict.regionId;
+	</select>
+
+	<select id="selectSurveyTapStatisticsCube" resultMap="sqnTapCubeResultMap"
+		resultType="java.lang.Integer">
+		select
+		table5.userId,table5.tapTime,table5.sqnId,table5.sqnClassName,table5.gender,
+		table5.regionName,table5.schoolName,table5.tapSource,ni_region_dict.province,
+		1 as qnType,1 as eventType
+		from
+		(select
+		table4.userId,table4.tapTime,table4.sqnId,table4.sqnClassName,table4.tapSource,ni_user_base.gender,
+		ni_user_education.regionName,ni_user_education.schoolName,ni_user_education.regionId
+		from
+		(select table3.*,ni_sqnclass_dict.sqnClassName from
+		(select
+		table2.*,ni_survey_questionnaire.sqnClassId from
+		(select
+		table1.*,ni_survey_delivery_wanx.sqnId from
+		(select
+		ni_survey_delivery_wanx_flow.deliveryId,ni_survey_delivery_wanx_flow.userId,ni_survey_delivery_wanx_flow.tapTime,
+		ni_survey_delivery_wanx_flow.tapSource
+		from
+		ni_survey_delivery_wanx_flow
+		where
+		ni_survey_delivery_wanx_flow.deliveryId = #{deliveryId}) as
+		table1,ni_survey_delivery_wanx
+		where table1.deliveryId =
+		ni_survey_delivery_wanx.deliveryId) as
+		table2,ni_survey_questionnaire
+		where table2.sqnId = ni_survey_questionnaire.sqnId) as
+		table3,ni_sqnclass_dict
+		where table3.sqnClassId =
+		ni_sqnclass_dict.sqnClassId) as
+		table4,ni_user_base,ni_user_education
+		where table4.userId = ni_user_base.userId and table4.userId =
+		ni_user_education.userId) as table5,ni_region_dict
+		where
+		table5.regionId = ni_region_dict.regionId;
+	</select>
+
+	<select id="selectAssessTapStatisticsCube" resultMap="aqnTapCubeResultMap"
+		resultType="java.lang.Integer">
+		select
+		table5.userId,table5.tapTime,table5.aqnId,table5.aqnClassName,table5.gender,
+		table5.regionName,table5.schoolName,table5.tapSource,ni_region_dict.province,
+		2 as qnType,1 as eventType
+		from
+		(select
+		table4.userId,table4.tapTime,table4.aqnId,table4.aqnClassName,table4.tapSource,ni_user_base.gender,
+		ni_user_education.regionName,ni_user_education.schoolName,ni_user_education.regionId
+		from
+		(select table3.*,ni_aqnclass_dict.aqnClassName from
+		(select
+		table2.*,ni_assess_questionnaire.aqnClassId from
+		(select
+		table1.*,ni_assess_delivery_wanx.aqnId from
+		(select
+		ni_assess_delivery_wanx_flow.deliveryId,ni_assess_delivery_wanx_flow.userId,ni_assess_delivery_wanx_flow.tapTime,
+		ni_assess_delivery_wanx_flow.tapSource
+		from
+		ni_assess_delivery_wanx_flow
+		where
+		ni_assess_delivery_wanx_flow.deliveryId = #{deliveryId}) as
+		table1,ni_assess_delivery_wanx
+		where table1.deliveryId =
+		ni_assess_delivery_wanx.deliveryId) as
+		table2,ni_assess_questionnaire
+		where table2.aqnId = ni_assess_questionnaire.aqnId) as
+		table3,ni_aqnclass_dict
+		where table3.aqnClassId =
+		ni_aqnclass_dict.aqnClassId) as
+		table4,ni_user_base,ni_user_education
+		where table4.userId = ni_user_base.userId and table4.userId =
+		ni_user_education.userId) as table5,ni_region_dict
+		where
+		table5.regionId = ni_region_dict.regionId;
+	</select>
+
+	<select id="selectVoteTapStatisticsCube" resultMap="vqnTapCubeResultMap"
+		resultType="java.lang.Integer">
+		select
+		table5.userId,table5.tapTime,table5.vqnId,table5.vqnClassName,table5.gender,
+		table5.regionName,table5.schoolName,table5.tapSource,ni_region_dict.province,
+		3 as qnType,1 as eventType
+		from
+		(select
+		table4.userId,table4.tapTime,table4.vqnId,table4.vqnClassName,table4.tapSource,ni_user_base.gender,
+		ni_user_education.regionName,ni_user_education.schoolName,ni_user_education.regionId
+		from
+		(select table3.*,ni_vqnclass_dict.vqnClassName from
+		(select
+		table2.*,ni_vote_questionnaire.vqnClassId from
+		(select
+		table1.*,ni_vote_delivery_wanx.vqnId from
+		(select
+		ni_vote_wanx_flow.deliveryId,ni_vote_wanx_flow.userId,ni_vote_wanx_flow.tapTime,
+		ni_vote_wanx_flow.tapSource
+		from
+		ni_vote_wanx_flow
+		where
+		ni_vote_wanx_flow.deliveryId = #{deliveryId}) as
+		table1,ni_vote_delivery_wanx
+		where table1.deliveryId =
+		ni_vote_delivery_wanx.deliveryId) as
+		table2,ni_vote_questionnaire
+		where
+		table2.vqnId = ni_vote_questionnaire.vqnId) as
+		table3,ni_vqnclass_dict
+		where table3.vqnClassId = ni_vqnclass_dict.vqnClassId) as
+		table4,ni_user_base,ni_user_education
+		where table4.userId =
+		ni_user_base.userId and table4.userId =
+		ni_user_education.userId) as
+		table5,ni_region_dict
+		where table5.regionId = ni_region_dict.regionId;
+	</select>
+</mapper>

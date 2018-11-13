@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.newIns.dao.assess.NiAssessQuestionnaireMapper" >
+
+  <resultMap id="BaseResultMap" type="com.newIns.model.assess.NiAssessQuestionnaireVO" >
+    <id column="aqnId" property="aqnid" />
+    <result column="aqnName" property="aqnname" />
+    <result column="publisherId" property="publisherid" />
+    <result column="publisherName" property="publishername" />
+    <result column="epilogue" property="epilogue" />
+    <result column="perface" property="perface" />
+    <result column="aqnClassId" property="aqnclassid" />
+    <result column="cTime" property="ctime" />
+    <result column="sTime" property="stime" />
+    <result column="staus" property="staus" />
+    <result column="recommandQty" property="recommandqty" />
+    <result column="questionQty" property="questionQty" />
+    <result column="filePath" property="filepath" />
+    <result column="validation" property="validation" />
+    <result column="tag1Id" property="tag1id" />
+    <result column="tag2Id" property="tag2id" />
+    <result column="tag3Id" property="tag3id" />
+    <result column="tag4Id" property="tag4id" />
+    <result column="tag5Id" property="tag5id" />
+    <result column="picPath" property="picpath" />
+    <result column="aqnSummary" property="aqnsummary" />
+    <result column="editor" property="editor" />
+    <result column="comment" property="comment" />
+    
+    <result column="aqnClassName" property="aqnClassName" />
+    <result column="resutShowType" property="resutShowType" />
+    <result column="showType" property="showType" />
+    
+  </resultMap>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select *
+    from ni_assess_questionnaire
+    where aqnId = #{aqnId}
+  </select>
+  
+  <!-- 查询所有定稿的测评问卷 -->
+  <select id="findNiAssQueByStat2" resultType="com.newIns.model.assess.NiAssessQuestionnaire">
+  	{CALL findNiAssQueByStat2()}
+  </select>
+  
+  <!-- 根据投放id 查询测评问卷信息 -->
+  <select id="findAssQue_byDelId" parameterType="java.lang.Integer" resultType="com.newIns.model.assess.NiAssessQuestionnaire">
+  	<!-- {CALL findAssQue_byDelId(#{id})} -->
+  	SELECT ni_assess_questionnaire.*
+	FROM ni_assess_delivery,ni_assess_questionnaire
+	WHERE 
+		ni_assess_delivery.aqnId=ni_assess_questionnaire.aqnId
+	AND ni_assess_delivery.deliveryId = #{id}
+  </select>
+  
+  <!-- 列表查询 -->
+  <select id="selectList" parameterType="hashmap" resultMap="BaseResultMap">
+  SELECT ad.aqnClassName,aq.* 
+ 	 FROM ni_assess_questionnaire aq,ni_aqnclass_dict ad
+	<where>
+		aq.aqnClassId = ad.aqnClassId
+		<if test="sqnName != null">
+			AND aq.aqnName LIKE '%${sqnName}%'
+		</if>
+		<if test="aqnId != null">
+			AND aq.aqnId = #{aqnId}
+		</if>
+		<if test="qnclassId != null">
+			AND aq.aqnClassId = #{qnclassId}
+		</if>
+		<if test="staus != null">
+			AND aq.staus = #{staus}
+		</if>
+	</where>
+		ORDER BY aq.cTime DESC
+  </select>
+  
+  <!-- 投放添加问卷信息筛选 -->
+  <select id="select_niAssQue_Dev" resultType="com.newIns.model.assess.NiAssessQuestionnaire" statementType="CALLABLE">
+  	  { CALL select_niAssQue_Dev() }
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from ni_assess_questionnaire
+    where aqnId = #{aqnId}
+  </delete>
+
+  <!-- 新增 -->
+  <insert id="insert" parameterType="com.newIns.model.assess.NiAssessQuestionnaire" >
+  	<!-- 返回主键 -->
+	  <selectKey keyProperty="aqnid" order="AFTER" resultType="java.lang.Integer">
+	  	select LAST_INSERT_ID()
+	  </selectKey>
+  	
+    insert into ni_assess_questionnaire (
+      aqnId, aqnName, publisherId, publisherName, epilogue, 
+      perface, aqnClassId, cTime, sTime, staus, 
+      recommandQty, questionQty, filePath, validation, aqnCategory, 
+      tag1Id,tag2Id, tag3Id, tag4Id, tag5Id,
+      picPath, aqnSummary, editor,showType,resutShowType, comment
+      )
+    values (
+      #{aqnid}, #{aqnname}, #{publisherid}, #{publishername}, #{epilogue}, 
+      #{perface}, #{aqnclassid}, #{ctime}, #{stime},#{staus}, 
+      #{recommandqty}, #{questionQty}, #{filepath}, #{validation}, #{aqnCategory}, 
+      #{tag1id}, #{tag2id}, #{tag3id}, #{tag4id}, #{tag5id}, 
+      #{picpath}, #{aqnsummary},#{editor}, #{showType},#{resutShowType}, #{comment} 
+      )
+  </insert>
+  
+  <update id="updateByPrimaryKeySelective" parameterType="com.newIns.model.assess.NiAssessQuestionnaire" >
+    update ni_assess_questionnaire
+    <set >
+      <if test="aqnname != null" >
+        aqnName = #{aqnname},
+      </if>
+      <if test="publisherid != null" >
+        publisherId = #{publisherid},
+      </if>
+      <if test="publishername != null" >
+        publisherName = #{publishername},
+      </if>
+      <if test="epilogue != null" >
+        epilogue = #{epilogue},
+      </if>
+      <if test="perface != null" >
+        perface = #{perface},
+      </if>
+      <if test="aqnclassid != null" >
+        aqnClassId = #{aqnclassid},
+      </if>
+      <if test="ctime != null" >
+        cTime = #{ctime},
+      </if>
+      <if test="stime != null" >
+        sTime = #{stime},
+      </if>
+      <if test="staus != null" >
+        staus = #{staus},
+      </if>
+      <if test="recommandqty != null" >
+        recommandQty = #{recommandqty},
+      </if>
+      <if test="questionQty != null" >
+        questionQty = #{questionQty},
+      </if>
+      <if test="filepath != null" >
+        filePath = #{filepath},
+      </if>
+      <if test="validation != null" >
+        validation = #{validation},
+      </if>
+      <if test="tag1id != null" >
+        tag1Id = #{tag1id},
+      </if>
+      <if test="tag2id != null" >
+        tag2Id = #{tag2id},
+      </if>
+      <if test="tag3id != null" >
+        tag3Id = #{tag3id},
+      </if>
+      <if test="tag4id != null" >
+        tag4Id = #{tag4id},
+      </if>
+      <if test="tag5id != null" >
+        tag5Id = #{tag5id},
+      </if>
+      <if test="picpath != null" >
+        picPath = #{picpath},
+      </if>
+      <if test="aqnsummary != null" >
+        aqnSummary = #{aqnsummary},
+      </if>
+      <if test="editor != null" >
+        editor = #{editor},
+      </if>
+      <if test="authorId != null and authorId != '' ">
+      	authorId = #{authorId},
+      </if>
+      <if test="subtitle != null and subtitle != '' ">
+      	subtitle = #{subtitle},
+      </if>
+      <if test="showType != null">
+      	showType = #{showType},
+      </if>
+      <if test="resutShowType != null">
+      	resutShowType = #{resutShowType},
+      </if>
+      <if test="comment != null" >
+        comment = #{commen},
+      </if>
+    </set>
+    where aqnId = #{aqnid}
+  </update>
+  
+  <!-- 批量发布测评问卷 -->
+  <update id="releaseNiAssessQuestionnaire" parameterType="hashmap">
+  	 UPDATE ni_assess_questionnaire
+	SET staus = #{statu} 
+	WHERE aqnId IN
+	<foreach collection="aqnids" item="aqnids" open="(" separator="," close=")"> 
+		#{aqnids}
+	</foreach>
+  </update>
+  
+  <!-- 批量删除测评问卷 -->
+  <delete id="delete_AssessQuestionnaireByids" parameterType="hashmap">
+	
+	delete from ni_assess_questionnaire
+	WHERE aqnId IN
+	<foreach collection="sqnId_list" item="aqnId" open="(" separator="," close=")">
+		#{aqnId}
+	</foreach>
+  </delete>
+  
+  <!-- 批量删除问卷下的问题 -->
+  <delete id="delete_QuestionByIds" parameterType="hashmap" >
+  	
+  	DELETE from ni_assess_question 
+	WHERE 
+	ni_assess_question.aqnId IN
+	<foreach collection="sqnId_list" item="aqnId" open="(" separator="," close=")">
+		#{aqnId}
+	</foreach>
+  	
+  </delete>
+  
+  <!-- 根据测评问卷名称查询测评问卷 -->
+  <select id="selectByAssessName" parameterType="java.lang.String" resultType="com.newIns.model.assess.NiAssessQuestionnaire">
+  	 SELECT * 
+  	 FROM 
+  	 	ni_assess_questionnaire 
+  	 WHERE 
+	 	ni_assess_questionnaire.staus = 2 
+	 	AND ni_assess_questionnaire.aqnName LIKE "%${_parameter}%"
+  </select>
+  
+</mapper>

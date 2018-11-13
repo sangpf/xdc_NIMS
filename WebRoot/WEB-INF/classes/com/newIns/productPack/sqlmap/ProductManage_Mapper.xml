@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.newIns.productPack.dao.ProductManage_Dao" >
+
+	<select id="select_product_manageList_map" parameterType="hashmap" resultType="com.newIns.productPack.pojo.vo.ProductManage_Vo">
+		
+		SELECT ni_product_manage.*,
+		(
+		CASE
+			WHEN ni_product_manage.itemType = 1 THEN (SELECT ni_survey_delivery.showTitle FROM ni_survey_delivery WHERE ni_survey_delivery.deliveryId = ni_product_manage.itemId)
+			WHEN ni_product_manage.itemType = 2 THEN (SELECT ni_assess_delivery.showTitle FROM ni_assess_delivery WHERE ni_assess_delivery.deliveryId = ni_product_manage.itemId)
+			WHEN ni_product_manage.itemType = 3 THEN (SELECT ni_vote_delivery.showTitle FROM ni_vote_delivery WHERE ni_vote_delivery.deliveryId = ni_product_manage.itemId)
+			WHEN ni_product_manage.itemType = 4 THEN (SELECT ni_report.reportTitle FROM ni_report WHERE ni_report.reportId = ni_product_manage.itemId)
+			WHEN ni_product_manage.itemType = 5 THEN (SELECT ni_tweet.tweetTitle FROM ni_tweet WHERE ni_tweet.tweetId = ni_product_manage.itemId)
+		END
+		) AS showTitle
+		FROM ni_product_manage
+		WHERE 
+		ni_product_manage.productId = #{productId}
+		AND ni_product_manage.columId = #{columId}
+		ORDER BY showOrder ASC
+		
+	</select>
+	
+	<select id="select_productManage_model" parameterType="com.newIns.productPack.pojo.ProductManage" resultType="com.newIns.productPack.pojo.ProductManage">
+		SELECT *
+			FROM ni_product_manage 
+			WHERE 
+			ni_product_manage.productId = #{productId}
+			AND ni_product_manage.itemId = #{itemId}
+			AND ni_product_manage.itemType = #{itemType}
+			AND ni_product_manage.columId = #{columId}
+	</select>
+	
+	<!-- 递增 showOrder -->
+	<update id="increasing_showOrder_map" parameterType="hashmap">
+		UPDATE ni_product_manage
+			SET showOrder = (showOrder + 1)
+			WHERE ni_product_manage.productId = #{productId}
+		    AND ni_product_manage.columId = #{columId}
+	</update>
+	
+	<insert id="insert" parameterType="com.newIns.productPack.pojo.ProductManage">
+		INSERT INTO ni_product_manage(
+			productId,itemId,itemType,showOrder,state,columId
+		)
+		VALUES(
+			#{productId},#{itemId},#{itemType},1,#{state},#{columId}
+		)
+				
+	</insert>
+	
+	<update id="update_model" parameterType="com.newIns.productPack.pojo.ProductManage">
+		UPDATE ni_product_manage
+			<set>
+				<if test="showOrder != null">
+					showOrder = #{showOrder},
+				</if>
+				<if test="state != null">
+					state = #{state},
+				</if>
+				<if test="columId != null">
+					columId = #{columId},
+				</if>
+			</set>
+		WHERE ni_product_manage.id	= #{id}	
+	</update>
+
+</mapper>

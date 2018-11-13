@@ -1,0 +1,428 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.newIns.dao.survey.NiSurveyQuestionnaireMapper" >
+  <resultMap id="BaseResultMap" type="com.newIns.model.survery.NiSurveyQuestionnaireVO" >
+    <id column="sqnId" property="sqnid" />
+    <result column="sqnName" property="sqnname" />
+    <result column="publisherId" property="publisherid" />
+    <result column="publisherName" property="publishername" />
+    <result column="epilogue" property="epilogue" />
+    <result column="perface" property="perface" />
+    <result column="sqnClassId" property="sqnclassid" />
+    <result column="cTime" property="ctime" />
+    <result column="sTime" property="stime" />
+    <result column="staus" property="staus" />
+    <result column="recommandQty" property="recommandqty" />
+    <result column="questionQty" property="questionQty" />
+    <result column="filePath" property="filepath" />
+    <result column="validation" property="validation" />
+    <result column="sqnCategory" property="sqnCategory"/>
+    <result column="keyQuestionNum" property="keyQuestionNum"/>
+    <result column="tag1Id" property="tag1id" />
+    <result column="tag2Id" property="tag2id" />
+    <result column="tag3Id" property="tag3id" />
+    <result column="tag4Id" property="tag4id" />
+    <result column="tag5Id" property="tag5id" />
+    <result column="picPath" property="picpath" />
+    <result column="sqnSummary" property="sqnsummary" />
+    <result column="editor" property="editor" />
+    <result column="comment" property="comment" />
+    <result column="sqnClassName" property="sqnClassName" />
+    <result column="showType" property="showType"/>
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    sqnId, sqnName, publisherId, publisherName, epilogue, perface, sqnClassId, cTime, 
+    sTime, staus, recommandQty, questionQty, filePath, validation,sqnCategory,keyQuestionNum, tag1Id, tag2Id, tag3Id, 
+    tag4Id, tag5Id, picPath, sqnSummary, editor, comment,showType
+  </sql>
+  
+  <select id="selectByNameLevelSubject" resultMap="BaseResultMap" parameterType="map">  
+       select * from ni_survey_questionnaire
+  </select>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from ni_survey_questionnaire
+    where sqnId = #{sqnid}
+  </select>
+  
+  <!-- 根据投放id查询调查问卷信息 -->
+  <select id="findSurQueBy_DelId" parameterType="java.lang.Integer" resultType="com.newIns.model.survery.NiSurveyQuestionnaire">
+  	SELECT `ni_survey_questionnaire`.*
+	FROM `ni_survey_delivery`,`ni_survey_questionnaire`
+	WHERE `ni_survey_delivery`.`sqnId`=`ni_survey_questionnaire`.`sqnId`
+	AND `ni_survey_delivery`.`deliveryId` = #{id}
+  </select>
+  
+  	<!-- 根据问卷名称查询问卷信息 -->
+	<select id="selectBySurveyQuestionnaireName" parameterType="java.lang.String" resultType="com.newIns.model.survery.NiSurveyQuestionnaire">
+		SELECT
+		<include refid="Base_Column_List"/>
+		FROM ni_survey_questionnaire WHERE staus = 2 AND sqnName LIKE "%${_parameter}%"
+		
+	</select>
+
+  <!-- 根据条件查询问卷表 -->
+  <select id="selectList" parameterType="hashmap" resultMap="BaseResultMap">
+	SELECT sd.sqnClassName,sq.* 
+	FROM ni_survey_questionnaire sq,ni_sqnclass_dict sd
+	<where>
+		sq.sqnClassId = sd.sqnClassId
+		<if test="sqnName != null">
+			AND sq.sqnName LIKE "%${sqnName}%" 
+		</if>
+		<if test="sqnId != null">
+			AND sq.sqnId = #{sqnId}
+		</if>
+		<if test="staus != null">
+			AND sq.staus = #{staus}
+		</if>
+		<if test="qnclassId != null">
+			AND sq.sqnClassId = #{qnclassId}
+		</if>
+	</where>
+	 ORDER BY sq.cTime DESC
+  </select>
+  
+  <select id="selectPaging" parameterType="hashmap" resultType="com.newIns.model.survery.NiSurveyQuestionnaire">
+  	  SELECT  
+	<include refid="Base_Column_List"/>
+	FROM ni_survey_questionnaire 
+  </select>
+   <select id="getPage" resultMap="BaseResultMap" parameterType="map">  
+       select * from ni_survey_questionnaire
+   </select> 
+   
+   <!-- 投放管理 添加问卷 筛选 -->
+   <select id="select_niSurveyQue_Dev" resultType="com.newIns.model.survery.NiSurveyQuestionnaire" statementType="CALLABLE">
+   	  { CALL select_niSurveyQue_Dev() }
+   </select>
+   
+   <!-- 查询所有处于定稿状态的调查问卷 -->
+   <select id="findSurQueByStau2" resultType="com.newIns.model.survery.NiSurveyQuestionnaire" statementType="CALLABLE">
+   	 {CALL findSurQueByStau2()}
+   </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from ni_survey_questionnaire
+    where sqnId = #{sqnid}
+  </delete>
+
+  <insert id="insert" parameterType="com.newIns.model.survery.NiSurveyQuestionnaire">
+	  <selectKey keyProperty="sqnid" order="AFTER" resultType="java.lang.Integer">
+	  	select LAST_INSERT_ID()
+	  </selectKey>
+    insert into ni_survey_questionnaire (sqnId, sqnName, publisherId, 
+      publisherName, epilogue, perface, 
+      sqnClassId, cTime, sTime, 
+      staus, recommandQty, questionQty, 
+      filePath, validation,sqnCategory,keyQuestionNum,
+      tag1Id, tag2Id, tag3Id, tag4Id, tag5Id, picPath, sqnSummary,
+      editor, comment)
+    values (#{sqnid}, #{sqnname}, #{publisherid}, 
+      #{publishername}, #{epilogue}, #{perface}, 
+      #{sqnclassid}, #{ctime}, #{stime}, 
+      #{staus}, #{recommandqty}, #{questionQty},
+      #{filepath}, #{validation},#{sqnCategory}, #{keyQuestionNum},
+      #{tag1id}, #{tag2id}, #{tag3id}, #{tag4id}, 
+      #{tag5id}, #{picpath}, #{sqnsummary}, 
+      #{editor}, #{comment})
+  </insert>
+  
+  <insert id="insertSelective" parameterType="com.newIns.model.survery.NiSurveyQuestionnaire" >
+    insert into ni_survey_questionnaire
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="sqnid != null" >
+        sqnId,
+      </if>
+      <if test="sqnname != null" >
+        sqnName,
+      </if>
+      <if test="publisherid != null" >
+        publisherId,
+      </if>
+      <if test="publishername != null" >
+        publisherName,
+      </if>
+      <if test="epilogue != null" >
+        epilogue,
+      </if>
+      <if test="perface != null" >
+        perface,
+      </if>
+      <if test="sqnclassid != null" >
+        sqnClassId,
+      </if>
+      <if test="ctime != null" >
+        cTime,
+      </if>
+      <if test="stime != null" >
+        sTime,
+      </if>
+      <if test="staus != null" >
+        staus,
+      </if>
+      <if test="recommandqty != null" >
+        recommandQty,
+      </if>
+      <if test="questionnum != null" >
+        questionNum,
+      </if>
+      <if test="filepath != null" >
+        filePath,
+      </if>
+      <if test="validation != null" >
+        validation,
+      </if>
+      <if test="sqnCategory != null">
+      	sqnCategory,
+      </if>
+      <if test="tag1id != null" >
+        tag1Id,
+      </if>
+      <if test="tag2id != null" >
+        tag2Id,
+      </if>
+      <if test="tag3id != null" >
+        tag3Id,
+      </if>
+      <if test="tag4id != null" >
+        tag4Id,
+      </if>
+      <if test="tag5id != null" >
+        tag5Id,
+      </if>
+      <if test="picpath != null" >
+        picPath,
+      </if>
+      <if test="sqnsummary != null" >
+        sqnSummary,
+      </if>
+      <if test="editor != null" >
+        editor,
+      </if>
+      <if test="comment != null" >
+        comment,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="sqnid != null" >
+        #{sqnid},
+      </if>
+      <if test="sqnname != null" >
+        #{sqnname},
+      </if>
+      <if test="publisherid != null" >
+        #{publisherid},
+      </if>
+      <if test="publishername != null" >
+        #{publishername},
+      </if>
+      <if test="epilogue != null" >
+        #{epilogue},
+      </if>
+      <if test="perface != null" >
+        #{perface},
+      </if>
+      <if test="sqnclassid != null" >
+        #{sqnclassid},
+      </if>
+      <if test="ctime != null" >
+        #{ctime},
+      </if>
+      <if test="stime != null" >
+        #{stime},
+      </if>
+      <if test="staus != null" >
+        #{staus},
+      </if>
+      <if test="recommandqty != null" >
+        #{recommandqty},
+      </if>
+      <if test="questionnum != null" >
+        #{questionnum},
+      </if>
+      <if test="filepath != null" >
+        #{filepath},
+      </if>
+      <if test="validation != null" >
+        #{validation},
+      </if>
+      <if test="sqnCategory != null">
+      	#{sqnCategory}
+      </if>
+      <if test="tag1id != null" >
+        #{tag1id},
+      </if>
+      <if test="tag2id != null" >
+        #{tag2id},
+      </if>
+      <if test="tag3id != null" >
+        #{tag3id},
+      </if>
+      <if test="tag4id != null" >
+        #{tag4id},
+      </if>
+      <if test="tag5id != null" >
+        #{tag5id},
+      </if>
+      <if test="picpath != null" >
+        #{picpath},
+      </if>
+      <if test="sqnsummary != null" >
+        #{sqnsummary},
+      </if>
+      <if test="editor != null" >
+        #{editor},
+      </if>
+      <if test="comment != null" >
+        #{comment},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.newIns.model.survery.NiSurveyQuestionnaire" >
+    update ni_survey_questionnaire
+    <set >
+      <if test="showType != null">
+      	showType = #{showType},
+      </if>
+      <if test="sqnname != null" >
+        sqnName = #{sqnname},
+      </if>
+      <if test="publisherid != null" >
+        publisherId = #{publisherid},
+      </if>
+      <if test="publishername != null" >
+        publisherName = #{publishername},
+      </if>
+      <if test="epilogue != null" >
+        epilogue = #{epilogue},
+      </if>
+      <if test="perface != null" >
+        perface = #{perface},
+      </if>
+      <if test="sqnclassid != null" >
+        sqnClassId = #{sqnclassid},
+      </if>
+      <if test="ctime != null" >
+        cTime = #{ctime},
+      </if>
+      <if test="stime != null" >
+        sTime = #{stime},
+      </if>
+      <if test="staus != null" >
+        staus = #{staus},
+      </if>
+      <if test="recommandqty != null" >
+        recommandQty = #{recommandqty},
+      </if>
+      <if test="questionQty != null" >
+        questionQty = #{questionQty},
+      </if>
+      <if test="filepath != null" >
+        filePath = #{filepath},
+      </if>
+      <if test="validation != null" >
+        validation = #{validation},
+      </if>
+      <if test="sqnCategory != null">
+      	sqnCategory = #{sqnCategory},
+      </if>
+      <if test="tag1id != null" >
+        tag1Id = #{tag1id},
+      </if>
+      <if test="tag2id != null" >
+        tag2Id = #{tag2id},
+      </if>
+      <if test="tag3id != null" >
+        tag3Id = #{tag3id},
+      </if>
+      <if test="tag4id != null" >
+        tag4Id = #{tag4id},
+      </if>
+      <if test="tag5id != null" >
+        tag5Id = #{tag5id},
+      </if>
+      <if test="picpath != null" >
+        picPath = #{picpath},
+      </if>
+      <if test="sqnsummary != null" >
+        sqnSummary = #{sqnsummary},
+      </if>
+      <if test="editor != null" >
+        editor = #{editor},
+      </if>
+      <if test="comment != null" >
+        comment = #{comment},
+      </if>
+    </set>
+    where sqnId = #{sqnid}
+  </update>
+  
+  <!-- 批量修改问卷状态 -->
+  <update id="updateStateByids" parameterType="hashmap" >
+  	UPDATE ni_survey_questionnaire 
+  	SET staus = #{state} 
+  	WHERE sqnId IN 
+  	<foreach collection="sqnids" item="sqnids" index="index" open="(" separator="," close=")"> 
+  		#{sqnids}
+  	</foreach>
+  </update>
+  <!-- 批量撤销问卷 -->
+  <update id="revokeStateByids">
+  	UPDATE ni_survey_questionnaire 
+  	SET staus = #{state} 
+  	WHERE sqnId IN 
+  	<foreach collection="sqnids" item="sqnids" index="index" open="(" separator="," close=")"> 
+  		#{sqnids}
+  	</foreach>
+  </update>
+
+  <delete id="delete_Questionnaire_ByIdS_list" parameterType="hashmap">
+  	 DELETE from ni_survey_questionnaire
+	 WHERE sqnId IN 
+	 <foreach collection="sqnId_list" item="sqnId" open="(" separator="," close=")">
+	 	#{sqnId}
+	 </foreach>
+  </delete>
+  
+  <delete id="delete_Question_ByIdS_list">
+  	DELETE FROM ni_survey_question
+		WHERE 
+		ni_survey_question.sqnId IN
+		<foreach collection="sqnId_list" item="sqnId" open="(" separator="," close=")">
+			#{sqnId}
+		</foreach>
+  </delete>
+  
+  <update id="updateByPrimaryKey" parameterType="com.newIns.model.survery.NiSurveyQuestionnaire" >
+    update ni_survey_questionnaire
+    set sqnName = #{sqnname},
+      publisherId = #{publisherid},
+      publisherName = #{publishername},
+      epilogue = #{epilogue},
+      perface = #{perface},
+      sqnClassId = #{sqnclassid},
+      cTime = #{ctime},
+      sTime = #{stime},
+      staus = #{staus},
+      recommandQty = #{recommandqty},
+      questionNum = #{questionnum},
+      filePath = #{filepath},
+      validation = #{validation},
+      sqnCategory = #{sqnCategory},
+      tag1Id = #{tag1id},
+      tag2Id = #{tag2id},
+      tag3Id = #{tag3id},
+      tag4Id = #{tag4id},
+      tag5Id = #{tag5id},
+      picPath = #{picpath},
+      sqnSummary = #{sqnsummary},
+      editor = #{editor},
+      comment = #{comment}
+    where sqnId = #{sqnid}
+  </update>
+</mapper>

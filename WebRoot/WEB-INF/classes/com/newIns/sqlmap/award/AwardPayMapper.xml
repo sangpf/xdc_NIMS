@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.newIns.dao.award.AwardPayMapper">
+	<resultMap id="AwardPayResultMap" type="com.newIns.model.award.AwardPay">
+	</resultMap>
+	
+	<resultMap id="PostalInfoResultMap" type="com.newIns.model.PostalInfo">
+	</resultMap>
+	
+	<!-- 分页查询 -->
+	<select id="selectList" resultMap="AwardPayResultMap">
+		<!-- 调查 -->
+		SELECT 
+			ni_survey_order.userId,
+			ni_survey_order.awardGetStatus,
+			ni_survey_order.awardPayStatus,
+			ni_survey_order.awardGetTime,
+			ni_survey_order.awardPayTime,
+			ni_survey_questionnaire.sqnName AS qnName,
+			ni_award.awardId,
+			ni_award.awardName,
+			ni_survey_order.orderId,
+			1 AS qnType
+		FROM ni_survey_order,ni_award,ni_survey_questionnaire,ni_award_pool
+		<where>
+			<if test="awardName != null">
+				awardName LIKE "%${awardName}%" 
+			</if>
+			<if test="qnName != null">
+			    AND sqnName LIKE "%${qnName}%"  
+			</if>
+			<if test="awardGetStatus != null">
+			    AND awardGetStatus =#{awardGetStatus} 
+			</if>
+			<if test="awardPayStatus != null">
+			    AND awardPayStatus =#{awardPayStatus} 
+			</if>
+			<if test="awardType != null">
+			    AND awardType =#{awardType} 
+			</if>
+				AND ni_award.awardPoolId=ni_award_pool.awardPoolId		
+				AND ni_survey_order.awardId IS NOT NULL 
+				AND ni_survey_order.awardId != 0
+				AND ni_survey_order.sqnId=ni_survey_questionnaire.sqnId
+				AND ni_survey_order.awardId=ni_award.awardId
+		</where>
+	
+		UNION
+	
+		<!-- 测评 -->
+		SELECT 
+			ni_assess_order.userId,
+			ni_assess_order.awardGetStatus,
+			ni_assess_order.awardPayStatus,
+			ni_assess_order.awardGetTime,
+			ni_assess_order.awardPayTime,
+			aqnName AS qnName,
+			ni_award.awardId,
+			ni_award.awardName,
+			ni_assess_order.orderId,
+			2 AS qnType
+		FROM ni_assess_order,ni_award,ni_assess_questionnaire,ni_award_pool
+		<where>	
+			<if test="awardName != null">
+				awardName LIKE "%${awardName}%" 
+			</if>
+			<if test="qnName != null">
+			    AND aqnName LIKE "%${qnName}%"  
+			</if>
+			<if test="awardGetStatus != null">
+			    AND awardGetStatus =#{awardGetStatus} 
+			</if>
+			<if test="awardPayStatus != null">
+			    AND awardPayStatus =#{awardPayStatus} 
+			</if>
+			<if test="awardType != null">
+			    AND awardType =#{awardType} 
+			</if>
+				AND ni_award.awardPoolId=ni_award_pool.awardPoolId			
+				AND ni_assess_order.awardId IS NOT NULL
+				AND ni_assess_order.awardId != 0
+				AND ni_assess_order.aqnId=ni_assess_questionnaire.aqnId
+				AND ni_assess_order.awardId=ni_award.awardId
+		</where>
+	
+		UNION
+	
+		<!-- 投票 -->
+		SELECT 
+			ni_vote_order.userId,
+			ni_vote_order.awardGetStatus,
+			ni_vote_order.awardPayStatus,
+			ni_vote_order.awardGetTime,
+			ni_vote_order.awardPayTime,
+			vqnName AS qnName,
+			ni_award.awardId,
+			ni_award.awardName,
+			ni_vote_order.orderId,
+			3 AS qnType
+		FROM ni_vote_order,ni_award,ni_vote_questionnaire,ni_award_pool
+		<where>	
+			<if test="awardName != null">
+				awardName LIKE "%${awardName}%" 
+			</if>
+			<if test="qnName != null">
+			    AND vqnName LIKE "%${qnName}%"  
+			</if>
+			<if test="awardGetStatus != null">
+			    AND awardGetStatus =#{awardGetStatus} 
+			</if>
+			<if test="awardPayStatus != null">
+			    AND awardPayStatus =#{awardPayStatus} 
+			</if>	
+			<if test="awardType != null ">
+			    AND awardType =#{awardType} 
+			</if>
+				AND ni_award.awardPoolId=ni_award_pool.awardPoolId	
+				AND ni_vote_order.awardId IS NOT NULL
+				AND ni_vote_order.awardId != 0
+				AND ni_vote_order.vqnId=ni_vote_questionnaire.vqnId
+				AND ni_vote_order.awardId=ni_award.awardId
+		</where>
+		
+		ORDER BY awardGetTime
+	</select>
+
+	<!-- 查看发放信息 -->
+	<select id="getAwardPostalInfo" resultMap="PostalInfoResultMap">
+		SELECT 
+			ni_user_postal.*,
+			ni_award.awardName,
+			ni_award.awardId
+		FROM ni_user_postal,ni_award
+		WHERE 
+			ni_user_postal.userId=#{userId} 
+			AND ni_award.awardId=#{awardId}
+		ORDER BY uTime DESC
+		LIMIT 1
+	</select>
+
+	<!-- 发放奖品 -->
+	<update id="payAward" >
+		UPDATE 
+			<if test="qnType == '1'.toString()"> ni_survey_order</if>
+			<if test="qnType == '2'.toString()"> ni_assess_order</if>
+			<if test="qnType == '3'.toString()"> ni_vote_order</if>
+		SET awardPayStatus = 2,awardPayTime = (SELECT NOW() as cuttertTime)
+		WHERE orderId=#{orderId}
+		
+	</update>
+	
+
+</mapper>

@@ -1,0 +1,330 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.newIns.dao.NiAdInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.newIns.model.NiAdInfo" >
+    <id column="adId" property="adId" jdbcType="INTEGER" />
+    <result column="adTitle" property="adTitle" jdbcType="VARCHAR" />
+    <result column="adCustomerId" property="adCustomerId" jdbcType="INTEGER" />
+    <result column="adType" property="adType" jdbcType="TINYINT" />
+    <result column="adImg" property="adImg" jdbcType="VARCHAR" />
+    <result column="adCTime" property="adCTime" jdbcType="TIMESTAMP" />
+    <result column="adLink" property="adLink" jdbcType="VARCHAR" />
+    <result column="adStatus" property="adStatus" jdbcType="TINYINT" />
+    <!-- <result column="comment" property="comment" jdbcType="VARCHAR" /> -->
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    adId, adTitle, adCustomerId, adType, adImg, adCTime, adLink, adStatus,replaceAdId, comment
+  </sql>
+  
+  <!-- 查询所有广告信息 -->
+  <select id="selectList" resultType="com.newIns.model.NiAdInfo">
+  		select * from ni_ad_info
+  </select>
+  
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.newIns.model.NiAdInfoExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from ni_ad_info
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from ni_ad_info
+    where adId = #{adid}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from ni_ad_info
+    where adId = #{adid}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.newIns.model.NiAdInfoExample" >
+    delete from ni_ad_info
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  
+  <insert id="insert" parameterType="com.newIns.model.NiAdInfo" >
+    insert into ni_ad_info (adTitle, adType, adImg, adCTime, adLink, adStatus,replaceAdId)
+    values (
+    	#{adTitle},#{adType}, #{adImg}, #{adCTime}, #{adLink}, #{adStatus},#{replaceAdId}
+    	)
+  </insert>
+  
+  <insert id="insertSelective" parameterType="com.newIns.model.NiAdInfo" >
+    insert into ni_ad_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="adid != null" >
+        adId,
+      </if>
+      <if test="adtitle != null" >
+        adTitle,
+      </if>
+      <if test="adcustomerid != null" >
+        adCustomerId,
+      </if>
+      <if test="adtype != null" >
+        adType,
+      </if>
+      <if test="adimg != null" >
+        adImg,
+      </if>
+      <if test="adbtime != null" >
+        adBTime,
+      </if>
+      <if test="adetime != null" >
+        adETime,
+      </if>
+      <if test="adlink != null" >
+        adLink,
+      </if>
+      <if test="adstatus != null" >
+        adStatus,
+      </if>
+      <if test="comment != null" >
+        comment,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="adid != null" >
+        #{adid},
+      </if>
+      <if test="adtitle != null" >
+        #{adtitle},
+      </if>
+      <if test="adcustomerid != null" >
+        #{adcustomerid},
+      </if>
+      <if test="adtype != null" >
+        #{adtype},
+      </if>
+      <if test="adimg != null" >
+        #{adimg},
+      </if>
+      <if test="adbtime != null" >
+        #{adbtime},
+      </if>
+      <if test="adetime != null" >
+        #{adetime},
+      </if>
+      <if test="adlink != null" >
+        #{adlink},
+      </if>
+      <if test="adstatus != null" >
+        #{adstatus},
+      </if>
+      <if test="comment != null" >
+        #{comment},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.newIns.model.NiAdInfoExample" resultType="java.lang.Integer" >
+    select count(*) from ni_ad_info
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update ni_ad_info
+    <set >
+      <if test="record.adid != null" >
+        adId = #{record.adid},
+      </if>
+      <if test="record.adtitle != null" >
+        adTitle = #{record.adtitle},
+      </if>
+      <if test="record.adcustomerid != null" >
+        adCustomerId = #{record.adcustomerid},
+      </if>
+      <if test="record.adtype != null" >
+        adType = #{record.adtype},
+      </if>
+      <if test="record.adimg != null" >
+        adImg = #{record.adimg},
+      </if>
+      <if test="record.adbtime != null" >
+        adBTime = #{record.adbtime},
+      </if>
+      <if test="record.adetime != null" >
+        adETime = #{record.adetime},
+      </if>
+      <if test="record.adlink != null" >
+        adLink = #{record.adlink},
+      </if>
+      <if test="record.adstatus != null" >
+        adStatus = #{record.adstatus},
+      </if>
+      <if test="record.comment != null" >
+        comment = #{record.comment},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update ni_ad_info
+    set adId = #{record.adid},
+      adTitle = #{record.adtitle},
+      adCustomerId = #{record.adcustomerid},
+      adType = #{record.adtype},
+      adImg = #{record.adimg},
+      adBTime = #{record.adbtime},
+      adETime = #{record.adetime},
+      adLink = #{record.adlink},
+      adStatus = #{record.adstatus},
+      comment = #{record.comment}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  
+  <update id="updateByPrimaryKeySelective" parameterType="com.newIns.model.NiAdInfo" >
+    update ni_ad_info
+    <set >
+      <if test="adTitle != null" >
+        adTitle = #{adTitle},
+      </if>
+      <if test="adType != null" >
+        adType = #{adType},
+      </if>
+      <if test="adImg != null" >
+        adImg = #{adImg},
+      </if>
+      <if test="adCTime != null" >
+        adCTime = #{adCTime},
+      </if>
+      <if test="adLink != null" >
+        adLink = #{adLink},
+      </if>
+      <if test="adStatus != null" >
+        adStatus = #{adStatus},
+      </if>
+      <if test="replaceAdId != null">
+      	replaceAdId = #{replaceAdId},
+      </if>
+    </set>
+    where adId = #{adId}
+  </update>
+  
+  <update id="updateByPrimaryKey" parameterType="com.newIns.model.NiAdInfo" >
+    update ni_ad_info
+    set adTitle = #{adtitle},
+      adCustomerId = #{adcustomerid},
+      adType = #{adtype},
+      adImg = #{adimg},
+      adBTime = #{adbtime},
+      adETime = #{adetime},
+      adLink = #{adlink},
+      adStatus = #{adstatus},
+      comment = #{comment}
+    where adId = #{adid}
+  </update>
+  
+  	<update id="deleteAdInfoByIds">
+		DELETE FROM ni_ad_info
+		WHERE adId IN
+		<foreach collection="adIds" item="adIds" index="index"
+			open="(" separator="," close=")">
+			#{adIds}
+		</foreach>
+	</update>
+	
+	<select id="searchList" resultMap="BaseResultMap">
+		SELECT * FROM ni_ad_info
+		<where>
+			<if test="adTitle != null">
+				adTitle LIKE "%${adTitle}%"
+			</if>
+			<if test="adId != null">
+				AND adId = #{adId}
+			</if>
+			<if test="adType != null">
+				AND adType = #{adType}
+			</if>
+			<if test="adStatus != null">
+				AND adStatus = #{adStatus}
+			</if>
+		</where>
+		ORDER BY adId DESC
+	</select>
+	
+	<update id="changeAdInfoStatus" parameterType="hashmap">
+		UPDATE ni_ad_info
+		SET adStatus = #{adStatus}
+		WHERE adId IN
+		<foreach collection="adIds" item="adIds" index="index" open="("
+			separator="," close=")">
+			#{adIds}
+		</foreach>
+	</update>
+
+</mapper>

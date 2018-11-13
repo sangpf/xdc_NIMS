@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.newIns.dao.LotteryMapper">
+	<resultMap id="LotteryResultMap" type="com.newIns.model.Lottery">
+	</resultMap>
+	<resultMap id="AwardResultMap" type="com.newIns.model.award.Award">
+	</resultMap>
+	<!-- 分页查询 -->
+ <select id="selectList" resultMap="LotteryResultMap">
+        SELECT  lotteryId,lotteryName,award1Rate,award2Rate,award3Rate
+		FROM ni_lottery_dict
+	<where>
+		<if test="lotteryName != null">
+			lotteryName LIKE "%${lotteryName}%" 
+		</if>
+		<if test="lotteryId != null">
+		    AND lotteryId = #{lotteryId}  
+		</if>
+	</where>
+	 ORDER BY lotteryId 
+   </select>
+   
+   <!-- 添加抽奖组合 -->
+	<insert id="addLottery" parameterType="com.newIns.model.Lottery" >
+        <selectKey keyProperty="lotteryId" order="AFTER" resultType="java.lang.Integer">
+            select LAST_INSERT_ID()
+        </selectKey>
+      	INSERT INTO ni_lottery_dict(lotteryId,lotteryName,rankNum,award1Name,award1Id,award1Rate
+      		<if test="award2Id != null and  award2Id != '0'.toString()">
+      			,award2Name,award2Id,award2Rate
+      		</if>
+      		<if test="award3Id != null and award3Id != '0'.toString()">
+      		,award3Name,award3Id,award3Rate
+      		</if>
+      		,comment)
+		VALUES (#{lotteryId},#{lotteryName},#{rankNum},(select awardName from ni_award where awardId = #{award1Id}),#{award1Id},#{award1Rate}
+			<if test="award2Id != null and award2Id != '0'.toString()">
+				,(select awardName from ni_award where awardId = #{award2Id}),#{award2Id},#{award2Rate}
+			</if>
+			<if test="award3Id != null and award3Id != '0'.toString()">
+			,(select awardName from ni_award where awardId = #{award3Id}),#{award3Id},#{award3Rate}
+			</if>
+			,#{comment})
+    </insert>
+   
+    <!-- 批量删除抽奖组合 -->
+  	<delete id="deleteLotteryByIds">
+  		DELETE FROM ni_lottery_dict
+		WHERE lotteryId IN
+  	<foreach collection="lotteryIdList" item="lotteryIdList" index="index" open="(" separator="," close=")">
+  		#{lotteryIdList}
+  	</foreach>
+ 		 
+	</delete>
+	
+	<!-- 查询奖品信息 -->
+	<select id="searchAwardById" resultMap="AwardResultMap">
+		SELECT ni_award.*,`status`
+		FROM ni_award,ni_award_pool
+		WHERE awardId=#{awardId} AND ni_award.awardPoolId=ni_award_pool.awardPoolId	
+	</select>
+	
+	<!-- 查询抽奖组合编辑信息 -->
+	<select id="searchEditInfo" resultMap="LotteryResultMap">
+		SELECT lotteryId,lotteryName,award1Id,award1Rate,award2Id,award2Rate,award3Id,award3Rate,comment
+		FROM ni_lottery_dict
+		WHERE lotteryId=#{lotteryId}
+	</select>
+	
+	<!-- 保存编辑信息 -->
+	<update id="updateLottery">
+		UPDATE ni_lottery_dict
+		SET lotteryName=#{lotteryName},rankNum=#{rankNum},comment=#{comment},award1Id=#{award1Id},award1Rate=#{award1Rate},award1Name=(SELECT awardName FROM ni_award WHERE awardId=#{award1Id})
+			<if test="award2Id != null and  award2Id != '0'.toString()">
+			,award2Id=#{award2Id},award2Rate=#{award2Rate},award2Name=(SELECT awardName FROM ni_award WHERE awardId=#{award2Id})
+			</if>
+			<if test="award3Id != null and award3Id != '0'.toString()">
+			,award3Id=#{award3Id},award3Rate=#{award3Rate},award3Name=(SELECT awardName FROM ni_award WHERE awardId=#{award3Id})
+			</if>
+		WHERE lotteryId=#{lotteryId}	
+	</update>
+	
+	<!-- 动态生成命运表，保存中奖名单 -->
+	<insert id="generateLottery" statementType="STATEMENT" parameterType="java.util.Map" >				
+		 CREATE TABLE If Not Exists `${retMap.tableName}` (
+			`deliveryId`  int(8) NOT NULL ,
+			`qnType`  tinyint(2) NOT NULL ,
+			`channel`  tinyint(2) NOT NULL ,
+			`sequenceNum`  int(8) NOT NULL ,
+			`lotteryId`  int(8) NULL ,
+			`awardRank`  tinyint(2) NOT NULL ,
+			`userId`  int(8) NULL ,
+			`awardTime`  timestamp(6) NULL ,
+			`comment`  varchar(200) NULL ,
+			PRIMARY KEY (`deliveryId`, `qnType`, `channel`, `sequenceNum`)
+		);
+		
+<!-- 		INSERT INTO ${retMap.tableName} (deliveryId,qnType,channel,sequenceNum,lotteryId,awardRank)
+		VALUES 
+		<foreach collection="retMap.lotteryBasicInfoList" item="lotteryItem" index="index"  separator=",">
+			( 
+				${lotteryItem.deliveryId},${lotteryItem.qnType},${lotteryItem.channel},
+				${lotteryItem.sequenceNum},${lotteryItem.lotteryId},${lotteryItem.awardRank}
+			)
+		</foreach> -->
+	</insert>
+	
+	<insert id="insert_generateLottery" parameterType="hashmap" >
+		INSERT INTO ${retMap.tableName} (deliveryId,qnType,channel,sequenceNum,lotteryId,awardRank)
+		VALUES 
+		<foreach collection="retMap.lotteryBasicInfoList" item="lotteryItem" index="index"  separator=",">
+			( 
+				${lotteryItem.deliveryId},${lotteryItem.qnType},${lotteryItem.channel},
+				${lotteryItem.sequenceNum},${lotteryItem.lotteryId},${lotteryItem.awardRank}
+			)
+		</foreach>
+	</insert>
+
+	<delete id="deleteTab" parameterType="java.util.Map">
+		DROP TABLE ${tabMap.tabName};
+	</delete>
+
+</mapper>
+	

@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.newIns.dao.NiAqnclassDictMapper" >
+  <resultMap id="BaseResultMap" type="com.newIns.model.NiAqnclassDict" >
+    <id column="aqnClassId" property="aqnclassid" jdbcType="INTEGER" />
+    <result column="aqnClassName" property="aqnclassname" jdbcType="VARCHAR" />
+    <result column="aqnClassDes" property="aqnclassdes" jdbcType="VARCHAR" />
+    <result column="comment" property="comment" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    aqnClassId, aqnClassName, aqnClassDes, comment
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.newIns.model.NiAqnclassDictExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from ni_aqnclass_dict
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from ni_aqnclass_dict
+    where aqnClassId = #{aqnclassid,jdbcType=INTEGER}
+  </select>
+  
+  <select id="selectList" resultMap="BaseResultMap">
+  	    select 
+    <include refid="Base_Column_List" />
+    from ni_aqnclass_dict
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from ni_aqnclass_dict
+    where aqnClassId = #{aqnclassid,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.newIns.model.NiAqnclassDictExample" >
+    delete from ni_aqnclass_dict
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.newIns.model.NiAqnclassDict" >
+    insert into ni_aqnclass_dict (aqnClassId, aqnClassName, aqnClassDes, 
+      comment)
+    values (#{aqnclassid,jdbcType=INTEGER}, #{aqnclassname,jdbcType=VARCHAR}, #{aqnclassdes,jdbcType=VARCHAR}, 
+      #{comment,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.newIns.model.NiAqnclassDict" >
+    insert into ni_aqnclass_dict
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="aqnclassid != null" >
+        aqnClassId,
+      </if>
+      <if test="aqnclassname != null" >
+        aqnClassName,
+      </if>
+      <if test="aqnclassdes != null" >
+        aqnClassDes,
+      </if>
+      <if test="comment != null" >
+        comment,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="aqnclassid != null" >
+        #{aqnclassid,jdbcType=INTEGER},
+      </if>
+      <if test="aqnclassname != null" >
+        #{aqnclassname,jdbcType=VARCHAR},
+      </if>
+      <if test="aqnclassdes != null" >
+        #{aqnclassdes,jdbcType=VARCHAR},
+      </if>
+      <if test="comment != null" >
+        #{comment,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.newIns.model.NiAqnclassDictExample" resultType="java.lang.Integer" >
+    select count(*) from ni_aqnclass_dict
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update ni_aqnclass_dict
+    <set >
+      <if test="record.aqnclassid != null" >
+        aqnClassId = #{record.aqnclassid,jdbcType=INTEGER},
+      </if>
+      <if test="record.aqnclassname != null" >
+        aqnClassName = #{record.aqnclassname,jdbcType=VARCHAR},
+      </if>
+      <if test="record.aqnclassdes != null" >
+        aqnClassDes = #{record.aqnclassdes,jdbcType=VARCHAR},
+      </if>
+      <if test="record.comment != null" >
+        comment = #{record.comment,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update ni_aqnclass_dict
+    set aqnClassId = #{record.aqnclassid,jdbcType=INTEGER},
+      aqnClassName = #{record.aqnclassname,jdbcType=VARCHAR},
+      aqnClassDes = #{record.aqnclassdes,jdbcType=VARCHAR},
+      comment = #{record.comment,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.newIns.model.NiAqnclassDict" >
+    update ni_aqnclass_dict
+    <set >
+      <if test="aqnclassname != null" >
+        aqnClassName = #{aqnclassname,jdbcType=VARCHAR},
+      </if>
+      <if test="aqnclassdes != null" >
+        aqnClassDes = #{aqnclassdes,jdbcType=VARCHAR},
+      </if>
+      <if test="comment != null" >
+        comment = #{comment,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where aqnClassId = #{aqnclassid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.newIns.model.NiAqnclassDict" >
+    update ni_aqnclass_dict
+    set aqnClassName = #{aqnclassname,jdbcType=VARCHAR},
+      aqnClassDes = #{aqnclassdes,jdbcType=VARCHAR},
+      comment = #{comment,jdbcType=VARCHAR}
+    where aqnClassId = #{aqnclassid,jdbcType=INTEGER}
+  </update>
+</mapper>
